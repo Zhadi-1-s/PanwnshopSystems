@@ -1,0 +1,144 @@
+import { Component,Input } from '@angular/core';
+import { LombardService } from '../../../../shared/services/lombard.service';
+import { FormBuilder,FormGroup,FormsModule,ReactiveFormsModule,Validators } from '@angular/forms';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { CommonModule } from '@angular/common';
+import { PawnshopProfile } from '../../../../shared/interfaces/shop-profile.interface';
+import { TranslateModule } from '@ngx-translate/core';
+import { CloudinaryService } from '../../../../shared/services/cloudinary.service';
+import { ImageViewComponent } from '../../image-view/image-view.component';
+@Component({
+  selector: 'app-create-lombard',
+  standalone: true,
+  imports: [CommonModule,ReactiveFormsModule,TranslateModule],
+  templateUrl: './create-lombard.component.html',
+  styleUrl: './create-lombard.component.scss'
+})
+export class CreateLombardComponent {
+
+  @Input() userId!: string; // приходит из login компонента
+  lombardForm: FormGroup;
+  loading = false;
+  errorMessage = '';
+  previewLogo: string | null = null;
+  selectedLogoFile: File | null = null;
+  photos: string[] = [];
+
+  selectedFiles: File[] = [];
+  previewUrls: string[] = [];
+
+  constructor(
+      private lombardService:LombardService,
+      private fb: FormBuilder,
+      private activeModal: NgbActiveModal,
+      private uploadService:CloudinaryService
+  ){
+      this.lombardForm = this.fb.group({
+        name: ['', Validators.required],
+        address: ['', Validators.required],
+        phone: ['', [Validators.required, Validators.pattern(/^\+?\d{10,15}$/)]],
+        slotLimit: [null, [Validators.required, Validators.min(0)]],
+        openTime: ['', Validators.required],
+        closeTime: ['', Validators.required],
+        description: [''],
+        photos: this.fb.control<string[]>([]),
+        terms: this.fb.group({
+            interestRate: [null],
+            minTermDays: [null],
+            maxAmount: [null],
+            fees: [null],
+            additional: ['']
+          })
+      });
+  }
+
+  async submit() {
+    if (this.lombardForm.invalid) return;
+    this.loading = true;
+
+    try {
+      let logoUrl = this.lombardForm.value.logoUrl;
+      if (this.selectedLogoFile) {
+        logoUrl = await this.uploadService.uploadImage(this.selectedLogoFile);
+      }
+
+      const uploadedUrls: string[] = [];
+      for (const file of this.selectedFiles) {
+        try {
+          const url = await this.uploadService.uploadImage(file);
+          uploadedUrls.push(url);
+        } catch (err) {
+          console.error('Ошибка загрузки фото:', err);
+        }
+      }
+
+      const payload: PawnshopProfile = {
+        userId: this.userId,
+        ...this.lombardForm.value,
+        logoUrl,
+        photos: uploadedUrls
+      };
+
+      console.log('вот ка выглядит ломбард', payload);
+
+      // ✅ если createLombard возвращает Observable
+      this.lombardService.createLombard(payload).subscribe({
+        next: (res) => {
+          console.log('Ломбард успешно создан:', res);
+          this.activeModal.close('created');
+        },
+        error: (err) => {
+          console.error('Ошибка при создании ломбарда:', err);
+          this.errorMessage = 'Ошибка при создании ломбарда';
+        },
+        complete: () => {
+          this.loading = false;
+        }
+      });
+
+    } catch (err) {
+      console.error(err);
+      this.errorMessage = 'Ошибка при создании ломбарда';
+      this.loading = false;
+    }
+  }
+
+
+  cancel(){
+    this.activeModal.dismiss();
+  }
+   
+  removePhoto(index: number) {
+    this.photos.splice(index, 1);
+  }
+
+  onLogoSelected(event:any){
+    const file = event.target.files?.[0];
+    if (file) {
+      this.selectedLogoFile = file;
+
+      // превью
+      const reader = new FileReader();
+      reader.onload = () => (this.previewLogo = reader.result as string);
+      reader.readAsDataURL(file);
+    }
+  }
+
+  onPhotosSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
+
+    // добавляем новые фото в массив
+    for (const file of Array.from(input.files)) {
+      this.selectedFiles.push(file);
+
+      // показываем превью
+      const reader = new FileReader();
+      reader.onload = (e) => this.previewUrls.push(e.target?.result as string);
+      reader.readAsDataURL(file);
+    }
+
+    input.value = '';
+  }
+
+}

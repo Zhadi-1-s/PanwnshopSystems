@@ -1,0 +1,164 @@
+<!-- Modernized modal header with gradient and better typography -->
+<div class="sticky top-0 z-10 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200 px-6 py-4">
+  <div class="flex items-center justify-between">
+    <h5 class="text-2xl font-bold text-gray-800 flex items-center gap-3">
+      <span class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+        <i class="fa-solid fa-box-open text-white text-lg"></i>
+      </span>
+      {{ product.title }}
+    </h5>
+    <button 
+      type="button" 
+      class="w-10 h-10 rounded-full hover:bg-gray-200 transition-all duration-300 flex items-center justify-center group" 
+      aria-label="Close" 
+      (click)="activeModal.dismiss()"
+    >
+      <i class="fa-solid fa-xmark text-gray-600 text-xl group-hover:rotate-90 transition-transform duration-300"></i>
+    </button>
+  </div>
+</div>
+
+<!-- Redesigned modal body with modern card-based layout -->
+<div class="p-6 bg-gradient-to-br from-gray-50 to-blue-50 max-h-[70vh] overflow-y-auto">
+  <!-- Product Image Section -->
+  <div class="flex justify-center mb-6">
+    <div class="relative group">
+      <div class="absolute inset-0 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-2xl blur-xl opacity-30 group-hover:opacity-50 transition-opacity duration-300"></div>
+      <img
+        [src]="product.photos?.[0] || 'assets/png/default-product.png'"
+        alt="{{ product.title }}"
+        class="relative rounded-2xl shadow-2xl object-cover w-64 h-64 border-4 border-white transform group-hover:scale-105 transition-transform duration-300"
+      />
+    </div>
+  </div>
+
+  <!-- Product Details Card -->
+  <div class="bg-white rounded-2xl shadow-lg p-6 mb-6 border border-gray-100">
+    <h6 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+      <span class="w-6 h-6 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
+        <i class="fa-solid fa-info text-white text-xs"></i>
+      </span>
+      Product Information
+    </h6>
+    
+    <div class="space-y-4">
+      <!-- Title -->
+      <div class="flex flex-col sm:flex-row sm:items-center gap-2 pb-4 border-b border-gray-100">
+        <span class="text-sm font-semibold text-gray-500 uppercase tracking-wide min-w-[140px]">
+          {{ 'Title' | translate }}
+        </span>
+        <span class="text-gray-800 font-medium">{{ product.title }}</span>
+      </div>
+
+      <!-- Category -->
+      <div class="flex flex-col sm:flex-row sm:items-center gap-2 pb-4 border-b border-gray-100">
+        <span class="text-sm font-semibold text-gray-500 uppercase tracking-wide min-w-[140px]">
+          {{ 'Category' | translate }}
+        </span>
+        <span class="inline-flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 rounded-lg text-sm font-medium">
+          <i class="fa-solid fa-tag text-xs"></i>
+          {{ product.category }}
+        </span>
+      </div>
+
+      <!-- Price -->
+      <div class="flex flex-col sm:flex-row sm:items-center gap-2 pb-4 border-b border-gray-100">
+        <span class="text-sm font-semibold text-gray-500 uppercase tracking-wide min-w-[140px]">
+          {{ 'Price' | translate }}
+        </span>
+        <span class="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+          {{ product.price }} Тг
+        </span>
+      </div>
+
+      <!-- Status -->
+      <div class="flex flex-col sm:flex-row sm:items-center gap-2 pb-4 border-b border-gray-100">
+        <span class="text-sm font-semibold text-gray-500 uppercase tracking-wide min-w-[140px]">
+          {{ 'Status' | translate }}
+        </span>
+        <span
+          class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold shadow-md transition-all duration-300 hover:shadow-lg w-fit"
+          [ngClass]="{
+            'bg-gradient-to-r from-green-500 to-emerald-500 text-white': product.status === 'sold',
+            'bg-gradient-to-r from-yellow-400 to-orange-400 text-gray-800': product.status === 'active',
+            'bg-gradient-to-r from-gray-400 to-gray-500 text-white': product.status === 'closed'
+          }"
+        >
+          <i class="fa-solid fa-circle text-xs animate-pulse"></i>
+          {{ product.status | titlecase }}
+        </span>
+      </div>
+
+      <!-- Created At -->
+      <div class="flex flex-col sm:flex-row sm:items-center gap-2 pb-4 border-b border-gray-100">
+        <span class="text-sm font-semibold text-gray-500 uppercase tracking-wide min-w-[140px]">
+          {{ 'Created At' | translate }}
+        </span>
+        <span class="text-gray-700 flex items-center gap-2">
+          <i class="fa-solid fa-calendar-plus text-blue-500"></i>
+          {{ product.createdAt | date: 'short' }}
+        </span>
+      </div>
+
+      <!-- Updated At -->
+      <div *ngIf="product.updatedAt" class="flex flex-col sm:flex-row sm:items-center gap-2">
+        <span class="text-sm font-semibold text-gray-500 uppercase tracking-wide min-w-[140px]">
+          {{ 'Updated At' | translate }}
+        </span>
+        <span class="text-gray-700 flex items-center gap-2">
+          <i class="fa-solid fa-calendar-check text-indigo-500"></i>
+          {{ product.updatedAt | date: 'short' }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Description Section -->
+  <div *ngIf="product.description" class="bg-white rounded-2xl shadow-lg p-6 mb-6 border border-gray-100">
+    <h6 class="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
+      <span class="w-6 h-6 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center">
+        <i class="fa-solid fa-align-left text-white text-xs"></i>
+      </span>
+      {{ 'Description' | translate }}
+    </h6>
+    <p class="text-gray-600 leading-relaxed">{{ product.description }}</p>
+  </div>
+
+  <!-- Image Gallery Section -->
+  <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+    <h6 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+      <span class="w-6 h-6 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg flex items-center justify-center">
+        <i class="fa-solid fa-images text-white text-xs"></i>
+      </span>
+      Gallery
+    </h6>
+    <app-image-view 
+      [photos]="product.photos" 
+      [editable]="canEdit"
+      (photoRemoved)="onPhotoRemoved($event)"
+      (photoAdded)="onPhotoAdded()"
+    ></app-image-view>
+  </div>
+</div>
+
+<!-- Modernized modal footer with gradient buttons -->
+<div class="sticky bottom-0 bg-gradient-to-r from-gray-50 to-blue-50 border-t border-gray-200 px-6 py-4">
+  <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3">
+    <button 
+      *ngIf="user?.role === 'pawnshop'"
+      class="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:from-blue-700 hover:to-indigo-700 transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
+      (click)="sendOffer()"
+    >
+      <i class="fa-solid fa-paper-plane"></i>
+      {{ 'Send Offer' | translate }}
+    </button>
+
+    <button 
+      class="px-6 py-3 bg-white text-gray-700 font-semibold rounded-xl border-2 border-gray-300 hover:bg-gray-50 hover:border-gray-400 transition-all duration-300 flex items-center justify-center gap-2"
+      (click)="activeModal.dismiss()"
+    >
+      <i class="fa-solid fa-xmark"></i>
+      {{ 'Close' | translate }}
+    </button>
+  </div>
+</div>

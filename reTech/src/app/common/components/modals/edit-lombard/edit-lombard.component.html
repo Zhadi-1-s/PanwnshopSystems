@@ -1,0 +1,113 @@
+<div class="modal-header">
+  <h5 class="modal-title">
+    <i class="fa-solid fa-building me-2 text-primary"></i>
+    {{ 'Edit pawnshop details' | translate }}
+  </h5>
+  <button type="button" class="btn-close" aria-label="Close" (click)="cancel()"></button>
+</div>
+
+<div class="modal-body">
+  <form #editForm="ngForm">
+    <div class="mb-3">
+      <label class="form-label">{{ 'Name' | translate }}</label>
+      <input
+        type="text"
+        class="form-control"
+        name="name"
+        [(ngModel)]="editedShop.name"
+        required
+      />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">{{ 'Address' | translate }}</label>
+      <input
+        type="text"
+        class="form-control"
+        name="address"
+        [(ngModel)]="editedShop.address"
+      />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">{{ 'Phone number' | translate }}</label>
+      <input
+        type="text"
+        class="form-control"
+        name="phone"
+        [(ngModel)]="editedShop.phone"
+      />
+    </div>
+
+   <div class="mb-3">
+    <label class="form-label">{{ 'График работы' | translate }}</label>
+    <div class="d-flex align-items-center gap-2">
+        <input
+        type="time"
+        class="form-control"
+        name="openTime"
+        [(ngModel)]="editedShop.openTime"
+        />
+        <span>–</span>
+        <input
+        type="time"
+        class="form-control"
+        name="closeTime"
+        [(ngModel)]="editedShop.closeTime"
+        />
+    </div>
+    <small class="text-muted">
+        {{ 'Укажите время открытия и закрытия, например 09:00 – 18:00' | translate }}
+    </small>
+    </div>
+
+
+
+    <div class="mb-3">
+      <label class="form-label">{{ 'Description' | translate }}</label>
+      <textarea
+        class="form-control"
+        rows="3"
+        name="description"
+        [(ngModel)]="editedShop.description"
+      ></textarea>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">{{ 'Logo URL' | translate }}</label>
+      <input
+        type="text"
+        class="form-control"
+        name="logoUrl"
+        [(ngModel)]="editedShop.logoUrl"
+      />
+      <div class="preview mt-2 text-center">
+        <img
+          [src]="editedShop.logoUrl || 'assets/png/pawnshopLogo.jpg'"
+          alt="Logo preview"
+          class="img-thumbnail logo-preview"
+        />
+      </div>
+    </div>
+
+    <div class="col-12">
+      <label class="form-label fw-semibold">{{ 'Photos' | translate }}</label>
+
+      <app-image-view
+        [photos]="photos"
+        [editable]="true"
+        (photoRemoved)="removePhoto($event)"
+        (photoAdded)="onFileSelect()"
+      ></app-image-view>
+    </div>
+  </form>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-outline-secondary" (click)="cancel()">
+   {{ 'Cancel' | translate }}
+  </button>
+  <button type="button" class="btn btn-primary" (click)="saveChanges()" [disabled]="!editForm.valid">
+    <i class="fa-solid fa-floppy-disk me-1"></i> {{ 'Save changes' | translate }}
+  </button>
+</div>

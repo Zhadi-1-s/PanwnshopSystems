@@ -1,0 +1,130 @@
+<div class="modal-header">
+  <h5 class="modal-title">
+    <i class="fa-solid fa-box me-2 text-primary"></i>
+    {{ 'Create Product' | translate }}
+  </h5>
+  <button type="button" class="btn-close" aria-label="Close" (click)="close()"></button>
+</div>
+
+<div class="modal-body">
+  <form [formGroup]="productForm" class="needs-validation">
+    <!-- Название -->
+    <div class="mb-3">
+      <label class="form-label fw-semibold">{{ 'Title' | translate }}</label>
+      <input
+        type="text"
+        formControlName="title"
+        class="form-control"
+        [class.is-invalid]="title.invalid && (title.dirty || title.touched)"
+        placeholder="{{ 'Enter product title' | translate }}"
+      />
+      <div class="invalid-feedback" *ngIf="title.errors?.['required']">
+        {{ 'Title is required' | translate }}
+      </div>
+    </div>
+
+    <!-- Категория -->
+    <div class="mb-3">
+          <label class="form-label">{{ 'Category' | translate }}</label>
+          <select formControlName="category" class="form-select">
+            <option *ngFor="let c of categories" [value]="c">
+              {{ c | translate }}
+            </option>
+          </select>
+    </div>
+
+    <!-- Описание -->
+    <div class="mb-3">
+      <label class="form-label fw-semibold">{{ 'Description' | translate }}</label>
+      <textarea
+        rows="3"
+        formControlName="description"
+        class="form-control"
+        placeholder="{{ 'Enter description' | translate }}"
+      ></textarea>
+    </div>
+
+    <!-- Фото -->
+    <div class="mb-3">
+      <label class="form-label fw-semibold">{{ 'Photos' | translate }}</label>
+      <input
+        type="file"
+        class="form-control"
+        accept="image/*"
+        multiple
+        (change)="onPhotosSelected($event)"
+      />
+
+      <!-- превью выбранных фото -->
+      <div
+        class="d-flex flex-wrap gap-2 mt-3"
+        *ngIf="previewUrls.length > 0"
+      >
+        <div
+          class="position-relative"
+          *ngFor="let preview of previewUrls; let i = index"
+          style="width: 100px; height: 100px;"
+        >
+          <img
+            [src]="preview"
+            class="rounded object-fit-cover w-100 h-100 border"
+            alt="Preview"
+          />
+          <button
+            type="button"
+            class="btn btn-sm btn-danger position-absolute top-0 end-0"
+            style="transform: translate(25%, -25%); border-radius: 50%;"
+            (click)="removePhoto(i)"
+          >
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Статус -->
+    <!-- <div class="mb-3">
+      <label class="form-label fw-semibold">{{ 'Status' | translate }}</label>
+      <select class="form-select" formControlName="status">
+        <option value="active">{{ 'Active' | translate }}</option>
+        <option value="sold">{{ 'Sold' | translate }}</option>
+        <option value="closed">{{ 'Closed' | translate }}</option>
+      </select>
+    </div> -->
+
+    <!-- Цена -->
+    <div class="mb-3">
+      <label class="form-label fw-semibold">{{ 'Price' | translate }}</label>
+      <input
+        type="number"
+        formControlName="price"
+        class="form-control"
+        [class.is-invalid]="price.invalid && (price.dirty || price.touched)"
+        placeholder="{{ 'Enter the price of the product' | translate }}"
+      />
+      <div class="invalid-feedback" *ngIf="price.errors?.['required']">
+        {{ 'Price is required' | translate }}
+      </div>
+      <div class="invalid-feedback" *ngIf="price.errors?.['min']">
+        {{ 'Price must be greater than 0' | translate }}
+      </div>
+    </div>
+
+  </form>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="close()">
+    {{ 'Cancel' | translate }}
+  </button>
+  <button
+    type="button"
+    class="btn btn-primary"
+    [disabled]="productForm.invalid"
+    (click)="saveProduct()"
+  >
+    <i class="fa-solid fa-plus me-1"></i>
+    {{ 'Create' | translate }}
+  </button>
+</div>

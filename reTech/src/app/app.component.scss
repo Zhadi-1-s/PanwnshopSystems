@@ -1,0 +1,26 @@
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+
+  .sidebar {
+    flex-shrink: 0;
+    width: 255px;
+    transition: width 0.3s;
+  }
+
+  .sidebar.collapsed {
+    width: 64px; // ширина свернутого sidebar
+  }
+
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    transition: margin-left 0.3s;
+
+    .content {
+      flex: 1;
+      margin-left: 0;
+    }
+  }
+}

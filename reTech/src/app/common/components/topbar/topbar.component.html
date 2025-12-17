@@ -1,0 +1,75 @@
+<div class="topbar">
+  <div class="topbar-right">
+
+    <!-- Notifications -->
+    <div class="position-relative">
+      <button 
+        class="btn btn-sm rounded-circle border-none me-3 d-flex align-items-center justify-content-center"
+        style="width: 40px; height: 40px;"
+        (click)="toggleNotifications()">
+
+        <i class="fa-solid fa-bell"></i>
+
+        <!-- Badge: количество непрочитанных -->
+        <span *ngIf="unreadCount$ | async as unreadCount"
+              class="position-absolute badge rounded-pill bg-danger"
+              style="
+                top: 10px;
+                right: 30px;
+                transform: translate(50%, -50%);
+                font-size: 10px;
+                padding: 3px 6px;
+              ">
+          {{ unreadCount }}
+        </span>
+        <ng-template #noUnread></ng-template>
+      </button>
+
+      <!-- Dropdown: уведомления -->
+
+    </div>
+
+    <!-- Language Switcher -->
+    <div class="language-switcher dropdown">
+      <button class="btn btn-sm btn-light border-none dropdown-toggle" type="button" data-bs-toggle="dropdown">
+        {{ currentLang.toUpperCase() }}
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li>
+          <a class="dropdown-item" [class.active]="currentLang === 'en'" (click)="changeLang('en')">
+            English
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" [class.active]="currentLang === 'ru'" (click)="changeLang('ru')">
+            Русский
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Profile -->
+    <div class="profile dropdown ms-3">
+      <button class="btn btn-light btn-sm rounded-circle border-none d-flex align-items-center justify-content-center"
+              type="button"
+              data-bs-toggle="dropdown"
+              style="width: 40px; height: 40px;">
+        <i class="fa-solid fa-user"></i>
+      </button>
+
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li>
+          <a class="dropdown-item" [routerLink]="isPawnShop ? '/lombard-profile' : '/profile'">
+            <i class="fa-solid fa-user me-2"></i> {{'Profile'|translate}}
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" (click)="logout()">
+            <i class="fa-solid fa-right-from-bracket me-2"></i> {{'Logout'|translate}}
+          </a>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+</div>

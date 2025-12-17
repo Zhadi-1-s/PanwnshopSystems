@@ -1,0 +1,224 @@
+<!-- Hero Section -->
+<div class="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white">
+  <!-- Header Navigation -->
+  <nav class="container mx-auto px-4 sm:px-6 py-4 sm:py-6 flex items-center justify-between">
+    <div class="text-xl sm:text-2xl font-bold">LombardHub</div>
+    <!-- Added responsive text sizing and spacing for navigation -->
+    <div class="flex items-center gap-3 sm:gap-6 md:gap-8">
+      <a routerLink="/pawnshop-list" class="hidden sm:inline text-sm md:text-base text-slate-300 hover:text-white transition-colors" (click)="scrollToPawnshops()">
+        {{ 'Pawnshops' | translate }}
+      </a>
+      <a routerLink="/about" class="hidden sm:inline text-sm md:text-base text-slate-300 hover:text-white transition-colors" (click)="scrollToHowItWorks()">
+        {{ 'How it works' | translate }}
+      </a>
+      <a 
+        *ngIf="!(user$ | async); else loggedInNav"
+        routerLink="/register" 
+        class="bg-white text-slate-950 px-4 sm:px-6 py-2 sm:py-2.5 text-sm sm:text-base rounded-full font-semibold hover:bg-slate-100 transition-colors">
+        {{ 'Start now' | translate }}
+      </a>
+      <ng-template #loggedInNav>
+        <a 
+          routerLink="/offers" 
+          class="bg-blue-600 text-white px-4 sm:px-6 py-2 sm:py-2.5 text-sm sm:text-base rounded-full font-semibold hover:bg-blue-700 transition-colors">
+          {{ 'Start now' | translate }}
+        </a>
+      </ng-template>
+    </div>
+  </nav>
+
+  <!-- Hero Content -->
+  <!-- Added responsive padding and spacing -->
+  <div class="container mx-auto px-4 sm:px-6 py-12 sm:py-16 md:py-20 lg:py-32">
+    <div class="max-w-4xl mx-auto text-center">
+      <!-- Enhanced responsive text sizing from mobile to desktop -->
+      <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-4 sm:mb-6 leading-tight text-balance">
+        {{ 'Sell or buy electronics' | translate }}
+        <span class="text-blue-400">{{ 'profitably' | translate }}</span>
+      </h1>
+      <p class="text-base sm:text-lg md:text-xl text-slate-300 mb-8 sm:mb-12 max-w-2xl mx-auto leading-relaxed px-4">
+        {{ 'We connect users and pawnshops in one app. Get offers from different pawnshops, find the best prices, and make safe deals.' | translate }}
+      </p>
+
+      <!-- Search Bar -->
+      <!-- Responsive search bar with adjusted padding and icon sizes -->
+      <div class="max-w-2xl mx-auto mb-10 sm:mb-16 px-4">
+        <div class="relative">
+          <svg class="absolute left-4 sm:left-5 top-1/2 -translate-y-1/2 w-4 sm:w-5 h-4 sm:h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <input 
+            type="text" 
+            class="w-full pl-12 sm:pl-14 pr-4 sm:pr-6 py-4 sm:py-5 text-sm sm:text-base bg-slate-800/50 border border-slate-700 rounded-xl sm:rounded-2xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all backdrop-blur-sm"
+            placeholder="{{ 'Find a gadget or device' | translate }}"
+          >
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <!-- Responsive stats grid from 1 column on mobile to 3 on tablet+ -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 max-w-3xl mx-auto px-4">
+        <div class="text-center">
+          <div class="text-3xl sm:text-4xl font-bold text-blue-400 mb-2">100+</div>
+          <div class="text-sm sm:text-base text-slate-400">{{ 'Verified Pawnshops' | translate }}</div>
+        </div>
+        <div class="text-center">
+          <div class="text-3xl sm:text-4xl font-bold text-blue-400 mb-2">5000+</div>
+          <div class="text-sm sm:text-base text-slate-400">{{ 'Successful Deals' | translate }}</div>
+        </div>
+        <div class="text-center">
+          <div class="text-3xl sm:text-4xl font-bold text-blue-400 mb-2">4.8★</div>
+          <div class="text-sm sm:text-base text-slate-400">{{ 'Average Rating' | translate }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Pawnshops Section -->
+<!-- Responsive section padding -->
+<section class="bg-slate-50 dark:bg-slate-900 py-12 sm:py-16 md:py-20" id="Pawnshops">
+  <div class="container mx-auto px-4 sm:px-6">
+    <div class="text-center mb-10 sm:mb-16">
+      <!-- Responsive heading sizes -->
+      <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white mb-3 sm:mb-4">
+        {{ 'Featured Pawnshops' | translate }}
+      </h2>
+      <p class="text-base sm:text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto px-4">
+        {{ 'Connect with trusted pawnshops in your area' | translate }}
+      </p>
+    </div>
+
+    <!-- Redesigned pawnshop grid with modern cards -->
+    <!-- Enhanced responsive grid: 1 col mobile, 2 cols tablet, 3 cols small desktop, 4 cols large -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-12" *ngIf="lombardList">
+      <div 
+        *ngFor="let lombard of lombardList | slice:0:8"
+        [routerLink]="['/pawnshop-detail', lombard._id]"
+        class="group bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer border border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500"
+      >
+        <!-- Logo -->
+        <div class="flex justify-center mb-3 sm:mb-4">
+          <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-lg sm:rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-700 flex items-center justify-center border-2 border-slate-200 dark:border-slate-600 group-hover:border-blue-400 transition-colors">
+            <img
+              [src]="lombard.logoUrl || 'assets/png/default-logo.png'"
+              [alt]="lombard.name"
+              class="w-full h-full object-cover"
+            />
+          </div>
+        </div>
+
+        <!-- Name -->
+        <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white text-center mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+          {{ lombard.name }}
+        </h3>
+
+        <!-- Address -->
+        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 text-center mb-3 line-clamp-2">
+          {{ lombard.address }}
+        </p>
+
+        <!-- Rating -->
+        <div class="flex items-center justify-center gap-2 mb-3">
+          <div class="flex">
+            <svg 
+              *ngFor="let star of [1,2,3,4,5]; let i = index" 
+              class="w-3.5 sm:w-4 h-3.5 sm:h-4"
+              [ngClass]="(lombard.rating || 0) > i ? 'text-amber-400' : 'text-slate-300 dark:text-slate-600'"
+              fill="currentColor" 
+              viewBox="0 0 20 20"
+            >
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+          </div>
+          <span class="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white">
+            {{ lombard.rating || 0 }}
+          </span>
+        </div>
+
+        <!-- Hours -->
+        <div class="flex items-center justify-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+          <svg class="w-3.5 sm:w-4 h-3.5 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span>{{ lombard.openTime }} - {{ lombard.closeTime }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- View All Button -->
+    <!-- Responsive button sizing and spacing -->
+    <div class="text-center">
+      <a 
+        routerLink="/pawnshop-list"
+        class="inline-flex items-center gap-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base rounded-full font-semibold hover:bg-slate-800 dark:hover:bg-slate-100 transition-colors shadow-lg hover:shadow-xl"
+      >
+        {{ 'View all pawnshops' | translate }}
+        <svg class="w-4 sm:w-5 h-4 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works Section -->
+<!-- Responsive section padding -->
+<section class="bg-white dark:bg-slate-950 py-12 sm:py-16 md:py-20" id="HowIrWorks">
+  <div class="container mx-auto px-4 sm:px-6">
+    <div class="text-center mb-10 sm:mb-16">
+      <!-- Responsive heading -->
+      <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white mb-3 sm:mb-4">
+        {{ 'How it works' | translate }}
+      </h2>
+    </div>
+
+    <!-- Responsive grid for steps: 1 col mobile, 3 cols tablet+ -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-8 max-w-5xl mx-auto">
+      <!-- Step 1 -->
+      <div class="text-center">
+        <div class="w-14 h-14 sm:w-16 sm:h-16 bg-blue-100 dark:bg-blue-900/30 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6">
+          <svg class="w-7 h-7 sm:w-8 sm:h-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+          </svg>
+        </div>
+        <h3 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-2 sm:mb-3">
+          {{ 'Post your item' | translate }}
+        </h3>
+        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 px-4">
+          {{ 'Create a listing in minutes with photos and description' | translate }}
+        </p>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="text-center">
+        <div class="w-14 h-14 sm:w-16 sm:h-16 bg-blue-100 dark:bg-blue-900/30 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6">
+          <svg class="w-7 h-7 sm:w-8 sm:h-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+          </svg>
+        </div>
+        <h3 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-2 sm:mb-3">
+          {{ 'Receive offers' | translate }}
+        </h3>
+        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 px-4">
+          {{ 'Get competitive offers from verified pawnshops' | translate }}
+        </p>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="text-center">
+        <div class="w-14 h-14 sm:w-16 sm:h-16 bg-blue-100 dark:bg-blue-900/30 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6">
+          <svg class="w-7 h-7 sm:w-8 sm:h-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+          </svg>
+        </div>
+        <h3 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-2 sm:mb-3">
+          {{ 'Complete deal' | translate }}
+        </h3>
+        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 px-4">
+          {{ 'Choose best offer and finalize transaction safely' | translate }}
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

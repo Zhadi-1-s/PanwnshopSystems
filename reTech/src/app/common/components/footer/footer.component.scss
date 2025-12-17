@@ -1,0 +1,30 @@
+footer {
+  background-color: #ffffff; //белый фон
+  
+
+  a {
+    color: #fff;
+    &:hover {
+      color: #908d8d;
+    }
+  }
+
+  &.with-sidebar{
+    margin-left: 250px;
+  }
+}
+.footer-content .container {
+  max-width: 1140px; /* или 960px */
+  margin: 0 auto;
+}
+.footer-content ul {
+  display: inline-block;
+  text-align: left;
+}
+.footer-content ul li {
+  margin-bottom: 0.5rem; /* 8px */
+}
+
+.footer-content ul li:last-child {
+  margin-bottom: 0; /* чтобы последний не "толкал" вниз */
+}

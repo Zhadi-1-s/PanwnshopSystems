@@ -1,0 +1,140 @@
+<div class="modal-header">
+  <h5 class="modal-title">Создать ломбард</h5>
+  <button type="button" class="btn-close" (click)="cancel()" aria-label="Close"></button>
+</div>
+
+<div class="modal-body">
+  <form [formGroup]="lombardForm" (ngSubmit)="submit()">
+    <div class="mb-3">
+      <label class="form-label">Название</label>
+      <input formControlName="name" class="form-control" placeholder="Введите название">
+    </div>
+
+    <!-- Логотип -->
+    <div class="mb-3">
+      <label class="form-label">Логотип</label>
+      <input type="file" accept="image/*" class="form-control" (change)="onLogoSelected($event)">
+      <div *ngIf="previewLogo" class="mt-2">
+        <img [src]="previewLogo" alt="Preview" class="img-thumbnail" style="max-width: 150px;">
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label fw-semibold">{{ 'Photos' | translate }}</label>
+      <input
+        type="file"
+        class="form-control"
+        accept="image/*"
+        multiple
+        (change)="onPhotosSelected($event)"
+      />
+
+      <!-- превью выбранных фото -->
+      <div
+        class="d-flex flex-wrap gap-2 mt-3"
+        *ngIf="previewUrls.length > 0"
+      >
+        <div
+          class="position-relative"
+          *ngFor="let preview of previewUrls; let i = index"
+          style="width: 100px; height: 100px;"
+        >
+          <img
+            [src]="preview"
+            class="rounded object-fit-cover w-100 h-100 border"
+            alt="Preview"
+          />
+          <button
+            type="button"
+            class="btn btn-sm btn-danger position-absolute top-0 end-0"
+            style="transform: translate(25%, -25%); border-radius: 50%;"
+            (click)="removePhoto(i)"
+          >
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Адрес</label>
+      <input formControlName="address" class="form-control" placeholder="Введите адрес">
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Телефон</label>
+      <input formControlName="phone" class="form-control" placeholder="+77001234567">
+    </div>
+
+    <div class="mb-3">
+      <span>Сколько слотов(предметов)</span>
+      <input type="number" formControlName="slotLimit" placeholder="Число">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">{{ 'График работы' | translate }}</label>
+        <div class="d-flex align-items-center gap-2">
+            <input
+            type="time"
+            class="form-control"
+            formControlName="openTime"
+            />
+            <span>–</span>
+            <input
+            type="time"
+            class="form-control"
+            formControlName="closeTime"
+            />
+        </div>
+        <small class="text-muted">
+            {{ 'Укажите время открытия и закрытия, например 09:00 – 18:00' | translate }}
+        </small>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Описание</label>
+      <textarea formControlName="description" class="form-control" rows="3" placeholder="Краткое описание"></textarea>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Условия ломбарда</label>
+
+      <div formGroupName="terms">
+        <div class="mb-2">
+          <label class="form-label">Процентная ставка (%)</label>
+          <input type="number" class="form-control" formControlName="interestRate" placeholder="3.5">
+        </div>
+
+        <div class="mb-2">
+          <label class="form-label">Минимальный срок (дней)</label>
+          <input type="number" class="form-control" formControlName="minTermDays" placeholder="7">
+        </div>
+
+        <div class="mb-2">
+          <label class="form-label">Максимальная сумма</label>
+          <input type="number" class="form-control" formControlName="maxAmount" placeholder="500000">
+        </div>
+
+        <div class="mb-2">
+          <label class="form-label">Комиссия (%)</label>
+          <input type="number" class="form-control" formControlName="fees" placeholder="2.5">
+        </div>
+
+        <div class="mb-2">
+          <label class="form-label">Дополнительно</label>
+          <textarea class="form-control" formControlName="additional" rows="2" placeholder="Особые условия или примечания"></textarea>
+        </div>
+      </div>
+    </div>
+
+
+    <div *ngIf="errorMessage" class="text-danger">{{ errorMessage }}</div>
+
+    <div class="modal-footer mt-3">
+      <button type="button" class="btn btn-secondary" (click)="cancel()">Отмена</button>
+      <button type="submit" class="btn btn-primary" [disabled]="loading || lombardForm.invalid">
+        {{ loading ? 'Создание...' : 'Создать' }}
+      </button>
+    </div>
+  </form>
+</div>

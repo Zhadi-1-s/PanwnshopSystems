@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* You can add global styles to this file, and also import other style files */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+}
+.btn{
+  outline: none!important;
+}
+.btn-close:focus,
+.btn-close:focus-visible,
+.btn-close:active:focus,
+.btn-close:active:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}

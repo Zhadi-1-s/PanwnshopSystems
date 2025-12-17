@@ -1,0 +1,85 @@
+<div class="modal-header">
+  <h5 class="modal-title">Edit Profile</h5>
+  <button type="button" class="btn-close" aria-label="Close" (click)="cancel()"></button>
+</div>
+
+<div class="modal-body">
+  <form #editForm="ngForm" (ngSubmit)="saveChanges()">
+    <!-- Name -->
+    <div class="mb-3">
+      <label for="name" class="form-label fw-semibold">{{'Name'|translate}}</label>
+      <input
+        type="text"
+        id="name"
+        class="form-control"
+        name="name"
+        [(ngModel)]="editedUser.name"
+        required
+      />
+    </div>
+
+    <!-- Email -->
+    <div class="mb-3">
+      <label for="email" class="form-label fw-semibold">{{'Email' |translate}}</label>
+      <input
+        type="email"
+        id="email"
+        class="form-control"
+        name="email"
+        [(ngModel)]="editedUser.email"
+        required
+      />
+    </div>
+
+    <!-- Password -->
+    <div class="mb-3">
+      <label for="password" class="form-label fw-semibold">{{'Password' | translate}}</label>
+      <input
+        type="password"
+        id="password"
+        class="form-control"
+        name="password"
+        [(ngModel)]="editedUser.password"
+        placeholder="Enter new password"
+      />
+    </div>
+
+    <!-- Avatar -->
+    <!-- Avatar Upload -->
+    <div class="mb-3">
+      <label for="avatar" class="form-label fw-semibold">{{ 'Profile photo' | translate }}</label>
+
+
+      <div class="text-center mb-2">
+        <img
+          *ngIf="editedUser.avatarUrl"
+          [src]="editedUser.avatarUrl"
+          alt="Avatar preview"
+          class="rounded-circle border"
+          width="120"
+          height="120"
+        />
+      </div>
+
+
+      <input
+        type="file"
+        id="avatar"
+        class="form-control"
+        (change)="onFileSelected($event)"
+        accept="image/*"
+      />
+
+      <!-- статус загрузки -->
+      <div *ngIf="uploading" class="text-info mt-2">
+        {{ 'Uploading image...' | translate }}
+      </div>
+    </div>
+
+
+    <div class="text-center mt-4">
+      <button type="submit" class="btn btn-primary me-2" [disabled]="!editForm.valid">{{'Save' |translate}}</button>
+      <button type="button" class="btn btn-secondary" (click)="cancel()">{{'Cancel'|translate}}</button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,828 @@
+<div class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-6 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto">
+    <!-- Top Section - Profile Header -->
+    <div class="mb-6">
+      <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300" 
+           *ngIf="profile$ | async as profile; else notLoggedIn">
+        <!-- Modern gradient header with better layout -->
+        <div class="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 h-32 sm:h-40"></div>
+        
+        <div class="px-6 pb-6 sm:px-8 sm:pb-8">
+          <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between -mt-16 sm:-mt-20">
+            <!-- Avatar and Info -->
+            <div class="flex flex-col sm:flex-row items-center sm:items-end gap-4 sm:gap-6">
+              <!-- Floating avatar with shadow -->
+              <div class="relative group">
+                <img [src]="profile?.logoUrl || 'assets/png/default-pawnshop.jpg'"
+                     alt="pawnshop-logo"
+                     class="w-32 h-32 sm:w-40 sm:h-40 rounded-2xl border-4 border-white shadow-xl object-cover 
+                            group-hover:scale-105 transition-transform duration-300" />
+              </div>
+
+              <!-- Improved info layout with better spacing -->
+              <div class="flex-grow text-center sm:text-left  sm:mb-0" *ngIf="profile">
+                <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+                  {{ profile?.name || 'Pawnshop name' }}
+                </h1>
+                
+                <div class="flex flex-wrap gap-3 sm:gap-4 justify-center sm:justify-start">
+                  <div class="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg">
+                    <i class="fa-regular fa-clock text-blue-600"></i>
+                    <span>{{ profile?.openTime }} – {{ profile?.closeTime }}</span>
+                    <span
+                      [ngClass]="{
+                        'text-green-600 bg-green-50': isOpenNow,
+                        'text-red-600 bg-red-50': !isOpenNow
+                      }"
+                      class="px-2 py-0.5 rounded-full text-xs font-semibold ml-1"
+                    >
+                      {{ isOpenNow ? 'Открыто' : 'Закрыто' }}
+                    </span>
+                  </div>
+                  
+                  <div class="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg">
+                    <i class="fa-regular fa-clock text-blue-600"></i>
+                    <span>{{ currentTime | date:'shortTime' }}</span>
+                  </div>
+                  <!-- <button *ngIf="profile?.terms"
+                            (click)="openTermsModal()"
+                            class="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-full font-semibold transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                        <i class="fa-solid fa-scale-balanced"></i>
+                        Условия сделки
+                  </button> -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Action buttons with modern styling -->
+            <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
+           
+              <button class="px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg 
+                           hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 
+                           shadow-md hover:shadow-lg font-medium flex items-center justify-center gap-2"
+                      (click)="openEditLombard()">
+                <i class="fa-solid fa-building"></i>
+                <span>{{ 'Edit details of shop' | translate }}</span>
+              </button>
+              <button (click)="openTerms()"
+                            class="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-full font-semibold transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                        <i class="fa-solid fa-scale-balanced"></i>
+                        Условия сделки
+                  </button>
+              <!-- <button class="px-4 py-2.5 border-2 border-blue-600 text-blue-600 rounded-lg 
+                           hover:bg-blue-50 transition-all duration-200 font-medium 
+                           flex items-center justify-center gap-2"
+                      (click)="openEditModal()">
+                <i class="fa-regular fa-pen-to-square"></i>
+                <span>{{ 'Edit profile' | translate }}</span>
+              </button> -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #notLoggedIn>
+        <!-- Modern alert design -->
+        <div class="bg-gradient-to-r from-amber-50 to-orange-50 border-l-4 border-amber-500 rounded-xl p-6 shadow-md" role="alert">
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0">
+              <i class="fa-solid fa-lock text-amber-600 text-3xl"></i>
+            </div>
+            <div>
+              <h5 class="text-lg font-bold text-gray-900 mb-2">{{ 'You are not logged in' | translate }}</h5>
+              <p class="text-gray-700">
+                {{ 'Please' | translate }}
+                <a routerLink="/login" class="text-blue-600 hover:text-blue-700 font-semibold underline">{{ 'log in' | translate }}</a>
+                {{ 'or' | translate }}
+                <a routerLink="/register" class="text-blue-600 hover:text-blue-700 font-semibold underline">{{ 'register' | translate }}</a>.
+              </p>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+
+    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm overflow-hidden mb-6">
+      
+      <!-- Dashboard Header -->
+      <div class="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-800 px-7 py-6">
+        <div class="flex items-center gap-3">
+          <svg class="w-6 h-6 text-blue-600 dark:text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+          <h5 class="text-xl font-semibold text-gray-900 dark:text-gray-50 tracking-tight">
+            {{ 'Notifications' | translate }}
+          </h5>
+        </div>
+      </div>
+
+      <ng-container *ngIf="notifications$ | async as notifications; else noNotifications">
+        
+        <div class="flex flex-col lg:flex-row min-h-[500px]">
+          
+          <!-- Sidebar -->
+          <div class="w-full lg:w-60 bg-gray-50 dark:bg-gray-800/30 border-b lg:border-b-0 lg:border-r border-gray-200 dark:border-gray-800 p-4 flex lg:flex-col gap-2 overflow-x-auto lg:overflow-x-visible">
+            
+            <!-- Offers -->
+            <div
+              (click)="activeSection = 'offers'"
+              [class.active-section]="activeSection === 'offers'"
+              class="sidebar-item flex items-center justify-between px-4 py-3.5 rounded-lg cursor-pointer transition-all whitespace-nowrap"
+            >
+              <div class="flex items-center gap-3">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <circle cx="9" cy="21" r="1"></circle>
+                  <circle cx="20" cy="21" r="1"></circle>
+                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+                <span class="text-sm font-medium">{{ 'Offers' | translate }}</span>
+              </div>
+
+              <span
+                *ngIf="unreadOfferNotifications.length > 0"
+                class="px-2 py-0.5 text-xs font-semibold bg-red-600 dark:bg-red-500 text-white rounded-full min-w-[22px] text-center">
+                {{ unreadOfferNotifications.length }}
+              </span>
+            </div>
+
+
+            <!-- System -->
+            <div (click)="activeSection = 'system'"
+                 [class.active-section]="activeSection === 'system'"
+                 class="sidebar-item flex items-center justify-between px-4 py-3.5 rounded-lg cursor-pointer transition-all whitespace-nowrap">
+              <div class="flex items-center gap-3">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                  <line x1="8" y1="21" x2="16" y2="21"></line>
+                  <line x1="12" y1="17" x2="12" y2="21"></line>
+                </svg>
+                <span class="text-sm font-medium">{{'System'|translate}}</span>
+              </div>
+              <span *ngIf="systemNotifications.length > 0"
+                    class="px-2 py-0.5 text-xs font-semibold bg-red-600 dark:bg-red-500 text-white rounded-full min-w-[22px] text-center">
+                {{systemNotifications.length}}
+              </span>
+            </div>
+
+            <!-- Chats (Disabled) -->
+            <div class="sidebar-item-disabled flex items-center justify-between px-4 py-3.5 rounded-lg cursor-not-allowed opacity-40 whitespace-nowrap">
+              <div class="flex items-center gap-3">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <span class="text-sm font-medium">{{'Chats'|translate}}</span>
+              </div>
+              <span class="px-2 py-1 text-[10px] font-semibold bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded uppercase tracking-wider">
+                Soon
+              </span>
+            </div>
+
+            <!-- Others -->
+            <div (click)="activeSection = 'others'"
+                 [class.active-section]="activeSection === 'others'"
+                 class="sidebar-item flex items-center justify-between px-4 py-3.5 rounded-lg cursor-pointer transition-all whitespace-nowrap">
+              <div class="flex items-center gap-3">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="1"></circle>
+                  <circle cx="12" cy="5" r="1"></circle>
+                  <circle cx="12" cy="19" r="1"></circle>
+                </svg>
+                <span class="text-sm font-medium">{{'Others'|translate}}</span>
+              </div>
+              <span *ngIf="otherNotifications.length > 0"
+                    class="px-2 py-0.5 text-xs font-semibold bg-red-600 dark:bg-red-500 text-white rounded-full min-w-[22px] text-center">
+                {{otherNotifications.length}}
+              </span>
+            </div>
+          </div>
+
+          <!-- Content Area -->
+          <div class="flex-1 p-6 overflow-y-auto max-h-[600px]">
+            
+            <!-- Offers Section -->
+            <div *ngIf="activeSection === 'offers'" class="animate-fade-in">
+              <div class="flex items-center justify-between mb-5 pb-4 border-b border-gray-200 dark:border-gray-800">
+                <h6 class="text-base font-semibold text-gray-900 dark:text-gray-50">
+                  {{'Offers' | translate}}
+                </h6>
+                <span class="text-sm text-gray-500 dark:text-gray-400 font-medium">
+                  {{offerNotifications.length}} notifications
+                </span>
+              </div>
+
+              <!-- Offers filter -->
+              <div class="flex gap-2 mb-4">
+                <button
+                  (click)="offerFilter = 'all'"
+                  [class.bg-blue-600]="offerFilter === 'all'"
+                  [class.text-white]="offerFilter === 'all'"
+                  class="flex-1 text-xs py-2 rounded-lg border border-gray-300 dark:border-gray-700
+                        text-gray-600 dark:text-gray-400 font-semibold transition">
+                  {{'All'|translate}}
+                </button>
+
+                <button
+                  (click)="offerFilter = 'sent'"
+                  [class.bg-blue-600]="offerFilter === 'sent'"
+                  [class.text-white]="offerFilter === 'sent'"
+                  class="flex-1 text-xs py-2 rounded-lg border border-gray-300 dark:border-gray-700
+                        text-gray-600 dark:text-gray-400 font-semibold transition">
+                  {{'Sent'|translate}}
+                </button>
+
+                <button
+                  (click)="offerFilter = 'received'"
+                  [class.bg-blue-600]="offerFilter === 'received'"
+                  [class.text-white]="offerFilter === 'received'"
+                  class="flex-1 text-xs py-2 rounded-lg border border-gray-300 dark:border-gray-700
+                        text-gray-600 dark:text-gray-400 font-semibold transition">
+                  {{'Received'|translate}}
+                </button>
+              </div>
+
+
+              <div *ngFor="let n of offerNotifications" 
+                   (click)="openNotificationDetail(n)"
+                   [class.notification-unread]="!n.isRead"
+                   class="notification-card bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700 rounded-xl p-4 mb-3 cursor-pointer transition-all hover:bg-gray-100 dark:hover:bg-gray-800 hover:shadow-md hover:-translate-y-0.5">
+                
+                <div class="flex gap-4 items-start">
+                  <!-- Product Thumbnail -->
+                  <div *ngIf="prodcuctsFromNotifications[n.refId] as p" class="w-14 h-14 flex-shrink-0 rounded-lg overflow-hidden bg-gray-200 dark:bg-gray-700">
+                    <img *ngIf="p.photos?.length > 0; else noImage"
+                         [src]="p.photos[0]"
+                         [alt]="p.title"
+                         class="w-full h-full object-cover">
+                    <ng-template #noImage>
+                      <div class="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                          <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                          <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
+                      </div>
+                    </ng-template>
+                  </div>
+
+                  <!-- Notification Body -->
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-start justify-between gap-4 mb-3">
+                      <div class="flex-1 min-w-0">
+                        <div class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-1.5 leading-snug">
+                          {{ n.title | translate }}
+                        </div>
+                        <div class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-2">
+                          {{ n.message | translate }}
+                        </div>
+                        
+                        <!-- Product Name -->
+                          <div *ngIf="prodcuctsFromNotifications[n.refId] as p" class="flex items-center gap-1.5 text-xs font-semibold text-blue-600 dark:text-blue-400 mt-2">
+                            <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                              <rect x="1" y="3" width="15" height="13"></rect>
+                              <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                              <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                              <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                            </svg>
+                            <span>{{ p.title }}</span>
+                          </div>
+                        </div>
+                        <div *ngIf="n.data?.status"
+                            class="inline-block px-2 py-0.5 text-xs rounded-lg font-semibold mt-2"
+                            [ngClass]="{
+                              'bg-yellow-100 text-yellow-700': n.data.status === 'pending',
+                              'bg-green-100 text-green-700': n.data.status === 'accepted',
+                              'bg-red-100 text-red-700': n.data.status === 'rejected'
+                            }">
+                          {{ n.data.status  |translate }}
+                        </div>
+                      
+                      <!-- Unread Indicator -->
+                      <div *ngIf="!n.isRead" class="w-2.5 h-2.5 rounded-full bg-blue-600 dark:bg-blue-500 flex-shrink-0 mt-1 shadow-lg shadow-blue-500/50"></div>
+                    </div>
+
+                    <!-- Timestamp -->
+                    <div class="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-500 font-medium">
+                      <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                      </svg>
+                      <span>{{ n.createdAt | date:'short' }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div *ngIf="offerNotifications.length === 0" class="empty-state flex flex-col items-center justify-center py-16 text-center">
+                <svg class="w-12 h-12 text-gray-300 dark:text-gray-700 mb-4 opacity-50" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <circle cx="9" cy="21" r="1"></circle>
+                  <circle cx="20" cy="21" r="1"></circle>
+                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+                <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">No offer notifications</p>
+              </div>
+            </div>
+
+            <!-- System Section -->
+            <div *ngIf="activeSection === 'system'" class="animate-fade-in">
+              <div class="flex items-center justify-between mb-5 pb-4 border-b border-gray-200 dark:border-gray-800">
+                <h6 class="text-base font-semibold text-gray-900 dark:text-gray-50">
+                  {{'System' | translate}}
+                </h6>
+                <span class="text-sm text-gray-500 dark:text-gray-400 font-medium">
+                  {{systemNotifications.length}} notifications
+                </span>
+              </div>
+
+              <div class="empty-state flex flex-col items-center justify-center py-16 text-center">
+                <svg class="w-12 h-12 text-gray-300 dark:text-gray-700 mb-4 opacity-50" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                  <line x1="8" y1="21" x2="16" y2="21"></line>
+                  <line x1="12" y1="17" x2="12" y2="21"></line>
+                </svg>
+                <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">Daily notifications will appear here</p>
+              </div>
+            </div>
+
+            <!-- Chats Section -->
+            <div *ngIf="activeSection === 'chats'" class="animate-fade-in">
+              <div class="flex items-center justify-between mb-5 pb-4 border-b border-gray-200 dark:border-gray-800">
+                <h6 class="text-base font-semibold text-gray-900 dark:text-gray-50">
+                  {{'Chats' | translate}}
+                </h6>
+              </div>
+
+              <div class="empty-state flex flex-col items-center justify-center py-16 text-center">
+                <svg class="w-12 h-12 text-gray-300 dark:text-gray-700 mb-4 opacity-50" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">Chat feature coming soon</p>
+              </div>
+            </div>
+
+            <!-- Others Section -->
+            <div *ngIf="activeSection === 'others'" class="animate-fade-in">
+              <div class="flex items-center justify-between mb-5 pb-4 border-b border-gray-200 dark:border-gray-800">
+                <h6 class="text-base font-semibold text-gray-900 dark:text-gray-50">
+                  {{'Others' | translate}}
+                </h6>
+                <span class="text-sm text-gray-500 dark:text-gray-400 font-medium">
+                  {{otherNotifications.length}} notifications
+                </span>
+              </div>
+
+              <div *ngFor="let n of otherNotifications" 
+                   (click)="markAsRead(n)"
+                   [class.notification-unread]="!n.isRead"
+                   class="notification-card bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700 rounded-xl p-4 mb-3 cursor-pointer transition-all hover:bg-gray-100 dark:hover:bg-gray-800 hover:shadow-md hover:-translate-y-0.5">
+                
+                 <div *ngIf="prodcuctsFromNotifications[n.refId] as p" class="w-14 h-14 flex-shrink-0 rounded-lg overflow-hidden bg-gray-200 dark:bg-gray-700">
+                    <img *ngIf="p.photos?.length > 0; else noImage"
+                         [src]="p.photos[0]"
+                         [alt]="p.title"
+                         class="w-full h-full object-cover">
+                    <ng-template #noImage>
+                      <div class="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                          <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                          <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
+                      </div>
+                    </ng-template>
+                  </div>
+
+                <div class="flex gap-4 items-start">
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-start justify-between gap-4 mb-3">
+                      <div class="flex-1 min-w-0">
+                        <div class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-1.5 leading-snug">
+                          {{ n.title | translate }}
+                        </div>
+                        <div class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                          {{ n.message | translate }}
+                        </div>
+                      </div>
+                      <div *ngIf="!n.isRead" class="w-2.5 h-2.5 rounded-full bg-blue-600 dark:bg-blue-500 flex-shrink-0 mt-1 shadow-lg shadow-blue-500/50"></div>
+                    </div>
+
+                    <div class="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-500 font-medium">
+                      <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                      </svg>
+                      <span>{{ n.createdAt | date:'short' }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div *ngIf="otherNotifications.length === 0" class="empty-state flex flex-col items-center justify-center py-16 text-center">
+                <svg class="w-12 h-12 text-gray-300 dark:text-gray-700 mb-4 opacity-50" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">No other notifications</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-template #noNotifications>
+        <div class="flex flex-col items-center justify-center py-20 text-center">
+          <svg class="w-16 h-16 text-gray-300 dark:text-gray-700 mb-5 opacity-60" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+          <p class="text-base text-gray-500 dark:text-gray-400">No notifications</p>
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- Bottom Section - Main Content -->
+    <div class="space-y-6" *ngIf="profile$ | async as profile">
+      <!-- Grid layout for description, stats, and reviews -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Description Section (spans 2 columns on large screens) -->
+        <div class="lg:col-span-2">
+          <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 p-6 relative h-full">
+            <!-- Modern edit button -->
+            <button
+              class="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-lg 
+                     bg-blue-50 hover:bg-blue-100 text-blue-600 transition-colors duration-200"
+              title="Edit description"
+              (click)="toggleEdit()"
+            >
+              <i class="far fa-edit"></i>
+            </button>
+
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 
+                        flex items-center justify-center text-white">
+                <i class="fa-solid fa-circle-info text-lg"></i>
+              </div>
+              <h4 class="text-xl font-bold text-gray-900">{{ "Description" | translate }}</h4>
+            </div>
+
+            <div class="description-text">
+              <div *ngIf="isEditing; else viewMode">
+                <textarea
+                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 
+                       focus:ring-2 focus:ring-blue-200 transition-all duration-200 resize-none"
+                  [(ngModel)]="editableDescription"
+                  rows="6"
+                  placeholder="{{ 'Enter description...' | translate }}"
+                ></textarea>
+
+                <div class="mt-3 flex justify-end gap-2">
+                  <button class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg 
+                               transition-colors duration-200 font-medium" 
+                          (click)="cancelEdit()">
+                    {{ 'Cancel' | translate }}
+                  </button>
+                  <button class="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 
+                               hover:to-emerald-700 text-white rounded-lg transition-all duration-200 
+                               font-medium shadow-md hover:shadow-lg" 
+                          (click)="saveDescription()">
+                    {{ 'Save' | translate }}
+                  </button>
+                </div>
+              </div>
+
+              <ng-template #viewMode>
+                <p class="text-gray-700 leading-relaxed" *ngIf="profile?.description; else noDescription">
+                  {{ profile.description }}
+                </p>
+                <ng-template #noDescription>
+                  <p class="text-gray-400 italic">
+                    {{ "No description provided yet." | translate }}
+                  </p>
+                </ng-template>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Stats and Reviews -->
+        <div class="space-y-6">
+          <!-- Stats card with modern design -->
+          <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 p-6">
+            <div class="flex items-center gap-3 mb-5">
+              <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 
+                        flex items-center justify-center text-white">
+                <i class="fa-solid fa-chart-simple text-lg"></i>
+              </div>
+              <h4 class="text-xl font-bold text-gray-900">{{ "Pawnshop summary" | translate }}</h4>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-4 
+                        hover:shadow-md transition-shadow duration-200">
+                <div class="text-2xl font-bold text-blue-600 mb-1">
+                  {{ (profile$ | async)?.activeSlots?.length || 0 }}
+                </div>
+                <div class="text-sm text-gray-600 font-medium">{{ "Active slots" | translate }}</div>
+              </div>
+
+              <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 
+                        hover:shadow-md transition-shadow duration-200">
+                <div class="text-2xl font-bold text-purple-600 mb-1">
+                  {{ (products$ | async)?.length || (products$ | async) || 0 }}
+                </div>
+                <div class="text-sm text-gray-600 font-medium">{{ "Items for sale" | translate }}</div>
+              </div>
+
+              <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-4 
+                        hover:shadow-md transition-shadow duration-200 cursor-pointer"
+                   (click)="scrollToTableItem()">
+                <div class="text-2xl font-bold text-green-600 mb-1">
+                  {{ (products$ | async)?.length || 0 }}
+                </div>
+                <div class="text-sm text-gray-600 font-medium">{{ "Total items" | translate }}</div>
+              </div>
+
+              <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg p-4 
+                        hover:shadow-md transition-shadow duration-200">
+                <div class="text-2xl font-bold text-amber-600 mb-1">
+                  {{ computeSlotUsagePercent(profile$ | async, products$ | async) }}%
+                </div>
+                <div class="text-sm text-gray-600 font-medium">{{ "Slot usage" | translate }}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Reviews card with modern design -->
+          <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 p-6" 
+               *ngIf="profile$ | async as profile">
+            <div class="text-center mb-4">
+              <div class="w-12 h-12 mx-auto rounded-full bg-gradient-to-br from-amber-400 to-yellow-500 
+                        flex items-center justify-center text-white mb-3">
+                <i class="fa-solid fa-star text-xl"></i>
+              </div>
+              <h6 class="text-lg font-bold text-gray-900 mb-3">{{ 'Rating and reviews' | translate }}</h6>
+
+              <div class="mb-4">
+                <div class="text-4xl font-bold text-gray-900 mb-1">
+                  {{ profile.rating || 0 }}
+                </div>
+                <div class="text-gray-500 text-sm mb-2">/ 5.0</div>
+
+                <div class="flex justify-center gap-1 text-amber-400 text-xl">
+                  <span>{{ getStars(profile.rating) }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="space-y-3 max-h-64 overflow-y-auto" 
+                 *ngIf="profile.reviews?.length; else noReviews">
+              <div class="bg-gray-50 rounded-lg p-3 hover:bg-gray-100 transition-colors duration-200" 
+                   *ngFor="let r of profile.reviews">
+                <p class="font-semibold text-gray-900 text-sm mb-1">{{ r.userName || 'User' }}</p>
+                <p class="text-gray-600 text-sm italic">
+                  "{{ r.comment }}"
+                </p>
+              </div>
+            </div>
+
+            <ng-template #noReviews>
+              <p class="text-gray-400 text-sm italic text-center py-4">
+                {{ 'No reviews yet' | translate }}
+              </p>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+
+      <!-- Items List Table with modern design -->
+      <div #itemsTable id="itemsTable" 
+           class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 p-6" 
+           *ngIf="profile$ && products$ | async">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 
+                      flex items-center justify-center text-white">
+              <i class="fa-solid fa-box text-lg"></i>
+            </div>
+            <h4 class="text-xl font-bold text-gray-900">{{ 'Items list' | translate }}</h4>
+          </div>
+
+          <button class="px-5 py-2.5 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 
+                       hover:to-emerald-700 text-white rounded-lg transition-all duration-200 
+                       shadow-md hover:shadow-lg font-medium flex items-center justify-center gap-2"
+                  (click)="openAddOfferModal()">
+            <i class="fa-solid fa-plus"></i>
+            <span>{{ 'Add item' | translate }}</span>
+          </button>
+        </div>
+
+        <div *ngIf="products$ | async; else noItems">
+          <div class="overflow-x-auto rounded-lg border border-gray-200">
+            <table class="w-full">
+              <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
+                <tr>
+                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    {{ 'Photo' | translate }}
+                  </th>
+                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    {{ 'Title' | translate }}
+                  </th>
+                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider hidden sm:table-cell">
+                    {{ 'Category' | translate }}
+                  </th>
+                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    {{ 'Price' | translate }}
+                  </th>
+                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider hidden md:table-cell">
+                    {{ 'Status' | translate }}
+                  </th>
+                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider hidden lg:table-cell">
+                    {{ 'Created' | translate }}
+                  </th>
+                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    {{ 'Action' | translate }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <tr class="hover:bg-blue-50 transition-colors duration-150" *ngFor="let item of products$ | async">
+                  <td class="px-4 py-3">
+                    <img
+                      [src]="item.photos?.[0] || 'assets/png/default-product.png'"
+                      alt="{{ item.title }}"
+                      class="w-14 h-14 rounded-lg object-cover shadow-sm"
+                    />
+                  </td>
+                  <td class="px-4 py-3 font-semibold text-gray-900">{{ item.title }}</td>
+                  <td class="px-4 py-3 text-gray-600 hidden sm:table-cell">{{ item.category }}</td>
+                  <td class="px-4 py-3 text-green-600 font-bold">${{ item.price }}</td>
+                  <td class="px-4 py-3 hidden md:table-cell">
+                    <span
+                      class="px-3 py-1 rounded-full text-xs font-semibold"
+                      [ngClass]="{
+                        'bg-green-100 text-green-700': item.status === 'sold',
+                        'bg-amber-100 text-amber-700': item.status === 'active',
+                        'bg-gray-100 text-gray-700': item.status === 'closed'
+                      }"
+                    >
+                      {{ item.status | titlecase }}
+                    </span>
+                  </td>
+                  <td class="px-4 py-3 text-gray-600 text-sm hidden lg:table-cell">
+                    {{ item.createdAt | date: 'short' }}
+                  </td>
+                  <td class="px-4 py-3">
+                    <div class="flex gap-2">
+                      <button 
+                          class="w-8 h-8 flex items-center justify-center rounded-lg bg-blue-50 
+                                 hover:bg-blue-100 text-blue-600 transition-colors duration-200" 
+                          (click)="editProduct(item)"
+                          ngbTooltip="{{ 'Edit product' | translate }}"
+                          container="body">
+                        <i class="fa-solid fa-pen text-sm"></i>
+                      </button>
+                      <button 
+                          class="w-8 h-8 flex items-center justify-center rounded-lg bg-red-50 
+                                 hover:bg-red-100 text-red-600 transition-colors duration-200"
+                          (click)="deleteProduct()"
+                          ngbTooltip="{{ 'Delete product' | translate }}"
+                          container="body">
+                        <i class="fa-solid fa-trash text-sm"></i>
+                      </button>
+                      <button 
+                          class="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-50 
+                                 hover:bg-gray-100 text-gray-600 transition-colors duration-200" 
+                          (click)="openProductDetail(item)"
+                          ngbTooltip="{{ 'View details' | translate }}"
+                          container="body">
+                        <i class="fa-solid fa-file-lines text-sm"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <ng-template #noItems>
+          <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
+            <i class="fa-solid fa-box-open text-blue-400 text-4xl mb-3"></i>
+            <p class="text-blue-700 font-medium">
+              {{ 'No items found for this pawnshop.' | translate }}
+            </p>
+          </div>
+        </ng-template>
+      </div>
+
+      <!-- Active Slots Section with modern card design -->
+      <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 p-6" 
+           >
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 
+                      flex items-center justify-center text-white">
+              <i class="fa-solid fa-hand-holding-dollar text-lg"></i>
+            </div>
+            <h4 class="text-xl font-bold text-gray-900">{{ 'Active slots' | translate }}</h4>
+          </div>
+
+          <button class="px-5 py-2.5 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 
+                       hover:to-yellow-600 text-white rounded-lg transition-all duration-200 
+                       shadow-md hover:shadow-lg font-medium flex items-center justify-center gap-2"
+                  (click)="openCreateSlotModal()">
+            <i class="fa-solid fa-vault"></i>
+            <span>{{ 'Create slot' | translate }}</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" *ngIf="slotsWithProducts$ | async as slots; else noActiveSlots">
+          <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border-2 border-green-200 
+                    hover:border-green-300 hover:shadow-lg transition-all duration-300 p-5" 
+               *ngFor="let item of slots">
+            
+            <div class="flex justify-between items-start mb-4">
+              <div class="flex items-center gap-3">
+                <img
+                  [src]="item.product?.photos?.[0] || 'assets/png/default-product.png'"
+                  alt="{{ item.product?.title }}"
+                  class="w-16 h-16 rounded-lg object-cover shadow-md"
+                />
+                <div>
+                  <h6 class="font-bold text-gray-900 mb-1">{{ item.product?.title }}</h6>
+                  <span class="px-3 py-1 bg-green-600 text-white text-xs font-semibold rounded-full">
+                    {{ item.slot.status | titlecase }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="relative">
+                <button
+                  class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/50 
+                         text-gray-600 transition-colors duration-200"
+                  type="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <i class="fa-solid fa-ellipsis-vertical"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li>
+                    <button class="dropdown-item" (click)="openSlotDetails(item.slot)">
+                      {{ 'Details' | translate }}
+                    </button>
+                  </li>
+                  <li>
+                    <button class="dropdown-item" (click)="editSlot(item.slot)">
+                      {{ 'Edit' | translate }}
+                    </button>
+                  </li>
+                  <li>
+                    <button class="dropdown-item text-danger" (click)="deleteSlot(item.slot._id)">
+                      {{ 'Delete' | translate }}
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="space-y-2 mb-4">
+              <div class="flex justify-between items-center text-sm">
+                <span class="text-gray-600 font-medium">{{ 'Loan amount' | translate }}:</span>
+                <span class="font-bold text-green-700">{{ item.slot.loanAmount }} тг</span>
+              </div>
+              <div class="flex justify-between items-center text-sm">
+                <span class="text-gray-600 font-medium">{{ 'Interest rate' | translate }}:</span>
+                <span class="font-bold text-blue-700">{{ item.slot.interestRate }}%</span>
+              </div>
+              <div class="flex justify-between items-center text-sm">
+                <span class="text-gray-600 font-medium">{{ 'End date' | translate }}:</span>
+                <span class="font-bold text-purple-700">{{ item.slot.endDate | date:'shortDate' }}</span>
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-green-200">
+              <div class="text-xs text-gray-500 flex items-center gap-1">
+                <i class="fa-regular fa-clock"></i>
+                <span>{{ item.slot.createdAt | date:'short' }}</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noActiveSlots>
+        <div class="bg-gray-50 border border-gray-200 rounded-xl p-8 text-center">
+          <i class="fa-solid fa-inbox text-gray-300 text-5xl mb-4"></i>
+          <p class="text-gray-500 font-medium text-lg">
+            {{ 'No active slots at the moment' | translate }}
+          </p>
+        </div>
+      </ng-template>
+
+    </div>
+  </div>
+</div>

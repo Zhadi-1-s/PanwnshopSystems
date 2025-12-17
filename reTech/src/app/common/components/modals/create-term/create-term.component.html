@@ -1,0 +1,38 @@
+<form [formGroup]="termsForm" (ngSubmit)="submit()" class="space-y-4 p-6 bg-white rounded-lg shadow-md">
+
+  <div class="flex flex-col">
+    <label class="mb-1 font-semibold text-gray-700">{{ 'Interest Rate (%)' | translate }}</label>
+    <input type="number" formControlName="interestRate"
+      class="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+  </div>
+
+  <div class="flex flex-col">
+    <label class="mb-1 font-semibold text-gray-700">{{ 'Min Term Days' | translate }}</label>
+    <input type="number" formControlName="minTermDays"
+      class="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+  </div>
+
+  <div class="flex flex-col">
+    <label class="mb-1 font-semibold text-gray-700">{{ 'Max Amount' | translate }}</label>
+    <input type="number" formControlName="maxAmount"
+      class="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+  </div>
+
+  <div class="flex flex-col">
+    <label class="mb-1 font-semibold text-gray-700">{{ 'Fees' | translate }}</label>
+    <input type="number" formControlName="fees"
+      class="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+  </div>
+
+  <div class="flex flex-col">
+    <label class="mb-1 font-semibold text-gray-700">{{ 'Additional' | translate }}</label>
+    <textarea formControlName="additional"
+      class="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400" rows="3"></textarea>
+  </div>
+
+  <button type="submit"
+    [disabled]="termsForm.invalid || loading"
+    class="w-full py-2 px-4 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold rounded-full shadow hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
+    {{ loading ? ('Saving...' | translate) : ('Save Terms' | translate) }}
+  </button>
+</form>

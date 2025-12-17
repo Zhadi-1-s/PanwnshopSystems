@@ -1,0 +1,606 @@
+<div class="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
+  <div class="container mx-auto px-4 py-6 max-w-7xl">
+    
+    <!-- Profile Header Card -->
+    <div *ngIf="user$ | async as user; else notLoggedIn" 
+         class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-8 mb-6 shadow-sm hover:shadow-md transition-shadow">
+      
+      <div class="flex flex-col lg:flex-row gap-8 items-start lg:items-center">
+        
+        <!-- Avatar Section -->
+        <div class="flex-shrink-0">
+          <div (click)="openEditModal()" 
+               class="relative w-28 h-28 rounded-full bg-gray-100 dark:bg-gray-800 border-3 border-gray-200 dark:border-gray-700 overflow-hidden cursor-pointer transition-all hover:border-blue-500 hover:scale-105 group">
+            <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900">
+              <i class="fa-solid fa-user text-4xl text-gray-400 dark:text-gray-600"></i>
+            </div>
+            <div class="absolute bottom-1.5 right-1.5 w-8 h-8 bg-blue-600 dark:bg-blue-500 border-3 border-white dark:border-gray-900 rounded-full flex items-center justify-center transition-all group-hover:bg-blue-700 group-hover:scale-110">
+              <i class="fa-solid fa-camera text-xs text-white"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- User Info Section -->
+        <div class="flex-1 min-w-0 w-full">
+          <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 mb-6">
+            
+            <!-- User Details -->
+            <div class="flex-1 min-w-0">
+              <h1 class="text-3xl font-semibold text-gray-900 dark:text-gray-50 mb-2 tracking-tight">
+                {{ user?.name || 'User Name' }}
+              </h1>
+              <p class="text-base text-gray-600 dark:text-gray-400">
+                {{ user?.email }}
+              </p>
+            </div>
+
+            <!-- Time Display -->
+            <div class="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg whitespace-nowrap">
+              <i class="fa-regular fa-clock text-sm text-gray-500 dark:text-gray-400"></i>
+              <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                {{ currentTime | date:'shortTime' }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex flex-col sm:flex-row gap-3">
+            <button (click)="openEditModal()" 
+                    class="flex items-center justify-center gap-2 px-5 py-3 bg-transparent text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium transition-all hover:bg-gray-100 dark:hover:bg-gray-800 hover:border-gray-400 dark:hover:border-gray-500">
+              <i class="fa-regular fa-pen-to-square"></i>
+              <span>{{ 'Edit profile' | translate }}</span>
+            </button>
+            <button (click)="openCreateItemModal()" 
+                    class="flex items-center justify-center gap-2 px-5 py-3 bg-blue-600 dark:bg-blue-500 text-white border border-blue-600 dark:border-blue-500 rounded-lg text-sm font-medium transition-all hover:bg-blue-700 dark:hover:bg-blue-600 hover:shadow-lg hover:-translate-y-0.5">
+              <i class="fa-solid fa-plus"></i>
+              <span>{{ 'Add item' | translate }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Not Logged In State -->
+    <ng-template #notLoggedIn>
+      <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-8 mb-6 shadow-sm">
+        <div class="flex items-start gap-5">
+          <i class="fa-solid fa-circle-info text-2xl text-blue-600 dark:text-blue-500 mt-0.5 flex-shrink-0"></i>
+          <div class="flex-1">
+            <h4 class="text-lg font-semibold text-gray-900 dark:text-gray-50 mb-2">
+              {{ 'You are not logged in' | translate }}
+            </h4>
+            <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+              {{ 'Please' | translate }}
+              <a routerLink="/login" class="text-blue-600 dark:text-blue-400 font-medium hover:text-blue-700 dark:hover:text-blue-300 hover:underline">
+                {{ 'log in' | translate }}
+              </a>
+              {{ 'or' | translate }}
+              <a routerLink="/register" class="text-blue-600 dark:text-blue-400 font-medium hover:text-blue-700 dark:hover:text-blue-300 hover:underline">
+                {{ 'register' | translate }}
+              </a>
+              {{ 'to access your profile.' | translate }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+
+    <!-- Notifications Dashboard -->
+    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm overflow-hidden mb-6">
+      
+      <!-- Dashboard Header -->
+      <div class="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-800 px-7 py-6">
+        <div class="flex items-center gap-3">
+          <svg class="w-6 h-6 text-blue-600 dark:text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+          <h5 class="text-xl font-semibold text-gray-900 dark:text-gray-50 tracking-tight">
+            {{ 'Notifications' | translate }}
+          </h5>
+        </div>
+      </div>
+
+      <ng-container *ngIf="notifications$ | async as notifications; else noNotifications">
+        
+        <div class="flex flex-col lg:flex-row min-h-[500px]">
+          
+          <!-- Sidebar -->
+          <div class="w-full lg:w-60 bg-gray-50 dark:bg-gray-800/30 border-b lg:border-b-0 lg:border-r border-gray-200 dark:border-gray-800 p-4 flex lg:flex-col gap-2 overflow-x-auto lg:overflow-x-visible">
+            
+            <!-- Offers -->
+            <div (click)="activeSection = 'offers'" 
+                 [class.active-section]="activeSection === 'offers'"
+                 class="sidebar-item flex items-center justify-between px-4 py-3.5 rounded-lg cursor-pointer transition-all whitespace-nowrap">
+              <div class="flex items-center gap-3">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <circle cx="9" cy="21" r="1"></circle>
+                  <circle cx="20" cy="21" r="1"></circle>
+                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+                <span class="text-sm font-medium">{{'Offers'|translate}}</span>
+              </div>
+              <span *ngIf="offerNotifications.length > 0" 
+                    class="px-2 py-0.5 text-xs font-semibold bg-red-600 dark:bg-red-500 text-white rounded-full min-w-[22px] text-center">
+                {{offerNotifications.length}}
+              </span>
+            </div>
+
+            <!-- System -->
+            <div (click)="activeSection = 'system'"
+                 [class.active-section]="activeSection === 'system'"
+                 class="sidebar-item flex items-center justify-between px-4 py-3.5 rounded-lg cursor-pointer transition-all whitespace-nowrap">
+              <div class="flex items-center gap-3">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                  <line x1="8" y1="21" x2="16" y2="21"></line>
+                  <line x1="12" y1="17" x2="12" y2="21"></line>
+                </svg>
+                <span class="text-sm font-medium">{{'System'|translate}}</span>
+              </div>
+              <span *ngIf="systemNotifications.length > 0"
+                    class="px-2 py-0.5 text-xs font-semibold bg-red-600 dark:bg-red-500 text-white rounded-full min-w-[22px] text-center">
+                {{systemNotifications.length}}
+              </span>
+            </div>
+
+            <!-- Chats (Disabled) -->
+            <div class="sidebar-item-disabled flex items-center justify-between px-4 py-3.5 rounded-lg cursor-not-allowed opacity-40 whitespace-nowrap">
+              <div class="flex items-center gap-3">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <span class="text-sm font-medium">{{'Chats'|translate}}</span>
+              </div>
+              <span class="px-2 py-1 text-[10px] font-semibold bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded uppercase tracking-wider">
+                Soon
+              </span>
+            </div>
+
+            <!-- Others -->
+            <div (click)="activeSection = 'others'"
+                 [class.active-section]="activeSection === 'others'"
+                 class="sidebar-item flex items-center justify-between px-4 py-3.5 rounded-lg cursor-pointer transition-all whitespace-nowrap">
+              <div class="flex items-center gap-3">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="1"></circle>
+                  <circle cx="12" cy="5" r="1"></circle>
+                  <circle cx="12" cy="19" r="1"></circle>
+                </svg>
+                <span class="text-sm font-medium">{{'Others'|translate}}</span>
+              </div>
+              <span *ngIf="unreadOtherNotifications.length > 0"
+                    class="px-2 py-0.5 text-xs font-semibold bg-red-600 dark:bg-red-500 text-white rounded-full min-w-[22px] text-center">
+                {{unreadOtherNotifications.length}}
+              </span>
+            </div>
+          </div>
+
+          <!-- Content Area -->
+          <div class="flex-1 p-6 overflow-y-auto max-h-[600px]">
+            
+            <!-- Offers Section -->
+            <div *ngIf="activeSection === 'offers'" class="animate-fade-in">
+              <div class="flex items-center justify-between mb-5 pb-4 border-b border-gray-200 dark:border-gray-800">
+                <h6 class="text-base font-semibold text-gray-900 dark:text-gray-50">
+                  {{'Offers' | translate}}
+                </h6>
+                <span class="text-sm text-gray-500 dark:text-gray-400 font-medium">
+                  {{offerNotifications.length}} notifications
+                </span>
+              </div>
+
+              <div *ngFor="let n of offerNotifications" 
+                   (click)="markAsRead(n)"
+                   [class.notification-unread]="!n.isRead"
+                   class="notification-card bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700 rounded-xl p-4 mb-3 cursor-pointer transition-all hover:bg-gray-100 dark:hover:bg-gray-800 hover:shadow-md hover:-translate-y-0.5">
+                
+                <div class="flex gap-4 items-start">
+                  <!-- Product Thumbnail -->
+                  <div *ngIf="productsById[n.refId] as p" class="w-14 h-14 flex-shrink-0 rounded-lg overflow-hidden bg-gray-200 dark:bg-gray-700">
+                    <img *ngIf="p.photos?.length > 0; else noImage"
+                         [src]="p.photos[0]"
+                         [alt]="p.title"
+                         class="w-full h-full object-cover">
+                    <ng-template #noImage>
+                      <div class="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                          <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                          <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
+                      </div>
+                    </ng-template>
+                  </div>
+
+                  <!-- Notification Body -->
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-start justify-between gap-4 mb-3">
+                      <div class="flex-1 min-w-0">
+                        <div class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-1.5 leading-snug">
+                          {{ n.title | translate }}
+                        </div>
+                        <div class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-2">
+                          {{ n.message | translate }}
+                        </div>
+                        
+                        <!-- Product Name -->
+                        <div *ngIf="productsById[n.refId] as p" class="flex items-center gap-1.5 text-xs font-semibold text-blue-600 dark:text-blue-400 mt-2">
+                          <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <rect x="1" y="3" width="15" height="13"></rect>
+                            <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                            <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                            <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                          </svg>
+                          <span>{{ p.title }}</span>
+                        </div>
+                      </div>
+                      
+                      <!-- Unread Indicator -->
+                      <div *ngIf="!n.isRead" class="w-2.5 h-2.5 rounded-full bg-blue-600 dark:bg-blue-500 flex-shrink-0 mt-1 shadow-lg shadow-blue-500/50"></div>
+                    </div>
+
+                    <!-- Timestamp -->
+                    <div class="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-500 font-medium">
+                      <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                      </svg>
+                      <span>{{ n.createdAt | date:'short' }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div *ngIf="offerNotifications.length === 0" class="empty-state flex flex-col items-center justify-center py-16 text-center">
+                <svg class="w-12 h-12 text-gray-300 dark:text-gray-700 mb-4 opacity-50" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <circle cx="9" cy="21" r="1"></circle>
+                  <circle cx="20" cy="21" r="1"></circle>
+                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+                <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">No offer notifications</p>
+              </div>
+            </div>
+
+            <!-- System Section -->
+            <div *ngIf="activeSection === 'system'" class="animate-fade-in">
+              <div class="flex items-center justify-between mb-5 pb-4 border-b border-gray-200 dark:border-gray-800">
+                <h6 class="text-base font-semibold text-gray-900 dark:text-gray-50">
+                  {{'System' | translate}}
+                </h6>
+                <span class="text-sm text-gray-500 dark:text-gray-400 font-medium">
+                  {{systemNotifications.length}} notifications
+                </span>
+              </div>
+
+              <div class="empty-state flex flex-col items-center justify-center py-16 text-center">
+                <svg class="w-12 h-12 text-gray-300 dark:text-gray-700 mb-4 opacity-50" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                  <line x1="8" y1="21" x2="16" y2="21"></line>
+                  <line x1="12" y1="17" x2="12" y2="21"></line>
+                </svg>
+                <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">Daily notifications will appear here</p>
+              </div>
+            </div>
+
+            <!-- Chats Section -->
+            <div *ngIf="activeSection === 'chats'" class="animate-fade-in">
+              <div class="flex items-center justify-between mb-5 pb-4 border-b border-gray-200 dark:border-gray-800">
+                <h6 class="text-base font-semibold text-gray-900 dark:text-gray-50">
+                  {{'Chats' | translate}}
+                </h6>
+              </div>
+
+              <div class="empty-state flex flex-col items-center justify-center py-16 text-center">
+                <svg class="w-12 h-12 text-gray-300 dark:text-gray-700 mb-4 opacity-50" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">Chat feature coming soon</p>
+              </div>
+            </div>
+
+            <!-- Others Section -->
+            <div *ngIf="activeSection === 'others'" class="animate-fade-in">
+              <div class="flex items-center justify-between mb-5 pb-4 border-b border-gray-200 dark:border-gray-800">
+                <h6 class="text-base font-semibold text-gray-900 dark:text-gray-50">
+                  {{'Others' | translate}}
+                </h6>
+                <span class="text-sm text-gray-500 dark:text-gray-400 font-medium">
+                  {{otherNotifications.length}} notifications
+                </span>
+              </div>
+
+              <div *ngFor="let n of otherNotifications" 
+                   (click)="markAsRead(n)"
+                   [class.notification-unread]="!n.isRead"
+                   class="notification-card bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700 rounded-xl p-4 mb-3 cursor-pointer transition-all hover:bg-gray-100 dark:hover:bg-gray-800 hover:shadow-md hover:-translate-y-0.5">
+                
+                 <div *ngIf="productsById[n.refId] as p" class="w-14 h-14 flex-shrink-0 rounded-lg overflow-hidden bg-gray-200 dark:bg-gray-700">
+                    <img *ngIf="p.photos?.length > 0; else noImage"
+                         [src]="p.photos[0]"
+                         [alt]="p.title"
+                         class="w-full h-full object-cover">
+                    <ng-template #noImage>
+                      <div class="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                          <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                          <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
+                      </div>
+                    </ng-template>
+                  </div>
+
+                <div class="flex gap-4 items-start">
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-start justify-between gap-4 mb-3">
+                      <div class="flex-1 min-w-0">
+                        <div class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-1.5 leading-snug">
+                          {{ n.title | translate }}
+                        </div>
+                        <div class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                          {{ n.message | translate }}
+                        </div>
+                      </div>
+                      <div *ngIf="!n.isRead" class="w-2.5 h-2.5 rounded-full bg-blue-600 dark:bg-blue-500 flex-shrink-0 mt-1 shadow-lg shadow-blue-500/50"></div>
+                    </div>
+
+                    <div class="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-500 font-medium">
+                      <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                      </svg>
+                      <span>{{ n.createdAt | date:'short' }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div *ngIf="otherNotifications.length === 0" class="empty-state flex flex-col items-center justify-center py-16 text-center">
+                <svg class="w-12 h-12 text-gray-300 dark:text-gray-700 mb-4 opacity-50" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">No other notifications</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-template #noNotifications>
+        <div class="flex flex-col items-center justify-center py-20 text-center">
+          <svg class="w-16 h-16 text-gray-300 dark:text-gray-700 mb-5 opacity-60" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+          <p class="text-base text-gray-500 dark:text-gray-400">No notifications</p>
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- Products and Favorites Row -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      
+      <!-- My Items Column -->
+      <div class="lg:col-span-1 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm p-6">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-50 mb-4">
+          {{ "My items" | translate }}
+        </h3>
+
+        <!-- Tabs -->
+        <ul class="flex border-b border-gray-200 dark:border-gray-700 mb-4">
+          <li class="flex-1 text-center">
+            <a (click)="selectedTab = 'active'"
+               [class.active-tab]="selectedTab === 'active'"
+               class="tab-link inline-block w-full px-3 py-2.5 text-sm font-semibold cursor-pointer transition-colors">
+              {{ 'Active items' | translate }}
+            </a>
+          </li>
+          <li class="flex-1 text-center">
+            <a (click)="selectedTab = 'inactive'"
+               [class.active-tab]="selectedTab === 'inactive'"
+               class="tab-link inline-block w-full px-3 py-2.5 text-sm font-semibold cursor-pointer transition-colors">
+              {{ 'Inactive items' | translate }}
+            </a>
+          </li>
+        </ul>
+
+        <!-- Active Items -->
+        <div *ngIf="selectedTab === 'active'">
+          <ng-container *ngIf="(activeProducts$ | async)?.length > 0; else noActive">
+            <div *ngFor="let item of activeProducts$ | async" 
+                 class="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700 rounded-lg p-3 mb-3 hover:shadow-md transition-shadow relative">
+              
+              <div class="flex items-center gap-3">
+                <img [src]="item.photos?.[0] || 'assets/png/no-photo.png'"
+                     alt="product"
+                     class="w-14 h-18 object-cover rounded-lg flex-shrink-0">
+                
+                <div class="flex-1 min-w-0">
+                  <h6 class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-0.5 truncate">
+                    {{ item.title }}
+                  </h6>
+                  <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                    {{ item.category }}
+                  </p>
+                  <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                    {{ item.price }} ₸
+                  </p>
+                </div>
+              </div>
+
+              <div class="absolute top-2 right-2">
+                <button class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 p-1"
+                        type="button" 
+                        data-bs-toggle="dropdown">
+                  <i class="fa-solid fa-ellipsis-vertical text-lg"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow-lg">
+                  <li><button class="dropdown-item" (click)="openProductDetails(item)">{{ 'Details' | translate }}</button></li>
+                  <li><button class="dropdown-item" (click)="editProduct(item)">{{ 'Edit' | translate }}</button></li>
+                  <li><button class="dropdown-item text-red-600" (click)="deleteProduct(item._id)">{{ 'Delete' | translate }}</button></li>
+                </ul>
+              </div>
+            </div>
+          </ng-container>
+          
+          <ng-template #noActive>
+            <p class="text-sm text-gray-500 dark:text-gray-400 text-center py-8">
+              {{ 'You have no active items' | translate }}
+            </p>
+          </ng-template>
+        </div>
+
+        <!-- Inactive Items -->
+        <div *ngIf="selectedTab === 'inactive'">
+          <ng-container *ngIf="(inactiveProducts$ | async)?.length > 0; else noInactive">
+            <div *ngFor="let item of inactiveProducts$ | async" 
+                 class="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700 rounded-lg p-3 mb-3 opacity-60 grayscale hover:opacity-75 transition-all relative">
+              
+              <div class="absolute top-2 left-2 z-10">
+                <span class="px-2 py-1 bg-gray-600 text-white text-xs font-semibold rounded">
+                  {{ item.status | translate }}
+                </span>
+              </div>
+
+              <div class="flex items-center gap-3">
+                <img [src]="item.photos?.[0] || 'assets/png/no-photo.png'"
+                     alt="product"
+                     class="w-14 h-18 object-cover rounded-lg flex-shrink-0">
+                
+                <div class="flex-1 min-w-0">
+                  <h6 class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-0.5 truncate">
+                    {{ item.title }}
+                  </h6>
+                  <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                    {{ item.category }}
+                  </p>
+                  <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                    {{ item.price }} ₸
+                  </p>
+                </div>
+              </div>
+
+              <div class="absolute top-2 right-2">
+                <button class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 p-1"
+                        type="button"
+                        data-bs-toggle="dropdown">
+                  <i class="fa-solid fa-ellipsis-vertical text-lg"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow-lg">
+                  <li><button class="dropdown-item" (click)="openProductDetails(item)">{{ 'Details' | translate }}</button></li>
+                  <li><button class="dropdown-item" (click)="editProduct(item)">{{ 'Edit' | translate }}</button></li>
+                  <li><button class="dropdown-item text-red-600" (click)="deleteProduct(item._id)">{{ 'Delete' | translate }}</button></li>
+                </ul>
+              </div>
+            </div>
+          </ng-container>
+          
+          <ng-template #noInactive>
+            <p class="text-sm text-gray-500 dark:text-gray-400 text-center py-8">
+              {{ 'You have no inactive items' | translate }}
+            </p>
+          </ng-template>
+        </div>
+      </div>
+
+      <!-- Favorites Columns -->
+      <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- Favorite Shops -->
+        <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm p-6">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-50 mb-4">
+            {{'Favorite shops'|translate}}
+          </h3>
+          
+          <ng-container *ngIf="(favoritePawnshops$ | async)?.length > 0; else noFavoriteShops">
+            <div *ngFor="let shop of favoritePawnshops$ | async"
+                 (click)="openPawnshopDetail(shop._id)"
+                 class="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700 rounded-lg p-3 mb-3 cursor-pointer hover:shadow-md hover:-translate-y-0.5 transition-all">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex-shrink-0 flex items-center justify-center text-white font-bold text-lg">
+                  {{ shop.name.charAt(0) }}
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h6 class="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
+                    {{ shop.name }}
+                  </h6>
+                  <p class="text-xs text-gray-500 dark:text-gray-400">
+                    {{ shop.address }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+
+          <ng-template #noFavoriteShops>
+            <p class="text-sm text-gray-500 dark:text-gray-400 text-center py-8">
+              {{'No favorite shops yet'|translate}}
+            </p>
+          </ng-template>
+        </div>
+
+        <!-- Favorite Products -->
+        <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm p-6">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-50 mb-4">
+            {{'Favorite products'|translate}}
+          </h3>
+
+          <ng-container *ngIf="(favoriteProducts$ | async)?.length > 0; else noFavoriteProducts">
+            <div *ngFor="let product of favoriteProducts$ | async;let i = index"
+                 class="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700 rounded-lg p-3 mb-3 cursor-pointer hover:shadow-md hover:-translate-y-0.5 transition-all relative">
+              <div class="flex items-center gap-3">
+                <img [src]="product.photos?.[0] || 'assets/png/no-photo.png'"
+                     alt="product"
+                     class="w-12 h-12 object-cover rounded-full flex-shrink-0">
+                <div class="flex-1 min-w-0">
+                  <h6 class="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
+                    {{ product.title }}
+                  </h6>
+                  <p class="text-xs text-gray-500 dark:text-gray-400 mb-0.5">
+                    {{ product.category }}
+                  </p>
+                  <p class="text-sm font-semibold text-blue-600 dark:text-blue-400">
+                    {{ product.price }} ₸
+                  </p>
+                </div>
+               
+              </div>
+               <div class="absolute top-3 right-3">
+                <button (click)="openedMenuIndex = openedMenuIndex === i ? null : i"
+                        class="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700">
+                  <svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M6 10a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm6 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm6 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/>
+                  </svg>
+                </button>
+
+                <!-- Тултип -->
+                <div *ngIf="openedMenuIndex === i"
+                    class="absolute right-0 mt-2 w-32 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded shadow-lg z-10">
+                  <button class="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+                          (click)="openProductDetails(product); openedMenuIndex = null">
+                    Details
+                  </button>
+                  <button class="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700"
+                          (click)="removeFromFavorites(product._id); openedMenuIndex = null">
+                    Remove
+                  </button>
+                </div>
+              </div>
+    
+
+            </div>
+          </ng-container>
+
+          <ng-template #noFavoriteProducts>
+            <p class="text-sm text-gray-500 dark:text-gray-400 text-center py-8">
+              {{'No favorite products yet'|translate}}
+            </p>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

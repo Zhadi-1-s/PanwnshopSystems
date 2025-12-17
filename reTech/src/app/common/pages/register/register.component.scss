@@ -1,0 +1,94 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+.login-page {
+  position: relative;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Roboto', sans-serif;
+
+  background: #fff;
+  z-index: 10;
+  padding: 0;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  
+}
+.login-page::before {
+  display: none;
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60vh;
+  background: linear-gradient(-180deg, #FFFFFF 0%, rgba(255,255,255,0) 100%);
+  z-index: 0;
+}
+.login-page::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(0deg, #EBEBEB 0%, rgba(235,235,235,0) 100%);
+  z-index: 0;
+}
+.squares-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: space-around;
+  overflow: hidden;
+  z-index: 0;
+}
+.square {
+  width: 1em;
+  height: 1em;
+  background: #ebebeb;
+  transform: translateY(100%);
+  animation: squareAnim 9.5s linear infinite;
+  align-self: flex-end;
+  filter: blur(0px);
+}
+/* Разные размеры и задержки для квадратов */
+.square:nth-child(2) { width:3em; height:1.5em; animation-delay:1s; animation-duration:17s; filter:blur(5px);}
+.square:nth-child(3) { width:1em; height:2em; animation-delay:1.5s; animation-duration:8s;}
+.square:nth-child(4) { width:1.5em; height:1em; animation-delay:0.5s; animation-duration:13s; filter:blur(3px);}
+.square:nth-child(5) { width:2em; height:1.25em; animation-delay:4s; animation-duration:11s; filter:blur(2px);}
+.square:nth-child(6) { width:2em; height:2.5em; animation-delay:2s; animation-duration:9s; filter:blur(1px);}
+.square:nth-child(7) { width:2em; height:5em; animation-duration:12s; filter:blur(2.5px);}
+.square:nth-child(8) { width:3em; height:1em; animation-delay:5s; animation-duration:18s; filter:blur(6px);}
+.square:nth-child(9) { width:2em; height:1.5em; animation-duration:9s; filter:blur(0.5px);}
+.square:nth-child(10){ width:2.4em; height:3em; animation-delay:6s; animation-duration:12s; filter:blur(0.5px);}
+
+/* Анимация */
+@keyframes squareAnim {
+  from { transform: translateY(100%) rotate(-50deg); }
+  to   { transform: translateY(-120%) rotate(20deg); }
+}
+.login-card {
+  background: #ffffff;
+  border-radius: 16px !important;
+  padding: 40px !important;
+  width: 600px;          /* ← Увеличил ширину */
+  max-width: 90%;        /* ← Чтобы не ломалось на телефонах */
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08) !important;
+  position: relative;       /* добавлено */
+  z-index: 10;   
+}
+
+.logo {
+  position: absolute;
+  top: 0px;   /* отступ сверху */
+  left: 20px;  /* отступ слева */
+}
+
+.brand-name {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #000; /* или твой цвет */
+}

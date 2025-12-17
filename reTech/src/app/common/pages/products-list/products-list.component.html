@@ -1,0 +1,213 @@
+<div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    
+    <!-- Header Section -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6 mb-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <h3 class="text-2xl sm:text-3xl font-bold text-gray-900">Список продуктов</h3>
+        <span class="inline-flex items-center px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-semibold">
+          {{ (filteredProducts$ | async)?.length || 0 }} {{ 'Results' | translate }}
+        </span>
+      </div>
+
+      <!-- Search Box -->
+      <div class="mb-6">
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <i class="fa-solid fa-search text-gray-400"></i>
+          </div>
+          <input
+            type="text"
+            class="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400"
+            placeholder="Поиск по названию..."
+            [(ngModel)]="searchTerm$.value"
+            (ngModelChange)="onSearchChange($event)"
+          />
+        </div>
+      </div>
+
+      <!-- Filter Section -->
+      <div class="space-y-4">
+        <div class="flex flex-wrap items-center gap-3">
+          <!-- Filter Toggle Button -->
+          <button 
+            class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl font-medium transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+            (click)="toogleFilterBlock = !toogleFilterBlock">
+            <span>Фильтры</span>
+            <i class="fa-solid fa-sliders"></i>
+          </button>
+
+          <!-- Applied Filters -->
+          <div class="flex flex-wrap gap-2" *ngIf="(appliedFilters$ | async)?.length">
+            <span 
+              *ngFor="let filter of appliedFilters$ | async" 
+              class="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium">
+              {{ filter }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Expandable Filter Block -->
+        <div 
+          [@filterAnimation]="toogleFilterBlock ? 'open' : 'closed'"
+          class="bg-gradient-to-br from-gray-50 to-blue-50/30 rounded-xl p-4 sm:p-6 border border-gray-200">
+          
+          <!-- Price Sliders -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <!-- Price From -->
+            <div class="space-y-3">
+              <label class="block text-sm font-semibold text-gray-700">Цена от</label>
+              <ngx-slider 
+                *ngIf="isBrowser"
+                [(value)]="priceFrom"
+                [options]="sliderMinOptions">
+              </ngx-slider>
+              <div class="text-right">
+                <span class="inline-flex items-center px-4 py-2 bg-white rounded-lg text-lg font-bold text-gray-900 shadow-sm border border-gray-200">
+                  {{ priceFrom | number:'1.0-0' }} ₸
+                </span>
+              </div>
+            </div>
+
+            <!-- Price To -->
+            <div class="space-y-3">
+              <label class="block text-sm font-semibold text-gray-700">Цена до</label>
+              <ngx-slider 
+                *ngIf="isBrowser"
+                [(value)]="priceTo"
+                [options]="sliderMaxOptions">
+              </ngx-slider>
+              <div class="text-right">
+                <span class="inline-flex items-center px-4 py-2 bg-white rounded-lg text-lg font-bold text-gray-900 shadow-sm border border-gray-200">
+                  {{ priceTo | number:'1.0-0' }} ₸
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Help Tooltips -->
+          <div class="flex flex-wrap gap-2 mb-6" *ngIf="searchHelpItemsList?.length">
+            <div 
+              *ngFor="let item of searchHelpItemsList" 
+              class="px-3 py-1.5 bg-white hover:bg-blue-50 border border-gray-200 hover:border-blue-300 rounded-lg text-sm text-gray-700 hover:text-blue-700 cursor-pointer transition-all duration-200"
+              (click)="onHelpItemClick(item)">
+              <span>{{ item }}</span>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-wrap gap-3">
+            <button 
+              class="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl font-medium transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+              (click)="updateAppliedFilters()">
+              Применить
+            </button>
+            <button 
+              class="px-6 py-2.5 bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 hover:border-gray-400 rounded-xl font-medium transition-all duration-200"
+              (click)="clearFilters()">
+              Очистить
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="flex justify-center items-center py-16">
+      <div class="relative">
+        <div class="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+      </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div *ngIf="!isLoading">
+      <div *ngIf="(filteredProducts$ | async) as products; else loading">
+        
+        <div *ngIf="products.length > 0; else noProducts" 
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+          
+          <div *ngFor="let product of products" 
+            class="group bg-white rounded-2xl shadow-sm hover:shadow-xl border border-gray-100 overflow-hidden transition-all duration-300 transform hover:-translate-y-1 cursor-pointer"
+            (click)="openProductDetails(product)">
+            
+            <!-- Product Image -->
+            <div class="relative overflow-hidden bg-gray-100 h-48 sm:h-56">
+              <img
+                *ngIf="product.photos?.length > 0; else noPhoto"
+                [src]="product.photos[0]"
+                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                alt="{{ product.title }}"
+              />
+
+              <ng-template #noPhoto>
+                <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+                  <i class="fa-solid fa-image text-gray-400 text-5xl"></i>
+                </div>
+              </ng-template>
+
+              <!-- Favorite Button -->
+              <button
+                class="absolute top-3 right-3 w-10 h-10 flex items-center justify-center bg-white/90 backdrop-blur-sm hover:bg-white rounded-full shadow-lg transition-all duration-200 transform hover:scale-110 z-10"
+                (click)="toggleFavorite(product, $event)">
+                <i 
+                  class="fa-solid fa-heart text-lg transition-colors duration-200"
+                  [ngClass]="isFavorite(product._id, favitems) ? 'text-red-500' : 'text-gray-300'">
+                </i>
+              </button>
+            </div>
+
+            <!-- Product Details -->
+            <div class="p-4 sm:p-5 space-y-3">
+              <h5 class="text-lg font-bold text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors duration-200">
+                {{ product.title }}
+              </h5>
+
+              <div class="space-y-2">
+                <!-- Price -->
+                <div class="flex items-center gap-2 text-gray-600">
+                  <i class="fa-solid fa-tag text-blue-500 text-sm"></i>
+                  <span class="text-xl font-bold text-blue-600">{{ product.price | number:'1.0-0' }} ₸</span>
+                </div>
+
+                <!-- Category -->
+                <div class="flex items-center gap-2 text-sm text-gray-600">
+                  <i class="fa-solid fa-layer-group text-gray-400"></i>
+                  <span>{{ product.category | translate }}</span>
+                </div>
+
+                <!-- Date -->
+                <div class="flex items-center gap-2 text-sm text-gray-500">
+                  <i class="fa-regular fa-calendar text-gray-400"></i>
+                  <span>{{ product.createdAt | date:'dd.MM.yyyy' }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- No Products State -->
+        <ng-template #noProducts>
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 text-center">
+            <div class="max-w-md mx-auto space-y-4">
+              <div class="w-20 h-20 mx-auto bg-gray-100 rounded-full flex items-center justify-center">
+                <i class="fa-regular fa-folder-open text-gray-400 text-4xl"></i>
+              </div>
+              <p class="text-lg font-semibold text-gray-900">Нет доступных товаров</p>
+              <p class="text-gray-500">Попробуйте изменить фильтры или поисковый запрос</p>
+            </div>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- Loading Template -->
+    <ng-template #loading>
+      <div class="flex justify-center items-center py-16">
+        <div class="relative">
+          <div class="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+        </div>
+      </div>
+    </ng-template>
+
+  </div>
+</div>

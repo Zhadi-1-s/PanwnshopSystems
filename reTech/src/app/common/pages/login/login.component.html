@@ -1,0 +1,70 @@
+<div class="login-page d-flex vh-100">
+
+   <div class="logo">
+    <h2 class="brand-name" routerLink="/dashboard" style="cursor: pointer;">TechLombard</h2>
+  </div>
+
+
+  <!-- Левая часть -->
+  <div class="d-flex flex-column justify-content-center p-5 ml-3">
+    <div class="card login-card shadow-lg border-0 mx-auto p-4" >
+      <div class="login-box">
+
+        <h3 class="fw-bold mb-2">{{'Welcome back' | translate}}</h3>
+        <p class="text-muted mb-4">{{'Please enter your details' | translate}}</p>
+
+        <!-- Google login -->
+        <button type="button"
+                class="btn btn-light border w-100 d-flex align-items-center justify-content-center mb-3"
+                (click)="loginWithGoogle()">
+          <img src="https://www.svgrepo.com/show/355037/google.svg" width="20" class="me-2"/>
+          {{'Sign in with Google' | translate}}
+        </button>
+
+        <div class="d-flex align-items-center my-3">
+          <hr class="flex-grow-1"/>
+          <span class="px-2 text-muted">{{'or' | translate}}</span>
+          <hr class="flex-grow-1"/>
+        </div>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+          <div class="mb-3">
+            <label class="form-label">{{'Email address' | translate}}</label>
+            <input type="email" formControlName="email" class="form-control" placeholder="Enter your email">
+            <div *ngIf="submitted && loginForm.controls['email'].errors" class="text-danger small">
+              <div *ngIf="loginForm.controls['email'].errors['required']">{{'Email is required' | translate}}</div>
+              <div *ngIf="loginForm.controls['email'].errors['email']">{{'Invalid email' | translate}}</div>
+            </div>
+          </div>
+
+          <div class="mb-3 d-flex justify-content-between align-items-center">
+            <label class="form-label mb-0">{{'Password' | translate}}</label>
+            <a class="small text-decoration-none" (click)="forgotPassword()">{{'Forgot password?' | translate}}</a>
+          </div>
+
+          <input type="password" formControlName="password" class="form-control mb-3" placeholder="Enter your password">
+          <div *ngIf="submitted && loginForm.controls['password'].errors" class="text-danger small">
+            <div *ngIf="loginForm.controls['password'].errors['required']">{{'Password is required' | translate}}</div>
+            <div *ngIf="loginForm.controls['password'].errors['minlength']">{{'Password must be at least 6 characters' | translate}}</div>
+          </div>
+
+          <button type="submit" class="btn btn-dark w-100 mb-3">{{'Sign in' | translate}}</button>
+
+        </form>
+
+        <div *ngIf="serverError" class="text-danger text-center py-2">
+          {{ serverError }}
+        </div>
+
+        <p class="text-center text-muted mt-3" style="cursor: pointer;">
+          {{'Don’t have an account?' | translate}}
+          <a class="text-decoration-none" routerLink="/register">{{'Sign up' | translate}}</a>
+        </p>
+
+      </div>
+    </div>
+  </div>
+
+
+</div>

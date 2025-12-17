@@ -1,0 +1,227 @@
+<!-- Modern Product Listing Page -->
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <!-- Header Section -->
+    <div class="mb-8">
+      <h1 class="text-3xl md:text-4xl font-bold text-slate-900 mb-2 text-balance">
+        Список Продоваемых товаров
+      </h1>
+      <p class="text-slate-600 text-lg">Найдите лучшие ломбарды в вашем городе</p>
+    </div>
+
+    <!-- Search and Filter Bar -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 mb-8">
+      <div class="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+        
+        <!-- Search Box -->
+        <div class="w-full lg:w-2/5">
+          <div class="relative">
+            <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            <input
+              type="text"
+              class="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder:text-slate-400"
+              placeholder="Поиск по названию..."
+              [(ngModel)]="searchTerm$.value"
+              (ngModelChange)="onSearchChange($event)"
+            />
+          </div>
+        </div>
+
+        <!-- Results Count and Sort -->
+        <div class="flex items-center gap-4 ml-auto">
+          <span class="text-sm font-medium text-slate-600 whitespace-nowrap">
+            {{ (filteredLombards$ | async)?.length || 0 }} {{ 'Results' | translate }}
+          </span>
+
+          <!-- Sort Dropdown -->
+          <div class="relative">
+            <button
+              (click)="toggleTooltip()"
+              class="flex items-center gap-2 px-4 py-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl transition-all duration-200 text-sm font-medium text-slate-700"
+            >
+              <span>Рейтинг</span>
+              <i
+                [class.fa-solid]="true"
+                [class.fa-arrow-up-wide-short]="sortOrder === 'asc'"
+                [class.fa-arrow-down-short-wide]="sortOrder === 'desc'"
+                class="text-slate-500"
+              ></i>
+            </button>
+
+            <!-- Sort Tooltip -->
+            <div
+              *ngIf="isTooltipOpen"
+              class="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-lg border border-slate-200 py-2 z-50"
+            >
+              <div
+                class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 cursor-pointer transition-colors"
+                (click)="onSortChange('asc'); toggleTooltip()"
+              >
+                <i class="fa-solid fa-arrow-up-wide-short text-blue-600"></i>
+                <span class="text-sm font-medium text-slate-700">По возрастанию</span>
+              </div>
+              <div
+                class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 cursor-pointer transition-colors"
+                (click)="onSortChange('desc'); toggleTooltip()"
+              >
+                <i class="fa-solid fa-arrow-down-short-wide text-blue-600"></i>
+                <span class="text-sm font-medium text-slate-700">По убыванию</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search Help Items -->
+      <div *ngIf="searchHelpItemsList && searchHelpItemsList.length > 0" class="flex flex-wrap gap-2 mt-4">
+        <button
+          *ngFor="let item of searchHelpItemsList"
+          (click)="onHelpItemClick(item)"
+          class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg text-sm font-medium transition-colors duration-200"
+        >
+          {{ item }}
+        </button>
+      </div>
+
+      <!-- Applied Filters -->
+      <div *ngIf="(appliedFilters$ | async)?.length > 0" class="flex flex-wrap items-center gap-2 mt-4 pt-4 border-t border-slate-200">
+        <span class="text-sm font-medium text-slate-600">{{ 'Applied filters' | translate }}:</span>
+        <span
+          *ngFor="let filter of appliedFilters$ | async"
+          (click)="removeFilter(filter)"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium cursor-pointer transition-colors duration-200"
+        >
+          <span>{{ filter }}</span>
+          <i class="fa-solid fa-xmark text-xs"></i>
+        </span>
+      </div>
+    </div>
+
+    <!-- Product Grid -->
+    <div *ngIf="(filteredLombards$ | async) as lombards; else loading">
+      <div *ngIf="lombards.length > 0; else noLombards">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div
+            *ngFor="let lombard of lombards"
+            [routerLink]="['/pawnshop-detail', lombard._id]"
+            class="group bg-white rounded-2xl shadow-sm hover:shadow-xl border border-slate-200/60 overflow-hidden cursor-pointer transition-all duration-300 hover:-translate-y-1"
+          >
+            <!-- Card Image -->
+            <div class="relative h-48 bg-gradient-to-br from-slate-100 to-slate-200 overflow-hidden">
+              <img
+                *ngIf="lombard.logoUrl; else noLogo"
+                [src]="lombard.logoUrl"
+                [alt]="lombard.name"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+              <ng-template #noLogo>
+                <div class="flex items-center justify-center w-full h-full bg-gradient-to-br from-blue-50 to-slate-100">
+                  <i class="fa-solid fa-store text-slate-300 text-5xl"></i>
+                </div>
+              </ng-template>
+
+              <!-- Favorite Button -->
+              <button
+                (click)="toggleFavorite(lombard._id, $event)"
+                class="absolute top-3 right-3 w-10 h-10 flex items-center justify-center rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg transition-all duration-200 hover:scale-110"
+              >
+                <i
+                  class="fa-solid fa-heart transition-colors duration-200"
+                  [ngClass]="{
+                    'text-red-500': user?.favoritePawnshops?.includes(lombard._id),
+                    'text-slate-300': !user?.favoritePawnshops?.includes(lombard._id)
+                  }"
+                ></i>
+              </button>
+
+              <!-- Status Badge -->
+              <div class="absolute bottom-3 left-3">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-semibold shadow-lg">
+                  <i class="fa-solid fa-box text-[10px]"></i>
+                  {{ lombard.activeSlots?.length || 0 }}/{{ lombard.slotLimit }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Card Content -->
+            <div class="p-5">
+              <h3 class="text-lg font-bold text-slate-900 mb-3 group-hover:text-blue-600 transition-colors duration-200 line-clamp-1">
+                {{ lombard.name }}
+              </h3>
+
+              <!-- Rating -->
+              <div class="flex items-center gap-2 mb-3">
+                <div class="flex items-center">
+                  <ng-container *ngFor="let star of [1,2,3,4,5]">
+                    <i
+                      class="fa-star text-sm"
+                      [ngClass]="{
+                        'fa-solid text-amber-400': lombard.rating >= star,
+                        'fa-regular text-slate-300': lombard.rating < star
+                      }"
+                    ></i>
+                  </ng-container>
+                </div>
+                <span class="text-sm font-semibold text-slate-700">{{ lombard.rating }}</span>
+              </div>
+
+              <!-- Location -->
+              <div class="flex items-start gap-2 mb-2">
+                <i class="fa-solid fa-location-dot text-slate-400 mt-1 text-sm flex-shrink-0"></i>
+                <p class="text-sm text-slate-600 line-clamp-1">{{ lombard.address }}</p>
+              </div>
+
+              <!-- Phone -->
+              <div class="flex items-center gap-2 mb-2">
+                <i class="fa-solid fa-phone text-slate-400 text-sm flex-shrink-0"></i>
+                <p class="text-sm text-slate-600">{{ lombard.phone }}</p>
+              </div>
+
+              <!-- Working Hours -->
+              <div class="flex items-center gap-2 mb-4">
+                <i class="fa-solid fa-clock text-slate-400 text-sm flex-shrink-0"></i>
+                <p class="text-sm text-slate-600">
+                  {{ lombard.openTime }} – {{ lombard.closeTime }}
+                </p>
+              </div>
+
+              <!-- Footer -->
+              <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+                <span class="text-sm font-medium text-slate-500">
+                  {{ lombard.products.length }} 
+                  {{ lombard.products.length === 1 ? 'товар' : (lombard.products.length >= 2 && lombard.products.length <= 4 ? 'товара' : 'товаров') }}
+                </span>
+                <div class="flex items-center gap-1.5 text-blue-600 font-medium text-sm group-hover:gap-2 transition-all duration-200">
+                  <span>Подробнее</span>
+                  <i class="fa-solid fa-arrow-right text-xs"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- No Results State -->
+      <ng-template #noLombards>
+        <div class="flex flex-col items-center justify-center py-20">
+          <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-4">
+            <i class="fa-regular fa-folder-open text-slate-400 text-3xl"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-slate-900 mb-2">Нет доступных ломбардов</h3>
+          <p class="text-slate-500">Попробуйте изменить параметры поиска</p>
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- Loading State -->
+    <ng-template #loading>
+      <div class="flex flex-col items-center justify-center py-20">
+        <div class="relative">
+          <div class="w-16 h-16 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin"></div>
+        </div>
+        <p class="mt-4 text-slate-600 font-medium">Загрузка...</p>
+      </div>
+    </ng-template>
+  </div>
+</div>

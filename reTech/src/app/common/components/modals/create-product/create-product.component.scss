@@ -1,0 +1,36 @@
+  input,
+  select,
+  textarea {
+    border-radius: 8px !important;
+    
+  }
+
+  button {
+    border-radius: 10px;
+    font-weight: 600;
+  }
+
+.form-select option{
+    gap: 2px;
+    font-size: 16px;
+    color: #838e95;
+    padding: 0.2em 0.5em;
+    text-align: left;
+    pointer-events: none;
+    user-select: none;
+    visibility: visible;
+    border-radius: 12px;
+}
+.form-select option ::before{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 0.2em 0.5em;
+    content: attr(data-placeholder);
+    visibility: hidden;
+}
+.object-fit-cover {
+  object-fit: cover;
+}

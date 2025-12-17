@@ -1,0 +1,44 @@
+<div class="modal-header">
+  <h5 class="modal-title">Создать оффер</h5>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="cancel()"
+  ></button>
+</div>
+
+<div class="modal-body">
+
+  <form [formGroup]="offerForm">
+
+    <div class="mb-3">
+      <label class="form-label">Цена</label>
+      <input
+        type="number"
+        class="form-control"
+        formControlName="price"
+        placeholder="Введите цену"
+      />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Сообщение (необязательно)</label>
+      <textarea
+        class="form-control"
+        rows="3"
+        formControlName="message"
+        placeholder="Комментарий"
+      ></textarea>
+    </div>
+
+  </form>
+
+</div>
+
+<div class="modal-footer">
+  <button class="btn btn-secondary" (click)="cancel()">Отмена</button>
+  <button class="btn btn-primary" (click)="submit()" [disabled]="offerForm.invalid">
+    Создать
+  </button>
+</div>

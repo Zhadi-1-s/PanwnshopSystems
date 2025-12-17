@@ -1,0 +1,67 @@
+<div class="modal-header">
+  <h5 class="modal-title">
+    <i class="fa-solid fa-pen me-2 text-primary"></i>
+    {{ 'Edit Product' | translate }}
+  </h5>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
+</div>
+
+<div class="modal-body">
+  <form [formGroup]="form" class="row g-3">
+    <!-- Title -->
+    <div class="col-12">
+      <label class="form-label">{{ 'Title' | translate }}</label>
+      <input type="text" class="form-control" formControlName="title" />
+    </div>
+
+    <!-- Description -->
+    <div class="col-12">
+      <label class="form-label">{{ 'Description' | translate }}</label>
+      <textarea class="form-control" rows="3" formControlName="description"></textarea>
+    </div>
+
+    <!-- Category -->
+    <div class="col-md-6">
+      <label class="form-label">{{ 'Category' | translate }}</label>
+      <input type="text" class="form-control" formControlName="category" />
+    </div>
+
+    <!-- Price -->
+    <div class="col-md-6">
+      <label class="form-label">{{ 'Price' | translate }}</label>
+      <input type="number" class="form-control" formControlName="price" />
+    </div>
+
+    <!-- Status -->
+      <div class="col-md-6">
+        <label class="form-label">{{ 'Status' | translate }}</label>
+        <select class="form-select" formControlName="status">
+          <option *ngFor="let status of statusValues" [value]="status">
+            {{ status | titlecase | translate }}
+          </option>
+        </select>
+      </div>
+
+    <!-- Photos -->
+    <div class="col-12">
+      <label class="form-label fw-semibold">{{ 'Photos' | translate }}</label>
+
+      <app-image-view
+        [photos]="photos"
+        [editable]="true"
+        (photoRemoved)="removePhoto($event)"
+        (photoAdded)="onFileSelect()"
+      ></app-image-view>
+    </div>
+
+  </form>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-outline-secondary" (click)="activeModal.dismiss()">
+    {{ 'Cancel' | translate }}
+  </button>
+  <button type="button" class="btn btn-primary" [disabled]="form.invalid" (click)="save()">
+    {{ 'Save Changes' | translate }}
+  </button>
+</div>

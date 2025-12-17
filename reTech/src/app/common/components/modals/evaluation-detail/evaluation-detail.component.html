@@ -1,0 +1,187 @@
+<div class="max-w-3xl mx-auto bg-white shadow-lg rounded-2xl overflow-hidden mt-2">
+  <ng-container *ngIf="evaluation$ | async as evaluation">
+
+    <!-- Header -->
+    <div class="bg-blue-600 p-6 flex justify-between items-center">
+      <h2 class="text-white text-2xl font-bold">
+        {{ 'Evaluation:' | translate }} {{ evaluation.title }}
+      </h2>
+
+      <span class="bg-white text-blue-600 font-semibold px-3 py-1 rounded-full text-sm">
+        {{ evaluation.status | translate | titlecase }}
+      </span>
+
+      <button
+        (click)="close()"
+        class="ml-4 bg-white text-blue-600 font-semibold px-3 py-1 rounded-lg hover:bg-gray-100 transition">
+        {{ 'Close' | translate }}
+      </button>
+    </div>
+
+    <!-- Content -->
+    <div class="p-6 space-y-6">
+
+      <!-- Description -->
+      <div>
+        <h3 class="text-gray-700 font-semibold mb-2">
+          {{ 'Description' | translate }}
+        </h3>
+
+        <p class="text-gray-600">
+          {{ evaluation.description || ('No description provided' | translate) }}
+        </p>
+      </div>
+
+      <!-- Condition and Term -->
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <h3 class="text-gray-700 font-semibold mb-1">
+            {{ 'State of the product' | translate }}
+          </h3>
+
+          <span class="px-2 py-1 bg-green-100 text-green-800 rounded-lg">
+            {{ evaluation.condition | titlecase }}
+          </span>
+        </div>
+
+        <div>
+          <h3 class="text-gray-700 font-semibold mb-1">
+            {{ 'Term (days)' | translate }}
+          </h3>
+
+          <span class="px-2 py-1 bg-gray-100 text-gray-800 rounded-lg">
+            {{ evaluation.termDays }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Price -->
+      <div>
+        <h3 class="text-gray-700 font-semibold mb-1">
+          {{ 'Expected price' | translate }}
+        </h3>
+
+        <span class="text-xl font-bold text-gray-800">
+          {{ evaluation.expectedPrice | number }} ₸
+        </span>
+      </div>
+
+      <!-- User contact -->
+      <div>
+        <h3 class="text-gray-700 font-semibold mb-1">
+          {{ 'Telephone number' | translate }}
+        </h3>
+
+        <span class="text-gray-800">
+          {{ evaluation.userTelephoneNumber }}
+        </span>
+      </div>
+
+      <!-- Photos -->
+      <div *ngIf="evaluation.photos?.length > 0">
+        <h3 class="text-gray-700 font-semibold mb-2">
+          {{ 'Photos' | translate }}
+        </h3>
+
+        <div class="grid grid-cols-3 gap-4">
+          <img
+            *ngFor="let photo of evaluation.photos"
+            [src]="photo"
+            alt="Product photo"
+            class="w-full h-32 object-cover rounded-lg shadow-sm border border-gray-200" />
+        </div>
+      </div>
+
+      <!-- Dates -->
+      <div class="flex justify-between text-gray-500 text-sm mt-4">
+        <span>
+          {{ 'Created:' | translate }}
+          {{ evaluation.createdAt | date:'dd.MM.yyyy HH:mm' }}
+        </span>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex justify-end gap-3 pt-4 border-t border-gray-200">
+
+        <button
+          class="px-4 py-2 rounded-lg font-semibold text-sm
+                 bg-red-100 text-red-700 hover:bg-red-200 transition">
+          {{ 'Reject offer' | translate }}
+        </button>
+
+        <button (click)="showCounterOffer = !showCounterOffer"
+          class="px-4 py-2 rounded-lg font-semibold text-sm
+                 bg-yellow-100 text-yellow-800 hover:bg-yellow-200 transition">
+          {{ 'Counter offer' | translate }}
+        </button>
+
+        <button
+          class="px-4 py-2 rounded-lg font-semibold text-sm
+                 bg-green-600 text-white hover:bg-green-700 transition">
+          {{ 'Accept offer' | translate }}
+        </button>
+
+      </div>
+      <!-- Counter Offer Form -->
+      <div *ngIf="showCounterOffer"
+          class="mt-6 p-4 border border-gray-200 rounded-xl bg-gray-50 space-y-4">
+
+        <h3 class="text-gray-800 font-semibold text-sm">
+          {{ 'Counter offer details' | translate }}
+        </h3>
+
+        <!-- Price -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            {{ 'Proposed price' | translate }}
+          </label>
+
+          <input
+            type="number"
+          
+            placeholder="{{ 'Enter price' | translate }}"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg
+                  focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+
+        <!-- Description -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            {{ 'Message to user' | translate }}
+          </label>
+
+          <textarea
+            rows="3"
+            placeholder="{{ 'Enter message' | translate }}"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg
+                  focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </textarea>
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex justify-end gap-2 pt-2">
+
+          <button
+            (click)="showCounterOffer = false"
+            class="px-4 py-2 text-sm font-semibold rounded-lg
+                  bg-gray-200 text-gray-700 hover:bg-gray-300 transition">
+            {{ 'Cancel' | translate }}
+          </button>
+
+          <button
+            class="px-4 py-2 text-sm font-semibold rounded-lg
+                  bg-blue-600 text-white hover:bg-blue-700 transition">
+            {{ 'Send counter offer' | translate }}
+          </button>
+
+        </div>
+      </div>
+
+    </div>
+  </ng-container>
+
+  <!-- Loading state -->
+  <div *ngIf="!(evaluation$ | async)" class="p-6 text-center text-gray-500">
+    {{ 'Loading evaluation data...' | translate }}
+  </div>
+</div>

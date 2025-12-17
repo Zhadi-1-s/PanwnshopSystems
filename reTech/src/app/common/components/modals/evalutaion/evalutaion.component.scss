@@ -1,0 +1,37 @@
+.value-box {
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: #f5f5f5;
+  transition: background .2s, color .2s;
+}
+
+.value-box.error {
+  background: #ffe5e5;
+  color: #d60000;
+}
+/* Изменяем размер ползунка (шарика) */
+::ng-deep.ngx-slider .ngx-slider-pointer {
+  width: 16px !important;   /* стандартный ~20-22px, уменьшаем */
+  height: 16px !important;
+  border: 2px solid #3b82f6; /* синяя рамка */
+  background-color: white;   /* цвет самого шарика */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+ margin-top: 8px;
+}
+
+::ng-deep.ngx-slider .ngx-slider-pointer:hover {
+  transform: scale(1.2); /* небольшое увеличение при hover */
+}
+
+/* Изменяем трек (фон слайдера) */
+::ng-deep.ngx-slider .ngx-slider-bar {
+  height: 6px !important;
+  background: #bfdbfe; /* светло-синий фон */
+  border-radius: 3px;
+}
+
+::ng-deep.ngx-slider .ngx-slider-selection {
+  background: #3b82f6; /* активная часть слайдера */
+  height: 6px !important;
+  border-radius: 3px;
+}
