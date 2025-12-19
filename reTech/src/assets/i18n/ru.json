@@ -195,5 +195,13 @@
     "Enter price": "Введите цену",
     "Message to user": "Сообщение пользователю",
     "Enter message": "Введите сообщение",
-    "Send counter offer": "Отправить контрпредложение"
+    "Send counter offer": "Отправить контрпредложение",
+    "Product Information":"Информация продукта",
+    "Created At":"Создано",
+    "Updated At":"Изменено",
+    "No other notifications":"Нет больше уведомлении",
+    "Daily notifications will appear here":"Ежедневные уведомления будут отображаться здесь",
+    "Chat feature coming soon":"Система чатов будет скоро",
+    "No offer notifcations":"Нет уведомлении предложении",
+    "notifications":"Уведомления"
 }

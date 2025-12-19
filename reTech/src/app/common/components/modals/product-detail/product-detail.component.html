@@ -38,7 +38,7 @@
       <span class="w-6 h-6 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
         <i class="fa-solid fa-info text-white text-xs"></i>
       </span>
-      Product Information
+      {{'Product Information'|translate}}
     </h6>
     
     <div class="space-y-4">
@@ -130,7 +130,7 @@
       <span class="w-6 h-6 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg flex items-center justify-center">
         <i class="fa-solid fa-images text-white text-xs"></i>
       </span>
-      Gallery
+      {{'Photos'|translate}}
     </h6>
     <app-image-view 
       [photos]="product.photos" 
@@ -153,12 +153,12 @@
       {{ 'Send Offer' | translate }}
     </button>
 
-    <button 
+    <!-- <button 
       class="px-6 py-3 bg-white text-gray-700 font-semibold rounded-xl border-2 border-gray-300 hover:bg-gray-50 hover:border-gray-400 transition-all duration-300 flex items-center justify-center gap-2"
       (click)="activeModal.dismiss()"
     >
       <i class="fa-solid fa-xmark"></i>
       {{ 'Close' | translate }}
-    </button>
+    </button> -->
   </div>
 </div>

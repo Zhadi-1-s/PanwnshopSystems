@@ -194,7 +194,15 @@
     "Enter price": "Enter price",
     "Message to user": "Message to user",
     "Enter message": "Enter message",
-    "Send counter offer": "Send counter offer"
+    "Send counter offer": "Send counter offer",
+    "Product Information":"Product information",
+    "Created At":"Created At",
+    "Updated At":"Updated At",
+    "No other notifications":"No other notifications",
+    "Daily notifications will appear here":"Daily notifications will appear here",
+    "Chat feature coming soon":"Chat feature coming soon",
+    "No offer notifications":"No offer notifications",
+    "notifications":"Notifications"
     
 
 }
