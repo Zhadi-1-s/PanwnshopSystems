@@ -19,4 +19,5 @@ export interface AppNotification {
 
   isRead: boolean;
   createdAt?: Date;
+  data:any;
 }

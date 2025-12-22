@@ -8,7 +8,7 @@ import { EditModalComponent } from '../../components/modals/edit-modal/edit-moda
 import { TranslateService } from '@ngx-translate/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { ProductService } from '../../../shared/services/product.service';
-import { Observable,map,pipe ,filter, switchMap, tap,firstValueFrom,of, forkJoin} from 'rxjs';
+import { Observable,map,pipe ,filter, switchMap, tap,firstValueFrom,of, forkJoin,catchError} from 'rxjs';
 import { Product } from '../../../shared/interfaces/product.interface';
 import { CreateProductComponent } from '../../components/modals/create-product/create-product.component';
 import { ProductDetailComponent } from '../../components/modals/product-detail/product-detail.component';
@@ -17,11 +17,15 @@ import { PawnshopProfile } from '../../../shared/interfaces/shop-profile.interfa
 import { UserService } from '../../../shared/services/user.service';
 import { NotificationService } from '../../../shared/services/notification.service';
 import { AppNotification } from '../../../shared/interfaces/notification.interface';
+import { OfferService } from '../../../shared/services/offer.service';
+import { Offer } from '../../../shared/interfaces/offer.interface';
+import { OfferDetailComponent } from '../../components/modals/offer-detail/offer-detail.component';
+
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslateModule, NgbTooltip],
+  imports: [CommonModule, RouterModule, TranslateModule],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'] 
 })
@@ -66,7 +70,9 @@ export class ProfileComponent implements OnInit {
               private modalService: NgbModal,
               private productService:ProductService,
               private userService:UserService,
-              private notificationService:NotificationService
+              private notificationService:NotificationService,
+              private offerService:OfferService,
+              private router: Router
   ) {
 
   }
@@ -81,20 +87,35 @@ export class ProfileComponent implements OnInit {
     this.notifications$ = this.authService.currentUser$.pipe(
       filter((user): user is User => !!user?._id),
       switchMap(user => this.notificationService.getUserNotifications(user._id)),
-      tap(notifications => {this.notificationsList = notifications,console.log(notifications,'loaded notifications')}),
-      switchMap(notifcations => {
-        const productIds = notifcations.map((n=> n.refId)).filter(id => !!id);
+      tap(notifications => {
+        // Сохраняем все уведомления
+        this.notificationsList = notifications;
+        console.log(notifications, 'loaded notifications');
+      }),
+      switchMap(notifications => {
+        // Фильтруем только уведомления напрямую на продукты
+        const productNotifications = notifications.filter(n =>
+          !['new-offer', 'offer-accepted', 'offer-rejected'].includes(n.type)
+        );
 
-        if(productIds.length === 0) return of([])
+        const productIds = productNotifications.map(n => n.refId).filter(Boolean);
 
-          return forkJoin(productIds.map(id => this.productService.getProductById(id)));
+        if (productIds.length === 0) return of([]);
+
+        return forkJoin(
+          productIds.map(id =>
+            this.productService.getProductById(id).pipe(
+              catchError(() => of(null)) // на случай 404
+            )
+          )
+        );
       }),
       tap(products => {
-        this.productsById = Object.fromEntries(products.map(p => [p._id,p]))
-        console.log(this.productsById,'products from notification')
+        this.productsById = Object.fromEntries(products.filter(p => p).map(p => [p._id, p]));
+        console.log(this.productsById, 'products from notification');
       })
-    )
-
+    );
+    
     this.product$ = this.notifications$.pipe(
       filter(n => n.length > 0),
       switchMap(notifications => this.productService.getProductById(notifications[0].refId)),
@@ -125,8 +146,80 @@ export class ProfileComponent implements OnInit {
       switchMap(user => this.userService.getFavoriteItems(user._id)),
       tap(products => console.log(products, 'loaded favorite products'))
     )
+    this.loadOffers();
     
   }
+
+ loadOffers() {
+  this.authService.currentUser$.pipe(
+    filter((user): user is User => !!user?._id),
+    switchMap(user => this.notificationService.getUserNotifications(user._id)),
+    tap(notifications => {
+      this.notificationsList = notifications || [];
+    }),
+    switchMap(notifications => {
+      const offerIds = notifications
+        .filter(n => n.type === 'new-offer')
+        .map(n => n.refId)
+        .filter(id => !!id);
+
+      if (offerIds.length === 0) return of({ offers: [], products: [] });
+
+      // Получаем офферы
+      return forkJoin(
+        offerIds.map(id =>
+          this.offerService.getOfferById(id).pipe(
+            catchError(() => of(null))
+          )
+        )
+      ).pipe(
+        map(offers => ({ offers: offers.filter(o => o !== null), products: [] })) // пока продукты пустые
+      );
+    }),
+    switchMap(({ offers }) => {
+      if (!offers.length) return of({ offers: [], products: [] });
+
+      // Получаем продукты офферов
+      const productIds = offers.map(o => o.productId);
+      return forkJoin(
+        productIds.map(id =>
+          this.productService.getProductById(id).pipe(
+            catchError(() => of(null))
+          )
+        )
+      ).pipe(
+        map(products => ({ offers, products: products.filter(p => p) }))
+      );
+    }),
+    tap(({ offers, products }) => {
+      this.productsById = Object.fromEntries(products.map(p => [p._id, p]));
+
+      const offerNotifications = offers.map(offer => ({
+        _id: offer._id,
+        userId:offer.productOwnerId,
+        senderId:offer.pawnshopId,
+        type: 'new-offer' as 'new-offer',
+        title: 'Offer received',
+        message: `Price: ${offer.price} ₸` + (offer.message ? ` — ${offer.message}` : ''),
+        refId: offer.productId,
+        isRead: false,
+        createdAt: offer.createdAt || new Date(),
+        data: offer
+      }));
+
+      this.notificationsList = [
+        ...(this.notificationsList || []),
+        ...offerNotifications
+      ];
+
+      console.log('Notifications list with offers', this.notificationsList);
+      console.log('Products from offers', this.productsById);
+    })
+  ).subscribe();
+}
+
+
+
   deleteProduct(itemId:string){
 
   }
@@ -163,8 +256,18 @@ export class ProfileComponent implements OnInit {
    
   }
 
-  openPawnshopDetail(id:string){
+  async openOfferDetailModal(offer:Offer){
+    const user = await firstValueFrom(this.authService.currentUser$)
+    const modalRef = this.modalService.open(OfferDetailComponent);
 
+    modalRef.componentInstance.offer = offer;
+    modalRef.componentInstance.user = user;
+
+    
+  }
+
+  openPawnshopDetail(id:string){
+    this.router.navigate(['/pawnshop-detail',id])
   }
 
   markAsRead(notification: AppNotification) {
@@ -197,6 +300,12 @@ export class ProfileComponent implements OnInit {
   get unreadOtherNotifications() {
     return (this.notificationsList || []).filter(
       n => ['product-sold','price-changed','chat-opened'].includes(n.type) && !n.isRead
+    );
+  }
+
+  get unreadOfferNotifications() {
+    return (this.notificationsList || []).filter(n =>
+      ['new-offer','offer-accepted','offer-rejected'].includes(n.type) && !n.isRead
     );
   }
 

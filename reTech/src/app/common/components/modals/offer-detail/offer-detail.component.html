@@ -1,0 +1,66 @@
+<div class="p-6 bg-white dark:bg-gray-900 rounded-xl shadow-lg w-full max-w-md mx-auto">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-4">
+    <h2 class="text-xl font-bold text-gray-900 dark:text-white">{{ 'Offer Details' | translate }}</h2>
+    <span class="text-sm text-gray-500 dark:text-gray-400">
+      {{ offer?.createdAt | date:'short' }}
+    </span>
+  </div>
+
+  <!-- Product Info -->
+  <div class="mb-4">
+    <p class="text-sm text-gray-500 dark:text-gray-400">{{ 'Product' | translate }}:</p>
+    <p class="text-base font-semibold text-gray-900 dark:text-white">
+      {{ offer?.productId }}
+    </p>
+  </div>
+
+  <!-- Price -->
+  <div class="mb-4">
+    <p class="text-sm text-gray-500 dark:text-gray-400">{{ 'Price' | translate }}:</p>
+    <p class="text-base font-semibold text-gray-900 dark:text-white">{{ offer?.price | number:'1.0-0' }} ₸</p>
+  </div>
+
+  <!-- Message -->
+  <div *ngIf="offer?.message" class="mb-4">
+    <p class="text-sm text-gray-500 dark:text-gray-400">{{ 'Message' | translate }}:</p>
+    <p class="text-base text-gray-800 dark:text-gray-200">{{ offer.message }}</p>
+  </div>
+
+  <!-- Status -->
+  <div class="mb-6">
+    <p class="text-sm text-gray-500 dark:text-gray-400">{{ 'Status' | translate }}:</p>
+    <span 
+      [ngClass]="{
+        'bg-yellow-200 text-yellow-800': offer.status==='pending',
+        'bg-green-200 text-green-800': offer.status==='accepted',
+        'bg-red-200 text-red-800': offer.status==='rejected'
+      }" 
+      class="inline-block px-3 py-1 rounded-full text-sm font-semibold">
+      {{ offer.status | titlecase | translate }}
+    </span>
+  </div>
+
+  <!-- Actions for User -->
+  <div *ngIf="user.role" class="flex flex-col gap-3">
+    <button class="w-full px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold transition">
+      {{ 'Accept' | translate }}
+    </button>
+    <button class="w-full px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-semibold transition">
+      {{ 'Reject' | translate }}
+    </button>
+    <button class="w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold transition">
+      {{ 'Counter Offer' | translate }}
+    </button>
+  </div>
+
+  <!-- Actions for Pawnshop -->
+  <div *ngIf="user.role" class="flex flex-col gap-3">
+    <button class="w-full px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-semibold transition">
+      {{ 'Cancel Offer' | translate }}
+    </button>
+    <button class="w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold transition">
+      {{ 'Edit Offer' | translate }}
+    </button>
+  </div>
+</div>

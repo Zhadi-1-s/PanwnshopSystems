@@ -36,6 +36,24 @@
             <span>Фильтры</span>
             <i class="fa-solid fa-sliders"></i>
           </button>
+          <button
+            class="inline-flex items-center gap-2 px-5 py-2.5
+                  bg-pink-50 hover:bg-pink-100
+                  text-pink-700 rounded-xl font-medium
+                  border border-pink-200
+                  transition-all duration-200 shadow-sm"
+            (click)="toggleFavorites()"
+          >
+            <i class="fa-solid fa-heart"></i>
+            <span>Избранные</span>
+
+            <span
+              *ngIf="(favoriteItems$ | async)?.length"
+              class="ml-1 px-2 py-0.5 text-xs font-bold bg-pink-600 text-white rounded-full"
+            >
+              {{ (favoriteItems$ | async)?.length }}
+            </span>
+          </button>
 
           <!-- Applied Filters -->
           <div class="flex flex-wrap gap-2" *ngIf="(appliedFilters$ | async)?.length">

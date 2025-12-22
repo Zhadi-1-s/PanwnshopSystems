@@ -65,6 +65,7 @@ export class ProductsListComponent implements OnInit {
   productBase$:Observable<Product[]>
 
   appliedFilters$ = new BehaviorSubject<string[]>([])
+  showFavoritesOnly$ = new BehaviorSubject<boolean>(false);
 
   favoriteItems$:Observable<Product[]>;
   favitems:Product[];
@@ -75,12 +76,18 @@ export class ProductsListComponent implements OnInit {
     floor: 0,
     ceil: 500000,
     showTicks: false,
-    showTicksValues: false
+    showTicksValues: false,
+    hidePointerLabels:true,
+    hideLimitLabels:true
   };
 
   sliderMaxOptions: Options = {
     floor: 0,
-    ceil: 500000
+    ceil: 500000,
+    showTicks:false,
+    showTicksValues:false,
+    hidePointerLabels:true,
+    hideLimitLabels:true
   };
 
   toogleFilterBlock: boolean = false;
@@ -113,7 +120,7 @@ export class ProductsListComponent implements OnInit {
   }
   ngOnInit() {
     this.isBrowser = isPlatformBrowser(this.platformId);
-
+    this.priceTo = this.sliderMaxOptions.ceil;
     this.loadFavorites();
     this.authService.currentUser$.pipe(
       filter((user): user is User => !!user?._id),
@@ -146,8 +153,8 @@ export class ProductsListComponent implements OnInit {
     );
     
     // 2. Фильтр + поиск + сортировка
-    this.filteredProducts$ = combineLatest([this.products$, this.searchTerm$, this.appliedFilters$]).pipe(
-      map(([products, search, appliedFilters]) => {
+    this.filteredProducts$ = combineLatest([this.products$, this.searchTerm$, this.appliedFilters$,this.showFavoritesOnly$]).pipe(
+      map(([products, search, appliedFilters,showFavoritesOnly]) => {
         let result = [...products];
 
         // Фильтр по цене
@@ -160,6 +167,11 @@ export class ProductsListComponent implements OnInit {
         if (priceToFilter) {
           const val = parseFloat(priceToFilter.replace(/\D/g, ''));
           result = result.filter(p => p.price <= val);
+        }
+
+        if (showFavoritesOnly) {
+          const favIds = new Set(this.favitems?.map(f => f._id));
+          result = result.filter(p => favIds.has(p._id));
         }
 
         // Фильтр по help-items
@@ -214,7 +226,7 @@ export class ProductsListComponent implements OnInit {
   // Кнопка "Очистить"
   clearFilters() {
     this.priceFrom = null;
-    this.priceTo = null;
+    this.priceTo = this.sliderMaxOptions.ceil;
     this.priceSort = '';
     this.searchTerm$.next('');
     // оставляем help-items или полностью очищаем?
@@ -267,6 +279,10 @@ export class ProductsListComponent implements OnInit {
       },
       error: (err) => console.error('Ошибка при обновлении избранного:', err)
     });
+  }
+
+  toggleFavorites() {
+    this.showFavoritesOnly$.next(!this.showFavoritesOnly$.value);
   }
 
 

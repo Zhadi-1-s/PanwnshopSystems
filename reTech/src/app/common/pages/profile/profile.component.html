@@ -120,9 +120,9 @@
                 </svg>
                 <span class="text-sm font-medium">{{'Offers'|translate}}</span>
               </div>
-              <span *ngIf="offerNotifications.length > 0" 
+              <span *ngIf="unreadOfferNotifications.length > 0" 
                     class="px-2 py-0.5 text-xs font-semibold bg-red-600 dark:bg-red-500 text-white rounded-full min-w-[22px] text-center">
-                {{offerNotifications.length}}
+                {{unreadOfferNotifications.length}}
               </span>
             </div>
 
@@ -186,12 +186,12 @@
                   {{'Offers' | translate}}
                 </h6>
                 <span class="text-sm text-gray-500 dark:text-gray-400 font-medium">
-                  {{offerNotifications.length}} notifications
+                  {{offerNotifications.length}} {{'notifications'|translate}}
                 </span>
               </div>
 
               <div *ngFor="let n of offerNotifications" 
-                   (click)="markAsRead(n)"
+                   (click)="n.type.startsWith('offer') ? openOfferDetailModal(n.data) : markAsRead(n)"
                    [class.notification-unread]="!n.isRead"
                    class="notification-card bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700 rounded-xl p-4 mb-3 cursor-pointer transition-all hover:bg-gray-100 dark:hover:bg-gray-800 hover:shadow-md hover:-translate-y-0.5">
                 
@@ -269,7 +269,7 @@
                   {{'System' | translate}}
                 </h6>
                 <span class="text-sm text-gray-500 dark:text-gray-400 font-medium">
-                  {{systemNotifications.length}} notifications
+                  {{systemNotifications.length}} {{'notifications'|translate}}
                 </span>
               </div>
 
@@ -279,7 +279,7 @@
                   <line x1="8" y1="21" x2="16" y2="21"></line>
                   <line x1="12" y1="17" x2="12" y2="21"></line>
                 </svg>
-                <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">Daily notifications will appear here</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">{{'Daily notifications will appear here'|translate}}</p>
               </div>
             </div>
 
@@ -295,7 +295,7 @@
                 <svg class="w-12 h-12 text-gray-300 dark:text-gray-700 mb-4 opacity-50" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                   <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                 </svg>
-                <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">Chat feature coming soon</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">{{'Chat feature coming soon'|translate}}</p>
               </div>
             </div>
 
@@ -306,7 +306,7 @@
                   {{'Others' | translate}}
                 </h6>
                 <span class="text-sm text-gray-500 dark:text-gray-400 font-medium">
-                  {{otherNotifications.length}} notifications
+                  {{otherNotifications.length}} {{'notifications'|translate}}
                 </span>
               </div>
 
@@ -362,7 +362,7 @@
                   <line x1="12" y1="8" x2="12" y2="12"></line>
                   <line x1="12" y1="16" x2="12.01" y2="16"></line>
                 </svg>
-                <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">No other notifications</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">{{'No other notifications'| translate}}</p>
               </div>
             </div>
           </div>
@@ -375,7 +375,7 @@
             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
             <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
           </svg>
-          <p class="text-base text-gray-500 dark:text-gray-400">No notifications</p>
+          <p class="text-base text-gray-500 dark:text-gray-400">{{'No notifications'|translate}}</p>
         </div>
       </ng-template>
     </div>
@@ -581,11 +581,11 @@
                     class="absolute right-0 mt-2 w-32 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded shadow-lg z-10">
                   <button class="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
                           (click)="openProductDetails(product); openedMenuIndex = null">
-                    Details
+                    {{'Details'|translate}}
                   </button>
                   <button class="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700"
                           (click)="removeFromFavorites(product._id); openedMenuIndex = null">
-                    Remove
+                    {{'Remove'|translate}}
                   </button>
                 </div>
               </div>

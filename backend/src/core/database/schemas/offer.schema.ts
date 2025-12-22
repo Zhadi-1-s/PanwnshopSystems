@@ -21,8 +21,22 @@ export class Offer {
   @Prop()
   message?: string;
 
-  @Prop({ required: true, enum: ['pending', 'accepted', 'rejected'], default: 'pending' })
+  @Prop({
+    required: true,
+    enum: ['pending', 'accepted', 'rejected'],
+    default: 'pending'
+  })
   status: 'pending' | 'accepted' | 'rejected';
+
+  // 👇 поле, по которому Mongo будет удалять документ
+  @Prop({ required: true })
+  expiresAt: Date;
 }
 
 export const OfferSchema = SchemaFactory.createForClass(Offer);
+
+// 👇 TTL индекс — ПИШЕТСЯ ТОЛЬКО ТУТ
+OfferSchema.index(
+  { expiresAt: 1 },
+  { expireAfterSeconds: 0 }
+);

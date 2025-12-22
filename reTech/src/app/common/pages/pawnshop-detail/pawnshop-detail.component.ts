@@ -232,6 +232,12 @@ export class PawnshopDetailComponent implements OnInit{
   }
 
   openEvaluationModal(){
+
+    if(!this.user){
+      this.modalService.open(LoginRequiredComponent)
+      return
+    }
+    
     const modalRef = this.modalService.open(EvalutaionComponent, {
       centered: true,
       size: 'md',

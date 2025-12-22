@@ -18,11 +18,18 @@ export class OfferService {
 
   // Создать оффер
   async create(dto: CreateOfferDto) {
-    const offer = await this.offerModel.create(dto);
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 10);
+
+    const offer = await this.offerModel.create({
+      ...dto,
+      expiresAt
+    });
 
     const pawnshop = await this.pawnshopService.findOne(dto.pawnshopId);
     const pawnshopName = pawnshop.name;
     
+
     await this.notificationService.create({
       userId: dto.productOwnerId, // кому отправляем уведомление
       senderId: dto.pawnshopId,
@@ -30,7 +37,7 @@ export class OfferService {
       title: 'New offer received',
       message: `${pawnshopName} отправил предложение вашему товару.`,
       refId: offer._id?.toString(),
-      isRead:false
+      isRead:false,
     });
 
     return offer;
