@@ -204,7 +204,13 @@
     "No offer notifications":"No offer notifications",
     "notifications":"Notifications",
     "Favorite shops":"Favorite shops",
-    "Favorite products":"Favorite products"
+    "Favorite products":"Favorite products",
+    "View product details":"View product details",
+    "Accept":"Accept",
+    "Reject":"Reject",
+    "Counter Offer":"Counter Offer",
+    "Message":"Message",
+    "Offer Details":"Offer Details"
     
 
 }

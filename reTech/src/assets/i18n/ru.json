@@ -205,5 +205,11 @@
     "No offer notifcations":"Нет уведомлении предложении",
     "notifications":"Уведомления",
     "Favorite shops":"Избранные магазины",
-    "Favorite products":"Избранные товары"
+    "Favorite products":"Избранные товары",
+    "View product details":"Посмотреть детали продукта",
+    "Accept":"Принять",
+    "Reject":"Отказать",
+    "Counter Offer":"Другие условия",
+    "Message":"Сообщение",
+    "Offer Details":"Детали Предложения"
 }

@@ -1,66 +1,122 @@
-<div class="p-6 bg-white dark:bg-gray-900 rounded-xl shadow-lg w-full max-w-md mx-auto">
+<div class="p-4 bg-white dark:bg-gray-900 rounded-2xl shadow-xl w-full max-w-md mx-auto">
+
   <!-- Header -->
-  <div class="flex justify-between items-center mb-4">
-    <h2 class="text-xl font-bold text-gray-900 dark:text-white">{{ 'Offer Details' | translate }}</h2>
-    <span class="text-sm text-gray-500 dark:text-gray-400">
-      {{ offer?.createdAt | date:'short' }}
+  <div class="flex justify-between items-start mb-5">
+    <div>
+      <h2 class="text-lg font-bold text-gray-900 dark:text-white">
+        {{ 'Offer Details' | translate }}
+      </h2>
+      <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+        {{ offer?.createdAt | date:'short' }}
+      </p>
+    </div>
+
+    <!-- Status Badge -->
+    <span
+      [ngClass]="{
+        'bg-yellow-100 text-yellow-800 ring-1 ring-yellow-200': offer.status === 'pending',
+        'bg-green-100 text-green-800 ring-1 ring-green-200': offer.status === 'accepted',
+        'bg-red-100 text-red-800 ring-1 ring-red-200': offer.status === 'rejected'
+      }"
+      class="px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider"
+    >
+      {{ offer.status | translate }}
     </span>
   </div>
 
-  <!-- Product Info -->
-  <div class="mb-4">
-    <p class="text-sm text-gray-500 dark:text-gray-400">{{ 'Product' | translate }}:</p>
-    <p class="text-base font-semibold text-gray-900 dark:text-white">
-      {{ offer?.productId }}
+  <!-- Product Card -->
+  <ng-container *ngIf="product$ | async as product">
+    <div class="mb-5 p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+      <p class="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-3">
+        {{ 'Product' | translate }}
+      </p>
+
+      <div class="flex gap-4 items-center">
+        <!-- Product Image -->
+        <div class="relative flex-shrink-0">
+          <img
+            [src]="product.photos[0] || 'assets/placeholder-product.jpg'"
+            [alt]="product.title"
+            class="w-20 h-20 object-cover rounded-xl shadow-sm ring-1 ring-gray-200 dark:ring-gray-700"
+          />
+          <div *ngIf="!product.photos[0]" class="absolute inset-0 flex items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-xl">
+            <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Product Info -->
+        <div class="flex-1 min-w-0">
+          <p class="text-base font-semibold text-gray-900 dark:text-white line-clamp-2">
+            {{ product.title }}
+          </p>
+          <button
+            type="button"
+            (click)="openProductDetail(product)"
+            class="mt-2 text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
+          >
+            {{ 'View details' | translate }}
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- Price -->
+  <div class="mb-5">
+    <p class="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">
+      {{ 'Price' | translate }}
+    </p>
+    <p class="text-2xl font-bold text-gray-900 dark:text-white">
+      {{ offer?.price | number:'1.0-0' }} <span class="text-lg font-semibold">₸</span>
     </p>
   </div>
 
-  <!-- Price -->
-  <div class="mb-4">
-    <p class="text-sm text-gray-500 dark:text-gray-400">{{ 'Price' | translate }}:</p>
-    <p class="text-base font-semibold text-gray-900 dark:text-white">{{ offer?.price | number:'1.0-0' }} ₸</p>
-  </div>
-
   <!-- Message -->
-  <div *ngIf="offer?.message" class="mb-4">
-    <p class="text-sm text-gray-500 dark:text-gray-400">{{ 'Message' | translate }}:</p>
-    <p class="text-base text-gray-800 dark:text-gray-200">{{ offer.message }}</p>
+  <div *ngIf="offer?.message" class="mb-5">
+    <p class="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">
+      {{ 'Message' | translate }}
+    </p>
+    <div class="p-3 rounded-lg bg-gray-50 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700">
+      <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+        {{ offer.message }}
+      </p>
+    </div>
   </div>
 
-  <!-- Status -->
-  <div class="mb-6">
-    <p class="text-sm text-gray-500 dark:text-gray-400">{{ 'Status' | translate }}:</p>
-    <span 
-      [ngClass]="{
-        'bg-yellow-200 text-yellow-800': offer.status==='pending',
-        'bg-green-200 text-green-800': offer.status==='accepted',
-        'bg-red-200 text-red-800': offer.status==='rejected'
-      }" 
-      class="inline-block px-3 py-1 rounded-full text-sm font-semibold">
-      {{ offer.status | titlecase | translate }}
-    </span>
+  <!-- Actions -->
+  <div class="grid gap-3">
+
+    <!-- User Actions -->
+    <ng-container *ngIf="user?.role === 'user'" >
+      <button (click)="acceptOffer()" class="w-full py-3 rounded-xl bg-green-600 text-white font-semibold text-base hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500/50 transition active:scale-[0.98]">
+        {{ 'Accept' | translate }}
+      </button>
+
+      <button (click)="rejectOffer()" class="w-full py-3 rounded-xl bg-red-600 text-white font-semibold text-base hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500/50 transition active:scale-[0.98]">
+        {{ 'Reject' | translate }}
+      </button>
+
+      <button class="w-full py-3 rounded-xl bg-blue-600 text-white font-semibold text-base hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition active:scale-[0.98]">
+        {{ 'Counter Offer' | translate }}
+      </button>
+    </ng-container>
+
+    <!-- Pawnshop Actions -->
+    <ng-container *ngIf="user?.role === 'pawnshop'">
+      <button class="w-full py-3 rounded-xl bg-red-600 text-white font-semibold text-base hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500/50 transition active:scale-[0.98]">
+        {{ 'Cancel Offer' | translate }}
+      </button>
+
+      <button class="w-full py-3 rounded-xl bg-gray-700 text-white font-semibold text-base hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500/50 transition active:scale-[0.98]">
+        {{ 'Edit Offer' | translate }}
+      </button>
+    </ng-container>
+
   </div>
 
-  <!-- Actions for User -->
-  <div *ngIf="user.role" class="flex flex-col gap-3">
-    <button class="w-full px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold transition">
-      {{ 'Accept' | translate }}
-    </button>
-    <button class="w-full px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-semibold transition">
-      {{ 'Reject' | translate }}
-    </button>
-    <button class="w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold transition">
-      {{ 'Counter Offer' | translate }}
-    </button>
-  </div>
-
-  <!-- Actions for Pawnshop -->
-  <div *ngIf="user.role" class="flex flex-col gap-3">
-    <button class="w-full px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-semibold transition">
-      {{ 'Cancel Offer' | translate }}
-    </button>
-    <button class="w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold transition">
-      {{ 'Edit Offer' | translate }}
-    </button>
-  </div>
 </div>

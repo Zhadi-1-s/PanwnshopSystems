@@ -34,6 +34,9 @@ export class ProfileComponent implements OnInit {
   loading = true;
   error: string | null = null;
 
+  offersById: Record<string, Offer> = {};
+
+
   myProducts:string[];
 
   currentTime: Date = new Date();
@@ -150,75 +153,35 @@ export class ProfileComponent implements OnInit {
     
   }
 
- loadOffers() {
-  this.authService.currentUser$.pipe(
-    filter((user): user is User => !!user?._id),
-    switchMap(user => this.notificationService.getUserNotifications(user._id)),
-    tap(notifications => {
-      this.notificationsList = notifications || [];
-    }),
-    switchMap(notifications => {
-      const offerIds = notifications
-        .filter(n => n.type === 'new-offer')
-        .map(n => n.refId)
-        .filter(id => !!id);
+  loadOffers() {
+    this.authService.currentUser$.pipe(
+      filter((user): user is User => !!user?._id),
+      switchMap(user => this.notificationService.getUserNotifications(user._id)),
+      map(notifications =>
+        notifications.filter(n => n.type === 'new-offer' && !!n.refId)
+      ),
+      switchMap(offerNotifications => {
+        if (!offerNotifications.length) return of([]);
 
-      if (offerIds.length === 0) return of({ offers: [], products: [] });
-
-      // Получаем офферы
-      return forkJoin(
-        offerIds.map(id =>
-          this.offerService.getOfferById(id).pipe(
-            catchError(() => of(null))
+        return forkJoin(
+          offerNotifications.map(n =>
+            this.offerService.getOfferById(n.refId!).pipe(
+              catchError(() => of(null))
+            )
           )
-        )
-      ).pipe(
-        map(offers => ({ offers: offers.filter(o => o !== null), products: [] })) // пока продукты пустые
-      );
-    }),
-    switchMap(({ offers }) => {
-      if (!offers.length) return of({ offers: [], products: [] });
+        );
+      }),
+      tap(offers => {
+        this.offersById = Object.fromEntries(
+          offers
+            .filter((o): o is Offer => !!o && !!o._id)
+            .map(o => [o._id!, o])
+        );
 
-      // Получаем продукты офферов
-      const productIds = offers.map(o => o.productId);
-      return forkJoin(
-        productIds.map(id =>
-          this.productService.getProductById(id).pipe(
-            catchError(() => of(null))
-          )
-        )
-      ).pipe(
-        map(products => ({ offers, products: products.filter(p => p) }))
-      );
-    }),
-    tap(({ offers, products }) => {
-      this.productsById = Object.fromEntries(products.map(p => [p._id, p]));
-
-      const offerNotifications = offers.map(offer => ({
-        _id: offer._id,
-        userId:offer.productOwnerId,
-        senderId:offer.pawnshopId,
-        type: 'new-offer' as 'new-offer',
-        title: 'Offer received',
-        message: `Price: ${offer.price} ₸` + (offer.message ? ` — ${offer.message}` : ''),
-        refId: offer.productId,
-        isRead: false,
-        createdAt: offer.createdAt || new Date(),
-        data: offer
-      }));
-
-      this.notificationsList = [
-        ...(this.notificationsList || []),
-        ...offerNotifications
-      ];
-
-      console.log('Notifications list with offers', this.notificationsList);
-      console.log('Products from offers', this.productsById);
-    })
-  ).subscribe();
-}
-
-
+        console.log('Offers by id loaded', this.offersById);
+      })
+    ).subscribe(); // ❗ ВОТ ЭТОГО НЕ ХВАТАЛО
+  }
 
   deleteProduct(itemId:string){
 
@@ -260,10 +223,32 @@ export class ProfileComponent implements OnInit {
     const user = await firstValueFrom(this.authService.currentUser$)
     const modalRef = this.modalService.open(OfferDetailComponent);
 
+    console.log(offer,'here we go')
+
     modalRef.componentInstance.offer = offer;
     modalRef.componentInstance.user = user;
 
-    
+
+  }
+
+  onNotificationClick(n: AppNotification) {
+
+    console.log(this.offersById,'loaded offers for modal')
+
+    if (!n.isRead) {
+      this.markAsRead(n);
+    }
+
+    if (n.type === 'new-offer') {
+      const offer = this.offersById[n.refId];
+
+      if (!offer) {
+        console.warn('Offer not loaded yet', n.refId);
+        return; // ⛔ ничего не делаем
+      }
+
+      this.openOfferDetailModal(offer);
+    }
   }
 
   openPawnshopDetail(id:string){

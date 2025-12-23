@@ -191,7 +191,7 @@
               </div>
 
               <div *ngFor="let n of offerNotifications" 
-                   (click)="n.type.startsWith('offer') ? openOfferDetailModal(n.data) : markAsRead(n)"
+                   (click)="onNotificationClick(n)"
                    [class.notification-unread]="!n.isRead"
                    class="notification-card bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700 rounded-xl p-4 mb-3 cursor-pointer transition-all hover:bg-gray-100 dark:hover:bg-gray-800 hover:shadow-md hover:-translate-y-0.5">
                 

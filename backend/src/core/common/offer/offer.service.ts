@@ -6,12 +6,15 @@ import { CreateOfferDto } from './offer.dto';
 import { UpdateOfferStatusDto } from './update-offer.dto';
 import { NotificationService } from '../notification/notification.service';
 import { PawnshopService } from '../pawnshop/pawnshop.service';
+import { NotificationDocument ,Notification} from 'src/core/database/schemas/notifications.schema';
 
 @Injectable()
 export class OfferService {
   constructor(
     @InjectModel(Offer.name)
     private offerModel: Model<OfferDocument>,
+    @InjectModel(Notification.name)
+    private readonly notificationModel:Model<NotificationDocument>,
     private notificationService:NotificationService,
     private pawnshopService:PawnshopService
   ) {}
@@ -62,7 +65,33 @@ export class OfferService {
   }
 
   // Обновить статус (accept / reject)
-  async updateStatus(id: string, dto: UpdateOfferStatusDto) {
-    return this.offerModel.findByIdAndUpdate(id, { status: dto.status }, { new: true });
+  async updateStatus(
+  offerId: string,
+  status: 'pending' | 'accepted' | 'rejected',
+) {
+  const offer = await this.offerModel.findById(offerId);
+
+  if (!offer) {
+    throw new NotFoundException('Offer not found');
   }
+  
+
+  if (status === 'rejected') {
+    await this.notificationModel.deleteMany({
+      type: 'new-offer',
+      refId: offer._id.toString(),
+    });
+
+    await this.offerModel.deleteOne({ _id: offer._id });
+
+    return { deleted: true };
+  }
+
+  // Здесь присваиваем **строку**, а не объект
+  offer.status = status;
+  await offer.save();
+
+  return offer;
+}
+
 }
