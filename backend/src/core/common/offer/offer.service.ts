@@ -3,10 +3,11 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Offer,OfferDocument } from 'src/core/database/schemas/offer.schema';
 import { Model, Types } from 'mongoose';
 import { CreateOfferDto } from './offer.dto';
-import { UpdateOfferStatusDto } from './update-offer.dto';
 import { NotificationService } from '../notification/notification.service';
 import { PawnshopService } from '../pawnshop/pawnshop.service';
 import { NotificationDocument ,Notification} from 'src/core/database/schemas/notifications.schema';
+
+
 
 @Injectable()
 export class OfferService {
@@ -66,32 +67,42 @@ export class OfferService {
 
   // Обновить статус (accept / reject)
   async updateStatus(
-  offerId: string,
-  status: 'pending' | 'accepted' | 'rejected',
-) {
-  const offer = await this.offerModel.findById(offerId);
+    offerId: string,
+    status: 'pending' | 'accepted' | 'rejected',
+  ) {
+    const offer = await this.offerModel.findById(offerId);
 
-  if (!offer) {
-    throw new NotFoundException('Offer not found');
-  }
-  
+    if (!offer) {
+      throw new NotFoundException('Offer not found');
+    }
 
-  if (status === 'rejected') {
+    // Удаляем уведомление о новом оффере
     await this.notificationModel.deleteMany({
       type: 'new-offer',
       refId: offer._id.toString(),
     });
 
-    await this.offerModel.deleteOne({ _id: offer._id });
+    if (status === 'rejected') {
+      await this.offerModel.findByIdAndDelete(offer._id);
+      return { deleted: true };
+    }
 
-    return { deleted: true };
+    // accepted / pending
+    offer.status = status;
+    await offer.save();
+
+    // можно сразу отправить новое уведомление
+   await this.notificationService.create({
+      userId: offer.pawnshopId.toString(),
+      senderId: offer.productOwnerId.toString(),
+      type: 'offer-accepted',
+      title: 'Offer accepted',
+      refId: offer._id.toString(),
+      isRead: false,
+    });
+
+    return offer;
   }
 
-  // Здесь присваиваем **строку**, а не объект
-  offer.status = status;
-  await offer.save();
-
-  return offer;
-}
 
 }

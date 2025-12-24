@@ -31,6 +31,7 @@ import { error } from 'console';
 import { EvaluationDetailComponent } from '../../components/modals/evaluation-detail/evaluation-detail.component';
 import { OfferService } from '../../../shared/services/offer.service';
 import { UserService } from '../../../shared/services/user.service';
+import { SlotDetailComponent } from '../../components/modals/slot-detail/slot-detail.component';
 
 
 @Component({
@@ -474,6 +475,8 @@ export class LombardProfileComponent implements OnInit{
 
   }
 
+  
+
   openNotificationDetail(n: any) {
     if (n.type === 'sent-offer') {
       // если есть продукт в n.data
@@ -513,7 +516,11 @@ export class LombardProfileComponent implements OnInit{
     modalRef.componentInstance.terms = this.profile.terms;
   }
 
-  openSlotDetails(item: Slot) {}
+  openSlotDetails(item: Slot) {
+      const modalRef = this.modalService.open(SlotDetailComponent,{size:'lg',centered:true});
+
+      modalRef.componentInstance.slot = item;
+  }
   editSlot(item: Slot) {}
   
   filterOpenItems(){

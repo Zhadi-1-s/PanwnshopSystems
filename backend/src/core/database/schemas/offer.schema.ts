@@ -1,8 +1,9 @@
 // offer.schema.ts
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
+import { HydratedDocument } from 'mongoose';
 
-export type OfferDocument = Offer & Document;
+export type OfferDocument = HydratedDocument<Offer>;
 
 @Schema({ timestamps: { createdAt: true, updatedAt: false } })
 export class Offer {
@@ -22,6 +23,7 @@ export class Offer {
   message?: string;
 
   @Prop({
+    type:String,
     required: true,
     enum: ['pending', 'accepted', 'rejected'],
     default: 'pending'

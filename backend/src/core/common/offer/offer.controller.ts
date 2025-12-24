@@ -30,7 +30,10 @@ export class OfferController {
   }
 
   @Patch(':id/status')
-  updateStatus(@Param('id') id: string, @Body() status: 'pending' | 'accepted' | 'rejected') {
-    return this.offerService.updateStatus(id, status);
+  updateStatus(
+    @Param('id') id: string,
+    @Body() dto: UpdateOfferStatusDto,
+  ) {
+    return this.offerService.updateStatus(id, dto.status);
   }
 }
