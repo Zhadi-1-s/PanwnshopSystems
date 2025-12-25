@@ -24,6 +24,9 @@ export class OfferDetailComponent implements OnInit{
   @Input() offer:Offer;
   @Input() user:User;
 
+  countdown:string;
+  inspectionDeadline:Date;
+
   product$:Observable<Product>;
 
   constructor(
@@ -36,7 +39,32 @@ export class OfferDetailComponent implements OnInit{
 
   ngOnInit() {
       this.product$ = this.productService.getProductById(this.offer.productId)
-    
+      if (this.offer?.status === 'in_inspection') {
+        // допустим 48 часов после принятия оффера
+        this.inspectionDeadline = new Date(this.offer.updatedAt);
+        this.inspectionDeadline.setHours(this.inspectionDeadline.getHours() + 48);
+
+        this.startCountdown();
+      }
+  }
+
+  startCountdown() {
+    const interval = setInterval(() => {
+      const now = new Date().getTime();
+      const distance = this.inspectionDeadline.getTime() - now;
+
+      if (distance <= 0) {
+        this.countdown = 'Expired';
+        clearInterval(interval);
+        return;
+      }
+
+      const hours = Math.floor((distance / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((distance / (1000 * 60)) % 60);
+      const seconds = Math.floor((distance / 1000) % 60);
+
+      this.countdown = `${hours}h ${minutes}m ${seconds}s`;
+    }, 1000);
   }
 
   openProductDetail(product:Product){
@@ -49,10 +77,11 @@ export class OfferDetailComponent implements OnInit{
   acceptOffer() {
     if (!this.offer._id) return;
 
-    this.offerService.updateStatus(this.offer._id, 'accepted')
+    this.offerService.updateStatus(this.offer._id, 'in_inspection')
       .subscribe({
         next: updatedOffer => {
           this.offer.status = updatedOffer.status;
+          window.alert(updatedOffer.status)
         },
         error: err => {
           console.error('Accept offer failed', err);

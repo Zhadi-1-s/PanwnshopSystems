@@ -5,9 +5,11 @@ export interface Offer{
     productOwnerId: string;
     price: number;
     message?: string;
-    status: 'pending' | 'accepted' | 'rejected';
+    status: 'pending' | 'completed' | 'rejected' | 'in_inspection';
     createdAt?: Date;
+    updatedAt?:Date
 }
+
 export interface Evaluation{
    _id?: string;
 
@@ -23,8 +25,8 @@ export interface Evaluation{
  
     expectedPrice?: number;
     termDays:number;
-  // статус обработки
-    status: 'pending' | 'viewed' | 'responded';
+ 
+    status: 'pending' | 'viewed' | 'responded' | 'in_inspection';
 
     createdAt?: Date;
 }

@@ -7,8 +7,6 @@ import { NotificationService } from '../notification/notification.service';
 import { PawnshopService } from '../pawnshop/pawnshop.service';
 import { NotificationDocument ,Notification} from 'src/core/database/schemas/notifications.schema';
 
-
-
 @Injectable()
 export class OfferService {
   constructor(
@@ -67,42 +65,37 @@ export class OfferService {
 
   // Обновить статус (accept / reject)
   async updateStatus(
-    offerId: string,
-    status: 'pending' | 'accepted' | 'rejected',
+      offerId: string,
+      status: 'pending' | 'completed' | 'rejected' | 'in_inspection',
   ) {
-    const offer = await this.offerModel.findById(offerId);
+      const offer = await this.offerModel.findById(offerId);
 
-    if (!offer) {
-      throw new NotFoundException('Offer not found');
-    }
-
-    // Удаляем уведомление о новом оффере
-    await this.notificationModel.deleteMany({
-      type: 'new-offer',
-      refId: offer._id.toString(),
-    });
+      if (!offer) throw new NotFoundException('Offer not found');
 
     if (status === 'rejected') {
-      await this.offerModel.findByIdAndDelete(offer._id);
-      return { deleted: true };
+      await this.notificationModel.deleteMany({
+        type: 'new-offer',
+        refId: offer._id.toString(),
+      });
     }
 
-    // accepted / pending
-    offer.status = status;
-    await offer.save();
+      // Обновляем статус
+      offer.status = status;
+      await offer.save();
 
-    // можно сразу отправить новое уведомление
-   await this.notificationService.create({
-      userId: offer.pawnshopId.toString(),
-      senderId: offer.productOwnerId.toString(),
-      type: 'offer-accepted',
-      title: 'Offer accepted',
-      refId: offer._id.toString(),
-      isRead: false,
-    });
+      // Отправка уведомления (можно делать более точно по статусу)
+      await this.notificationService.create({
+          userId: offer.pawnshopId.toString(),
+          senderId: offer.productOwnerId.toString(),
+          type: status === 'pending' ? 'offer-accepted' : 'offer-updated',
+          title: `Offer ${status}`,
+          refId: offer._id.toString(),
+          isRead: false,
+      });
 
-    return offer;
+      return offer;
   }
+
 
 
 }

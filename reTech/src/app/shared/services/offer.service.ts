@@ -28,7 +28,7 @@ export class OfferService {
     return this.http.get<Offer>(`${this.apiUrl}/${id}`);
   }
 
-  updateStatus(id: string, status: 'pending' | 'accepted' | 'rejected'): Observable<Offer> {
+  updateStatus(id: string, status: 'pending' | 'completed' | 'rejected'| 'in_inspection'): Observable<Offer> {
     return this.http.patch<Offer>(`${this.apiUrl}/${id}/status`, { status });
   }
 }

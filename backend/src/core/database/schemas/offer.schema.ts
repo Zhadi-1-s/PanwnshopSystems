@@ -5,7 +5,7 @@ import { HydratedDocument } from 'mongoose';
 
 export type OfferDocument = HydratedDocument<Offer>;
 
-@Schema({ timestamps: { createdAt: true, updatedAt: false } })
+@Schema({ timestamps: { createdAt: true, updatedAt: true } })
 export class Offer {
   @Prop({ type: Types.ObjectId, ref: 'ProductId', required: true })
   productId: Types.ObjectId;
@@ -25,10 +25,10 @@ export class Offer {
   @Prop({
     type:String,
     required: true,
-    enum: ['pending', 'accepted', 'rejected'],
+    enum: ['pending', 'completed', 'rejected','in_inspection'],
     default: 'pending'
   })
-  status: 'pending' | 'accepted' | 'rejected';
+  status: 'pending' | 'completed' | 'rejected' | 'in_inspection';
 
   // 👇 поле, по которому Mongo будет удалять документ
   @Prop({ required: true })

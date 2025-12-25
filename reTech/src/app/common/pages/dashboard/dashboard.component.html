@@ -5,10 +5,10 @@
     <div class="text-xl sm:text-2xl font-bold ml-12">LombardHub</div>
     <!-- Added responsive text sizing and spacing for navigation -->
     <div class="flex items-center gap-3 sm:gap-6 md:gap-8">
-      <a routerLink="/pawnshop-list" class="hidden sm:inline text-sm md:text-base text-slate-300 hover:text-white transition-colors" (click)="scrollToPawnshops()">
+      <a class="hidden sm:inline text-sm md:text-base text-slate-300 hover:text-white transition-colors cursor-pointer" (click)="scrollToPawnshops()">
         {{ 'Pawnshops' | translate }}
       </a>
-      <a routerLink="/about" class="hidden sm:inline text-sm md:text-base text-slate-300 hover:text-white transition-colors" (click)="scrollToHowItWorks()">
+      <a  class="hidden sm:inline text-sm md:text-base text-slate-300 hover:text-white transition-colors cursor-pointer" (click)="scrollToHowItWorks()">
         {{ 'How it works' | translate }}
       </a>
       <a 
@@ -43,13 +43,18 @@
       <!-- Search Bar -->
       <!-- Responsive search bar with adjusted padding and icon sizes -->
       <div class="max-w-2xl mx-auto mb-10 sm:mb-16 px-4">
-        <div class="relative">
-          <svg class="absolute left-4 sm:left-5 top-1/2 -translate-y-1/2 w-4 sm:w-5 h-4 sm:h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        <div class="relative backdrop-blur-sm bg-slate-800/50 rounded-xl sm:rounded-2xl">
+          <svg class="absolute left-4 sm:left-5 top-1/2 -translate-y-1/2 w-4 sm:w-5 h-4 sm:h-5 text-slate-400 pointer-events-none z-10"
+              fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
           </svg>
-          <input 
-            type="text" 
-            class="w-full pl-12 sm:pl-14 pr-4 sm:pr-6 py-4 sm:py-5 text-sm sm:text-base bg-slate-800/50 border border-slate-700 rounded-xl sm:rounded-2xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all backdrop-blur-sm"
+
+          <input
+            type="text"
+            class="w-full pl-12 sm:pl-14 pr-4 sm:pr-6 py-4 sm:py-5 text-sm sm:text-base
+                  bg-transparent border border-slate-700 text-white placeholder-slate-400
+                  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
             placeholder="{{ 'Find a gadget or device' | translate }}"
           >
         </div>
@@ -164,7 +169,7 @@
 
 <!-- How It Works Section -->
 <!-- Responsive section padding -->
-<section class="bg-white dark:bg-slate-950 py-12 sm:py-16 md:py-20" id="HowIrWorks">
+<section class="bg-white dark:bg-slate-950 py-12 sm:py-16 md:py-20" id="HowItWorks">
   <div class="container mx-auto px-4 sm:px-6">
     <div class="text-center mb-10 sm:mb-16">
       <!-- Responsive heading -->

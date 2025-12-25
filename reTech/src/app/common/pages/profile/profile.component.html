@@ -193,8 +193,8 @@
               <div *ngFor="let n of offerNotifications" 
                    (click)="onNotificationClick(n)"
                    [class.notification-unread]="!n.isRead"
-                   class="notification-card bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700 rounded-xl p-4 mb-3 cursor-pointer transition-all hover:bg-gray-100 dark:hover:bg-gray-800 hover:shadow-md hover:-translate-y-0.5">
-                
+                   class=" relaitve notification-card bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700 rounded-xl p-4 mb-3 cursor-pointer transition-all hover:bg-gray-100 dark:hover:bg-gray-800 hover:shadow-md hover:-translate-y-0.5">
+
                 <div class="flex gap-4 items-start">
                   <!-- Product Thumbnail -->
                   <div *ngIf="productsById[n.refId] as p" class="w-14 h-14 flex-shrink-0 rounded-lg overflow-hidden bg-gray-200 dark:bg-gray-700">

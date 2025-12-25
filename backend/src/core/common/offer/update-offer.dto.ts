@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum } from 'class-validator';
 
 export class UpdateOfferStatusDto {
-  @ApiProperty({ enum: ['pending', 'accepted', 'rejected'] })
-  @IsEnum(['pending', 'accepted', 'rejected'])
-  status: 'pending' | 'accepted' | 'rejected';
+  @ApiProperty({ enum: ['pending', 'completed', 'rejected','in_inspection'] })
+  @IsEnum(['pending', 'completed', 'rejected','in_inspection'])
+  status: 'pending' | 'completed' | 'rejected' | 'in_inspection';
 }
