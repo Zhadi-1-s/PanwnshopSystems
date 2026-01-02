@@ -210,7 +210,13 @@
     "Reject":"Reject",
     "Counter Offer":"Counter Offer",
     "Message":"Message",
-    "Offer Details":"Offer Details"
-    
+    "Offer Details":"Offer Details",
+    "Filters":"Filters",
+    "Rejected":"Rejected",
+    "Sold":"Sold",
+    "Newest first":"Newest first",
+    "Oldest first":"Oldest first",
+    "Sort by date":"Sort by date",
+    "in_inspection":"In inspection"
 
 }

@@ -36,9 +36,3 @@ export class Offer {
 }
 
 export const OfferSchema = SchemaFactory.createForClass(Offer);
-
-// 👇 TTL индекс — ПИШЕТСЯ ТОЛЬКО ТУТ
-OfferSchema.index(
-  { expiresAt: 1 },
-  { expireAfterSeconds: 0 }
-);

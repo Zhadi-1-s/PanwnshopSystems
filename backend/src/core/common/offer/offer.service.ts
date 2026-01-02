@@ -60,6 +60,12 @@ export class OfferService {
   async getById(id: string) {
     const offer = await this.offerModel.findById(id);
     if (!offer) throw new NotFoundException('Offer not found');
+
+    if(offer.status === 'in_inspection' && offer.expiresAt <= new Date()){
+      offer.status = 'rejected';
+      await offer.save();
+    }
+
     return offer;
   }
 
@@ -71,13 +77,6 @@ export class OfferService {
       const offer = await this.offerModel.findById(offerId);
 
       if (!offer) throw new NotFoundException('Offer not found');
-
-    if (status === 'rejected') {
-      await this.notificationModel.deleteMany({
-        type: 'new-offer',
-        refId: offer._id.toString(),
-      });
-    }
 
       // Обновляем статус
       offer.status = status;

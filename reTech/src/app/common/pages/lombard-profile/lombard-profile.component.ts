@@ -77,10 +77,18 @@ export class LombardProfileComponent implements OnInit{
 
   offerFilter: 'all' | 'sent' | 'received' = 'all';
 
-
+  isOfferFilterOpen = false;
 
   viewMode:boolean = true;
   isEditing:boolean = false;
+
+  statusFilter = {
+    rejected:false,
+    in_inspection:false,
+    pending:false,
+    completed:false
+  }
+  sortByDate: 'newest' | 'oldest' = 'newest';
 
   selectedTab: 'active' | 'inactive' = 'active';
   activeSection: 'offers' | 'system' | 'chats' | 'others' = 'offers';
@@ -130,7 +138,7 @@ export class LombardProfileComponent implements OnInit{
       }),
 
       switchMap(notifications => {
-        const refIds = notifications.map(r => r.refId).filter(Boolean);
+        const refNotifications = notifications.filter(n => n.refId);
         const senderIds = [...new Set(
           notifications.map(s => s.senderId).filter(Boolean)
         )];
@@ -146,21 +154,46 @@ export class LombardProfileComponent implements OnInit{
             )
           : of([]);
 
-        const refs$ = refIds.length
+        const refs$ = refNotifications.length
           ? forkJoin(
-              refIds.map(id =>
-                this.productService.getProductById(id).pipe(
-                  map(product => ({ id, data: product })),
-                  catchError(() =>
-                    this.evaluationService.getEvaluationById(id).pipe(
-                      map(evaluation => ({ id, data: evaluation })),
-                      catchError(() => of({ id, data: null }))
-                    )
-                  )
-                )
-              )
+              refNotifications.map(n => {
+                if (!n.refId) {
+                  return of(null);
+                }
+
+                switch (n.type) {
+
+                  // ===== OFFERS =====
+                  case 'new-offer':
+                  case 'offer-accepted':
+                  case 'offer-rejected':
+                  case 'offer-updated':
+                    return this.offerService.getOfferById(n.refId).pipe(
+                      map(data => ({ id: n.refId, data })),
+                      catchError(() => of({ id: n.refId, data: null }))
+                    );
+
+                  // ===== PRODUCTS =====
+                  case 'product-sold':
+                  case 'price-changed':
+                    return this.productService.getProductById(n.refId).pipe(
+                      map(data => ({ id: n.refId, data })),
+                      catchError(() => of({ id: n.refId, data: null }))
+                    );
+
+                  // ===== CHATS =====
+                  case 'new-message':
+
+                  // ===== SYSTEM / UNKNOWN =====
+                  case 'system':
+                  default:
+                    return of(null);
+                }
+              })
             )
           : of([]);
+
+
 
         return forkJoin({ users: users$, refs: refs$ }).pipe(
           tap(({ users, refs }) => {
@@ -314,20 +347,44 @@ export class LombardProfileComponent implements OnInit{
   }
   
   get offerNotifications() {
-    const offers = (this.notificationsList || []).filter(n =>
+    let offers = (this.notificationsList || []).filter(n =>
       ['new-offer', 'sent-offer'].includes(n.type)
     );
 
+    // 1️⃣ sent / received
     if (this.offerFilter === 'sent') {
-      return offers.filter(n => n.type === 'sent-offer');
+      offers = offers.filter(n => n.type === 'sent-offer');
     }
 
     if (this.offerFilter === 'received') {
-      return offers.filter(n => n.type === 'new-offer');
+      offers = offers.filter(n => n.type === 'new-offer');
     }
+
+    // 2️⃣ status (rejected / sold)
+    if (this.statusFilter.rejected || this.statusFilter.completed || this.statusFilter.in_inspection || this.statusFilter.pending) {
+      offers = offers.filter(n => {
+        const status = n.data?.status; // <-- важно
+        return (
+          (this.statusFilter.rejected && status === 'rejected') ||
+          (this.statusFilter.completed && status === 'sold') || 
+          (this.statusFilter.in_inspection && status === 'in_inspection') ||
+          (this.statusFilter.pending && status === 'pending')
+        );
+      });
+    }
+
+    // 3️⃣ sort by date
+    offers = offers.sort((a, b) => {
+      const aDate = new Date(a.createdAt).getTime();
+      const bDate = new Date(b.createdAt).getTime();
+      return this.sortByDate === 'newest'
+        ? bDate - aDate
+        : aDate - bDate;
+    });
 
     return offers;
   }
+
 
   get systemNotifications() {
     return (this.notificationsList || []).filter(n => n.type === 'system');

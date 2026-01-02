@@ -211,5 +211,12 @@
     "Reject":"Отказать",
     "Counter Offer":"Другие условия",
     "Message":"Сообщение",
-    "Offer Details":"Детали Предложения"
+    "Offer Details":"Детали Предложения",
+    "Rejected":"Отклонено",
+    "Sold":"Продано",
+    "Newest first":"Сначала новые",
+    "Oldest first":"Сначала старые",
+    "Filters":"Фильтры",
+    "Sort by date":"Сортировать по дате",
+    "in_inspection":"На проверке"
 }
