@@ -22,7 +22,7 @@ export class EditModalComponent {
   editedUser: User;
 
   uploading = false;
-  avatarPreview: string | ArrayBuffer | null = null;
+  avatarPreview: { url: string; publicId: string } | string = '';
 
 
   constructor(
@@ -36,32 +36,33 @@ export class EditModalComponent {
   ngOnInit(): void {
     // копируем данные, чтобы не редактировать оригинальный объект
     this.editedUser = { ...this.user };
-    this.avatarPreview = this.user.avatarUrl || '/assets/png/default-avatar.jpg'
+    // this.avatarPreview = this.user.avatarUrl || '/assets/png/default-avatar.jpg'
+    this.avatarPreview = '/assets/png/default-avatar.jpg';
   }
 
-  async onFileSelected(event: Event): Promise<void> {
-    const input = event.target as HTMLInputElement;
-    if (!input.files?.length) return;
+  // async onFileSelected(event: Event): Promise<void> {
+  //   const input = event.target as HTMLInputElement;
+  //   if (!input.files?.length) return;
 
-    const file = input.files[0];
-    if (!file.type.startsWith('image/')) {
-      alert('Please select a valid image file.');
-      return;
-    }
+  //   const file = input.files[0];
+  //   if (!file.type.startsWith('image/')) {
+  //     alert('Please select a valid image file.');
+  //     return;
+  //   }
 
-    this.uploading = true;
+  //   this.uploading = true;
 
-    try {
-      const uploadedUrl = await this.uploadService.uploadImage(file);
-      this.editedUser.avatarUrl = uploadedUrl;
-      this.avatarPreview = uploadedUrl;
-    } catch (err) {
-      console.error('Ошибка загрузки изображения:', err);
-      alert('Ошибка при загрузке изображения');
-    } finally {
-      this.uploading = false;
-    }
-  }
+  //   try {
+  //     const uploadedUrl = await this.uploadService.uploadImage(file);
+  //     this.editedUser.avatarUrl = uploadedUrl;
+  //     this.avatarPreview = uploadedUrl;
+  //   } catch (err) {
+  //     console.error('Ошибка загрузки изображения:', err);
+  //     alert('Ошибка при загрузке изображения');
+  //   } finally {
+  //     this.uploading = false;
+  //   }
+  // }
 
 
   saveChanges(): void {

@@ -57,16 +57,17 @@ export class CreateLombardComponent {
     this.loading = true;
 
     try {
-      let logoUrl = this.lombardForm.value.logoUrl;
+      let logo: { url: string; publicId: string } | null = null;
+
       if (this.selectedLogoFile) {
-        logoUrl = await this.uploadService.uploadImage(this.selectedLogoFile);
+        logo = await this.uploadService.uploadImage(this.selectedLogoFile);
       }
 
-      const uploadedUrls: string[] = [];
+      const uploadedPhotos: { url: string; publicId: string }[] = [];
       for (const file of this.selectedFiles) {
         try {
-          const url = await this.uploadService.uploadImage(file);
-          uploadedUrls.push(url);
+          const photo = await this.uploadService.uploadImage(file);
+          uploadedPhotos.push(photo);
         } catch (err) {
           console.error('Ошибка загрузки фото:', err);
         }
@@ -75,8 +76,8 @@ export class CreateLombardComponent {
       const payload: PawnshopProfile = {
         userId: this.userId,
         ...this.lombardForm.value,
-        logoUrl,
-        photos: uploadedUrls
+        logo,
+        photos: uploadedPhotos
       };
 
       console.log('вот ка выглядит ломбард', payload);

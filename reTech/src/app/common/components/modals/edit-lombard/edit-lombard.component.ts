@@ -22,7 +22,7 @@ export class EditLombardComponent implements OnInit {
   @Input() lombard: PawnshopProfile;
 
   editedShop:PawnshopProfile;
-  photos: string[] = [];
+  photos: { url: string; publicId: string }[] = [];
 
   constructor(
     private modalService:NgbActiveModal,
@@ -47,9 +47,9 @@ export class EditLombardComponent implements OnInit {
       if (!file) return;
 
       try {
-        const url = await this.uploadService.uploadImage(file);
-        this.photos.push(url);
-        console.log('🌐 Ответ от Cloudinary:', url);
+        const image = await this.uploadService.uploadImage(file);
+        this.photos.push(image);
+        console.log('🌐 Ответ от Cloudinary:', image);
       } catch (err) {
         console.error('Ошибка загрузки фото:', err);
       }

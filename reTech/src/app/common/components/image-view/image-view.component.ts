@@ -11,7 +11,7 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 export class ImageViewComponent {
 
-  @Input() photos: string[];
+  @Input() photos: { url: string; publicId: string }[];
   @Input() editable:boolean ;
 
   @Output() photoRemoved = new EventEmitter<number>();

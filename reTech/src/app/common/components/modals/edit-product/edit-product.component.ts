@@ -20,7 +20,7 @@ export class EditProductComponent {
   @Input() product!: Product;
 
   form!: FormGroup;
-  photos: string[] = [];
+  photos: { url: string; publicId: string }[] = [];
 
   status:Status;
   statusValues = Object.values(Status);

@@ -9,7 +9,7 @@ export class CloudinaryService {
 
   constructor(private http: HttpClient) {}
 
-  async uploadImage(file: File): Promise<string> {
+  async uploadImage(file: File): Promise<{ url: string; publicId: string }> {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('upload_preset', this.uploadPreset);
@@ -18,6 +18,9 @@ export class CloudinaryService {
       this.http.post(`https://api.cloudinary.com/v1_1/${this.cloudName}/image/upload`, formData)
     );
 
-    return response.secure_url;
+   return {
+      url: response.secure_url,
+      publicId: response.public_id
+    };
   }
 }

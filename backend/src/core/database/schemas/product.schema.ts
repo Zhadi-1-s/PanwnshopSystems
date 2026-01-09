@@ -24,8 +24,19 @@ export class Product {
   })
   category: Category;
 
-  @Prop({ type: [String], default: [] })
-  photos: string[];
+  @Prop({
+    type: [
+      {
+        url: { type: String, required: true },
+        publicId: { type: String, required: true }
+      }
+    ],
+    default: []
+  })
+  photos: {
+    url: string;
+    publicId: string;
+  }[];
 
   @Prop({ required: true, enum:Status, default: 'open' })
   status: Status;

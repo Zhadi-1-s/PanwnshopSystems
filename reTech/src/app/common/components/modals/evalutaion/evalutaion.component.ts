@@ -106,7 +106,7 @@ export class EvalutaionComponent implements OnInit {
 
     this.uploading =true;
 
-    const uploadedUrls: string[] = [];
+    const uploadedUrls: { url: string; publicId: string }[] = [];
 
     for (const file of this.selectedFiles) {
       try {

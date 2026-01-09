@@ -1,7 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional, IsArray, IsEnum, IsMongoId, isString, IsNumber } from 'class-validator';
+import { IsString, IsOptional, IsArray, IsEnum, IsMongoId, isString, IsNumber,ValidateNested } from 'class-validator';
 import { Category } from '../enums/category.enum';
 import { Status } from '../enums/status.enum';
+import { Type } from 'class-transformer';
+
+class ProductPhotoDto {
+  @ApiProperty({ example: 'https://res.cloudinary.com/...' })
+  @IsString()
+  url: string;
+
+  @ApiProperty({ example: 'products/iphone_123abc' })
+  @IsString()
+  publicId: string;
+}
 
 export class CreateProductDto {
   @ApiProperty({ example: '6707f9a3c52f1a2b6b2f1d1c', description: 'ID владельца (User._id) или (PawnShopId)' })
@@ -22,13 +33,15 @@ export class CreateProductDto {
   category: Category;
 
   @ApiProperty({
-    example: ['https://example.com/photo1.jpg'],
+    type: [ProductPhotoDto],
     required: false,
-    description: 'Фото товара',
+    description: 'Фото товара'
   })
   @IsOptional()
   @IsArray()
-  photos?: string[];
+  @ValidateNested({ each: true })
+  @Type(() => ProductPhotoDto)
+  photos?: ProductPhotoDto[];
 
   @ApiProperty({enum:Status,default:Status.ACTIVE})
   @IsOptional()

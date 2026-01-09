@@ -59,13 +59,13 @@ export class CreateProductComponent {
     if (this.productForm.invalid) return;
 
     this.uploading = true;
-    const uploadedUrls: string[] = [];
+    const uploadedPhotos: { url: string; publicId: string }[] = [];
 
     // загружаем фото по очереди в Cloudinary
     for (const file of this.selectedFiles) {
       try {
-        const url = await this.uploadService.uploadImage(file);
-        uploadedUrls.push(url);
+        const photo = await this.uploadService.uploadImage(file);
+        uploadedPhotos.push(photo);
       } catch (err) {
         console.error('Ошибка загрузки фото:', err);
       }
@@ -74,7 +74,7 @@ export class CreateProductComponent {
     const product: Product = {
       ...this.productForm.value,
       ownerId: this.ownerId,
-      photos: uploadedUrls,
+      photos: uploadedPhotos,
       status:'active'
     };
 

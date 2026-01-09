@@ -6,7 +6,7 @@ export interface Product {
   title: string;
   description?: string;
   category: Category;
-  photos: string[];
+  photos: { url: string; publicId: string }[];
   status: Status;
   price: number;
   createdAt?: Date;

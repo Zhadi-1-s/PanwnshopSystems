@@ -15,7 +15,7 @@ export interface PawnshopProfile {
   workingDays?: string[]; //  ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']
   rating?: number;
   description?: string;
-  photos?: string[];
+  photos?: { url: string; publicId: string }[];
   products:Product[]
   activeSlots:Slot[];
   slotLimit:number;
