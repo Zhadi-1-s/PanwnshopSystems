@@ -46,7 +46,9 @@ export class PawnshopDetailComponent implements OnInit{
 
   newRating: number = 5;
   newComment: string = '';
-
+  commentError = false;
+  ratingError = false;
+  roleError = false;
   reviews:string[];
 
   favorites:any[];
@@ -111,10 +113,15 @@ export class PawnshopDetailComponent implements OnInit{
         this.isOpenNow = now >= open && now <= close;
       }
     });
-    this.products$ = this.pawnShop$.pipe(
-      switchMap(profile => this.productService.getProductsByOwner(profile._id)),
-      tap(products => console.log('products of pawshop', products))
-    )
+   // продукты — только из store
+    this.products$ = this.productService.getProducts();
+
+    // когда загрузился ломбард → грузим продукты
+    this.pawnShop$
+      .pipe(take(1))
+      .subscribe(profile => {
+        this.productService.loadProductsByOwner(profile._id);
+      });
   }
 
   showTerms = false;
@@ -125,6 +132,19 @@ export class PawnshopDetailComponent implements OnInit{
     });
     console.log(this.pawnShop.terms)
     modalRef.componentInstance.terms = this.pawnShop.terms;
+  }
+
+  submitReview(pawnshopId: string) {
+    this.ratingError = this.newRating === 0;
+    this.commentError = !this.newComment.trim();
+
+    this.roleError = this.user?.role === 'pawnshop';
+
+    if (this.roleError || this.ratingError || this.commentError) {
+      return;
+    }
+
+    this.addReview(pawnshopId);
   }
 
   addReview(pawnshopId: string) {

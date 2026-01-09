@@ -188,7 +188,7 @@
                      *ngIf="pawnShop$ | async as profile">
                     <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2 mb-6">
                         <i class="fa-regular fa-images text-blue-600"></i>
-                        Фотографии ломбарда
+                        {{'Photos of the pawnshop' |translate}}
                     </h3>
 
                     <div class="grid grid-cols-2 gap-3">
@@ -321,30 +321,61 @@
             <!-- Add Review Form with modern styling -->
             <div class="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-200">
                 <h4 class="text-lg font-bold text-gray-800 mb-4">Оставить отзыв</h4>
-                
-                <!-- Star Rating Input -->
-                <div class="flex items-center gap-2 mb-4">
+
+                <!-- Star Rating -->
+                <div class="flex items-center gap-2 mb-1">
                     <span class="text-sm font-medium text-gray-600">Ваша оценка:</span>
                     <ng-container *ngFor="let star of [1,2,3,4,5]">
-                        <i class="fa-star text-2xl cursor-pointer transition-all duration-200 hover:scale-110"
-                           [ngClass]="{'fa-solid text-yellow-400': star <= newRating, 'fa-regular text-gray-300': star > newRating}"
-                           (click)="newRating = star"></i>
+                    <i
+                        class="fa-star text-2xl cursor-pointer transition-all duration-200 hover:scale-110"
+                        [ngClass]="{
+                        'fa-solid text-yellow-400': star <= newRating,
+                        'fa-regular text-gray-300': star > newRating
+                        }"
+                        (click)="newRating = star; ratingError = false"
+                    ></i>
                     </ng-container>
                 </div>
 
-                <!-- Comment Textarea -->
-                <textarea [(ngModel)]="newComment" 
-                          class="w-full p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 resize-none bg-white" 
-                          rows="4" 
-                          placeholder="Поделитесь своим опытом..."></textarea>
+                <p *ngIf="roleError" class="text-sm text-red-600 mb-3">
+                    {{ 'You cannot leave reviews for pawnshops' | translate }}
+                </p>
 
-                <!-- Submit Button -->
-                <button (click)="addReview(profile._id)"
-                        class="mt-4 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 flex items-center gap-2">
+                <!-- Rating error -->
+                <p *ngIf="ratingError" class="text-sm text-red-600 mb-3">
+                    {{'Select a rating' | translate}}
+                </p>
+
+                <!-- Comment -->
+                <textarea
+                    [(ngModel)]="newComment"
+                    (ngModelChange)="commentError = false"
+                    class="w-full p-4 border rounded-xl resize-none bg-white
+                        transition-all duration-300
+                        focus:ring-2 focus:ring-blue-500
+                        focus:border-transparent"
+                    rows="4"
+                    placeholder="Поделитесь своим опытом..."
+                ></textarea>
+
+                <!-- Comment error -->
+                <p *ngIf="commentError" class="text-sm text-red-600 mt-2">
+                    {{'Add a comment' | translate}}
+                </p>
+
+                <!-- Submit -->
+                <button
+                    (click)="submitReview(profile._id)"
+                    class="mt-4 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600
+                        hover:from-blue-600 hover:to-indigo-700 text-white rounded-xl
+                        font-semibold transition-all duration-300 shadow-md
+                        hover:shadow-lg flex items-center gap-2"
+                >
                     <i class="fa-solid fa-paper-plane"></i>
-                    Отправить отзыв
+                    {{'Submit Review' | translate}}
                 </button>
             </div>
+
         </div>
 
     </div>

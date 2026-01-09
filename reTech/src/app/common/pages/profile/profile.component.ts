@@ -36,7 +36,6 @@ export class ProfileComponent implements OnInit {
 
   offersById: Record<string, Offer> = {};
 
-
   myProducts:string[];
 
   currentTime: Date = new Date();
@@ -60,6 +59,8 @@ export class ProfileComponent implements OnInit {
   productsById: Record<string, Product> = {};
 
   openedMenuIndex: number | null = null;
+
+  offerSection: 'active' | 'completed' = 'active';
 
   sections = [
     { id: 'offers', label: 'Offers' },
@@ -262,10 +263,64 @@ export class ProfileComponent implements OnInit {
       });
     }
   }
-  get offerNotifications() {
-    return (this.notificationsList || []).filter(n =>
-      ['new-offer','offer-accepted','offer-rejected'].includes(n.type)
+
+  get hasActiveDeal(): boolean {
+    if (!this.user || !this.offersById) return false;
+
+    // Проверяем, есть ли активное предложение, где пользователь — владелец продукта
+    return Object.values(this.offersById).some(
+      o => o.productOwnerId === this.user!._id && o.status === 'in_inspection'
     );
+  }
+
+
+  private getOfferByNotification(n: AppNotification): Offer | null {
+    return this.offersById?.[n.refId] ?? null;
+  }
+
+  get activeOfferNotifications() {
+    return (this.notificationsList || []).filter(n => {
+      if (!['new-offer','offer-accepted','offer-rejected'].includes(n.type)) {
+        return false;
+      }
+
+      const offer = this.getOfferByNotification(n);
+      return offer && ['pending', 'in_inspection'].includes(offer.status);
+    });
+  }
+
+  get completedOfferNotifications() {
+    return (this.notificationsList || []).filter(n => {
+      if (!['new-offer','offer-accepted','offer-rejected'].includes(n.type)) {
+        return false;
+      }
+
+      const offer = this.getOfferByNotification(n);
+      return offer && ['rejected', 'completed'].includes(offer.status);
+    });
+  }
+
+
+  get offerNotifications() {
+    return (this.notificationsList || []).filter(n => {
+      // только offer-уведомления
+      if (!['new-offer', 'offer-accepted', 'offer-rejected'].includes(n.type)) {
+        return false;
+      }
+
+      const offer = this.offersById?.[n.refId];
+      if (!offer) {
+        return false;
+      }
+
+      // ACTIVE
+      if (this.offerSection === 'active') {
+        return offer.status === 'pending' || offer.status === 'in_inspection';
+      }
+
+      // COMPLETED
+      return offer.status === 'rejected' || offer.status === 'completed';
+    });
   }
 
   get systemNotifications() {

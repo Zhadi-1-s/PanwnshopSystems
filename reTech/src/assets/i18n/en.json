@@ -217,6 +217,22 @@
     "Newest first":"Newest first",
     "Oldest first":"Oldest first",
     "Sort by date":"Sort by date",
-    "in_inspection":"In inspection"
+    "in_inspection":"In inspection",
+    "Edit pawnshop details":"Edit pawnshop details",
+    "Address":"Address",
+    "Phone number":"Phone number",
+    "Logo":"Logo",
+    "Rating and reviews":"Rating and Reviews",
+    "There are no products in your showcase":"There are no products in your showcase",
+    "No active slots at the moment":"No active slots at the moment",
+    "Soon":"Soon",
+    "Add a comment":"Add a comment",
+    "Select a rating":"Select a rating",
+    "Submit Review":"Submit Review",
+    "You cannot leave reviews for pawnshops":"You cannot leave reviews for pawnshops",
+    "active":"Active",
+    "Active offers":"Active offers",
+    "Completed offers":"Completed offers",
+    "You have an active deal":"You have an active deal"
 
 }

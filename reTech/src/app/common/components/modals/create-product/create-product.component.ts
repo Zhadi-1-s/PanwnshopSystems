@@ -78,9 +78,12 @@ export class CreateProductComponent {
       status:'active'
     };
 
-    this.productService.createProduct(product).subscribe(() => {
-      this.uploading = false;
-      this.activeModal.close(true);
+   this.productService.createProduct(product).subscribe({
+      next: () => this.activeModal.close(true),
+      error: err => {
+        console.error(err);
+        this.uploading = false;
+      }
     });
   }
 

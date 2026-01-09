@@ -32,7 +32,7 @@ import { EvaluationDetailComponent } from '../../components/modals/evaluation-de
 import { OfferService } from '../../../shared/services/offer.service';
 import { UserService } from '../../../shared/services/user.service';
 import { SlotDetailComponent } from '../../components/modals/slot-detail/slot-detail.component';
-
+import { Offer } from '../../../shared/interfaces/offer.interface';
 
 @Component({
   selector: 'app-lombard-profile',
@@ -61,6 +61,8 @@ export class LombardProfileComponent implements OnInit{
   usersFromNotifications:Record<string,User> = {}
   productofSlot:Product | null;
 
+  offersById: Record<string, Offer> = {};
+
   activeSlots:Slot[] | null;
 
   slotWithProduct: { slot: Slot; product: Product }[] = [];
@@ -78,7 +80,7 @@ export class LombardProfileComponent implements OnInit{
   offerFilter: 'all' | 'sent' | 'received' = 'all';
 
   isOfferFilterOpen = false;
-
+  offersLoading = true;
   viewMode:boolean = true;
   isEditing:boolean = false;
 
@@ -120,10 +122,16 @@ export class LombardProfileComponent implements OnInit{
       tap(profile =>  this.profile = profile)
     );
 
-    this.products$ = this.profile$.pipe(
-      switchMap(profile => this.productService.getProductsByOwner(profile._id)),
-      // tap(products => console.log('Loaded products:', products))
-    );
+    this.products$ = this.productService.getProducts();
+
+    this.profile$
+      .pipe(
+        filter(profile => !!profile?._id),
+        take(1) // ⚠️ важно, чтобы не дергать повторно
+      )
+      .subscribe(profile => {
+        this.productService.loadProductsByOwner(profile._id);
+    });
 
     this.notifications$ = this.profile$.pipe(
       switchMap(profile =>
@@ -197,8 +205,8 @@ export class LombardProfileComponent implements OnInit{
 
         return forkJoin({ users: users$, refs: refs$ }).pipe(
           tap(({ users, refs }) => {
-            console.log('✅ USERS LOADED:', users);
-            console.log('✅ REFS LOADED:', refs);
+            // console.log('✅ USERS LOADED:', users);
+            // console.log('✅ REFS LOADED:', refs);
 
             this.usersFromNotifications = {
               ...(this.usersFromNotifications || {}),
@@ -210,12 +218,14 @@ export class LombardProfileComponent implements OnInit{
               ...Object.fromEntries(refs.map(r => [r.id, r.data]))
             };
           }),
-          map(() => notifications) // 🔥 ВАЖНО: возвращаем обратно уведомления
+          map(() => notifications) 
         );
       })
     );
     this.loadOffers();
     this.loadSlots();
+    console.log('has active deal afete onInit', this.hasActiveDeal);
+    console.log('offersBy id in ngONinit', this.offersById);
   }
 
   loadOffers() {
@@ -224,6 +234,10 @@ export class LombardProfileComponent implements OnInit{
        switchMap(user => this.lombardService.getLombardByUserId(user._id)),
        switchMap(pawnshop => this.offerService.getOffersByPawnshop(pawnshop._id))
      ).subscribe(offers => {
+        this.offersById = Object.fromEntries(offers.map(o => [o._id, o]));
+        this.offersLoading = false;
+        console.log('Offers by ID:', this.offersById);
+        console.log('hasActive deal', this.hasActiveDeal);
        // Добавляем в notificationsList как "тип оффер"
        const normalized = offers.map(o => ({
          _id: o._id,
@@ -280,7 +294,13 @@ export class LombardProfileComponent implements OnInit{
     ).subscribe(data => this.slotsSubject.next(data));
   }
 
+   get hasActiveDeal(): boolean {
+    if (!this.offersById) return false;
 
+    return Object.values(this.offersById).some(
+      o =>  o.status === 'in_inspection'
+    );
+  }
 
   editableDescription = '';
 
@@ -428,7 +448,13 @@ export class LombardProfileComponent implements OnInit{
       () => {}
     )
   }
-  deleteProduct(){}
+  deleteProduct(id:string){
+    this.productService.deleteProduct(id).subscribe({
+      next:()=>{
+        this.productslist = this.productslist?.filter(prod => prod._id !== id) || null;
+      }
+    });
+  }
 
   openEditModal(){}
 
