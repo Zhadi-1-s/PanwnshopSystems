@@ -381,7 +381,7 @@
                   <!-- Product Thumbnail -->
                   <div *ngIf="prodcuctsFromNotifications[n.refId] as p" class="w-14 h-14 flex-shrink-0 rounded-lg overflow-hidden bg-gray-200 dark:bg-gray-700">
                     <img *ngIf="p.photos?.length > 0; else noImage"
-                         [src]="p.photos[0]"
+                         [src]="p.photos[0].url"
                          [alt]="p.title"
                          class="w-full h-full object-cover">
                     <ng-template #noImage>

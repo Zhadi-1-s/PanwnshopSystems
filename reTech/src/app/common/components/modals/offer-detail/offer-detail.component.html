@@ -35,7 +35,7 @@
         <!-- Product Image -->
         <div class="relative flex-shrink-0">
           <img
-            [src]="product.photos[0] || 'assets/placeholder-product.jpg'"
+            [src]="product.photos[0].url || 'assets/placeholder-product.jpg'"
             [alt]="product.title"
             class="w-20 h-20 object-cover rounded-xl shadow-sm ring-1 ring-gray-200 dark:ring-gray-700"
           />

@@ -9,6 +9,7 @@ import { error } from 'console';
 import { User, UserDocument } from 'src/core/database/schemas/user.schema';
 import { Mode } from 'fs';
 import { NotificationService } from '../notification/notification.service';
+import cloudinary from 'src/core/config/cloudinary.config';
 
 
 @Injectable()
@@ -27,8 +28,16 @@ export class ProductService {
     const createdProduct = new this.productModel({
       ...dto,
       ownerId: new Types.ObjectId(dto.ownerId),
-      photos: dto.photos?.length ? dto.photos : ['assets/png/iphone-11.jpg','assets/png/ip.jpg','assets/png/ip2.jpg','assets/png/ip3.jpg','assets/png/ip4.jpg'], // ✅ дефолтное значение
+      photos: dto.photos?.length
+        ? dto.photos
+        : [
+            {
+              url: 'assets/png/iphone-11.jpg',
+              publicId: 'default-iphone-11',
+            }
+          ],
     });
+
     return createdProduct.save();
   }
 
@@ -37,8 +46,14 @@ export class ProductService {
   }
 
   async findById(id: string): Promise<Product> {
-    const product = await this.productModel.findById(id).populate('ownerId', 'name email').exec();
+    const product = await this.productModel.findById(id).populate('ownerId', 'name email').lean().exec();
     if (!product) throw new NotFoundException('Product not found');
+
+    // Нормализуем photos сразу
+    product.photos = product.photos.map(p =>
+      typeof p === 'string' ? { url: p, publicId: '' } : p
+    );
+
     return product;
   }
 
@@ -85,8 +100,18 @@ export class ProductService {
 
 
   async delete(id: string): Promise<{ message: string }> {
-    const res = await this.productModel.findByIdAndDelete(id).exec();
+    const res = await this.productModel.findById(id).exec();
     if (!res) throw new NotFoundException('Product not found');
+
+    if(res.photos && res.photos.length > 0){
+      for(const img of res.photos){
+        if(img.publicId){
+          await cloudinary.uploader.destroy(img.publicId)
+        }
+      }
+    }
+
+    await this.productModel.findByIdAndDelete(id).exec();
     return { message: 'Product deleted successfully' };
   }
 

@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { User } from '../../../../shared/interfaces/user.interface';
 import { AuthService } from '../../../../shared/services/auth.service';
 import { error } from 'console';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { Product } from '../../../../shared/interfaces/product.interface';
 import { ProductService } from '../../../../shared/services/product.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -29,6 +29,8 @@ export class OfferDetailComponent implements OnInit{
 
   product$:Observable<Product>;
 
+  prod:Product;
+
   constructor(
     private productService:ProductService,
     private modalService:NgbModal,
@@ -38,7 +40,13 @@ export class OfferDetailComponent implements OnInit{
   }
 
   ngOnInit() {
-      this.product$ = this.productService.getProductById(this.offer.productId)
+      
+      this.product$ = this.productService.getProductById(this.offer.productId).pipe(
+        tap(product => {
+          this.prod = product;
+          console.log('Loaded product:', product);
+        })
+      )
       if (this.offer?.status === 'in_inspection') {
         // допустим 48 часов после принятия оффера
         this.inspectionDeadline = new Date(this.offer.updatedAt);

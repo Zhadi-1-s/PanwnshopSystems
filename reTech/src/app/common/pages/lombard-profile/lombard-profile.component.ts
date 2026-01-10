@@ -270,6 +270,7 @@ export class LombardProfileComponent implements OnInit{
             ...(this.prodcuctsFromNotifications || {}),
             ...Object.fromEntries(items.map( i=> [i.id, i.data]))
           },
+         
           console.log('ProductsfromNotificaation after offerProduct added',this.prodcuctsFromNotifications)
         }
        )
