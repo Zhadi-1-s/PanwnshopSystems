@@ -52,7 +52,7 @@
                     id="name"
                     formControlName="name"
                     class="form-control"
-                    placeholder="Enter your name" />
+                    placeholder="{{'Enter your name'|translate}}" />
              <div *ngIf="submitted && registerForm.controls['name'].errors" class="text-danger small">
                <div *ngIf="registerForm.controls['name'].errors['required']">{{'Name is required' | translate}}</div>
              </div>
@@ -65,7 +65,7 @@
                     id="email"
                     formControlName="email"
                     class="form-control"
-                    placeholder="Enter your email" />
+                    placeholder="{{'Enter your email'|translate}}" />
              <div *ngIf="submitted && registerForm.controls['email'].errors" class="text-danger small">
                <div *ngIf="registerForm.controls['email'].errors['required']">E{{'mail is required' | translate}}</div>
                <div *ngIf="registerForm.controls['email'].errors['email']">{{'Invalid email' | translate}}</div>
@@ -79,7 +79,7 @@
                     id="password"
                     formControlName="password"
                     class="form-control"
-                    placeholder="Enter your password" />
+                    placeholder="{{'Enter your password'|translate}}" />
              <div *ngIf="submitted && registerForm.controls['password'].errors" class="text-danger small">
                <div *ngIf="registerForm.controls['password'].errors['required']">{{'Password is required' | translate}}</div>
                <div *ngIf="registerForm.controls['password'].errors['minlength']">{{'Password must be at least 6 characters' | translate}}</div>

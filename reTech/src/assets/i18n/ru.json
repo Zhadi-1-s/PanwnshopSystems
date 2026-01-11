@@ -240,5 +240,9 @@
     "Home":"Главная",
     "About us":"О нас",
     "Contacts":"Контакты",
-    "Terms of deal":"Условия сделки"
+    "Terms of deal":"Условия сделки",
+    "Enter your name":"Введите ваше имя",
+    "Enter your email":"Введите вашу электронную почту",
+    "Upload avatar":"Загрузить аватар"
+
 }

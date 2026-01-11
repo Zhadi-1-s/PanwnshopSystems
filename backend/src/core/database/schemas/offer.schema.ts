@@ -3,7 +3,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { HydratedDocument } from 'mongoose';
 
-export type OfferDocument = HydratedDocument<Offer>;
+export type OfferDocument = HydratedDocument<Offer> & {createdAt: Date; updatedAt: Date;};
 
 @Schema({ timestamps: { createdAt: true, updatedAt: true } })
 export class Offer {

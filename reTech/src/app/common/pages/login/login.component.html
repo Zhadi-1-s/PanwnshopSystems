@@ -31,7 +31,7 @@
 
           <div class="mb-3">
             <label class="form-label">{{'Email address' | translate}}</label>
-            <input type="email" formControlName="email" class="form-control" placeholder="Enter your email">
+            <input type="email" formControlName="email" class="form-control" placeholder="{{'Enter your email'|translate}}">
             <div *ngIf="submitted && loginForm.controls['email'].errors" class="text-danger small">
               <div *ngIf="loginForm.controls['email'].errors['required']">{{'Email is required' | translate}}</div>
               <div *ngIf="loginForm.controls['email'].errors['email']">{{'Invalid email' | translate}}</div>
@@ -43,7 +43,7 @@
             <a class="small text-decoration-none" (click)="forgotPassword()">{{'Forgot password?' | translate}}</a>
           </div>
 
-          <input type="password" formControlName="password" class="form-control mb-3" placeholder="Enter your password">
+          <input type="password" formControlName="password" class="form-control mb-3" placeholder="{{'Enter your password'|translate}}">
           <div *ngIf="submitted && loginForm.controls['password'].errors" class="text-danger small">
             <div *ngIf="loginForm.controls['password'].errors['required']">{{'Password is required' | translate}}</div>
             <div *ngIf="loginForm.controls['password'].errors['minlength']">{{'Password must be at least 6 characters' | translate}}</div>

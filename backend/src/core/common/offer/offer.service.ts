@@ -57,13 +57,20 @@ export class OfferService {
   }
 
   // Получить один оффер
-  async getById(id: string) {
-    const offer = await this.offerModel.findById(id);
+  async getById(id: string): Promise<Offer> {
+    const offer = await this.offerModel.findById(id).exec();
     if (!offer) throw new NotFoundException('Offer not found');
 
-    if(offer.status === 'in_inspection' && offer.expiresAt <= new Date()){
-      offer.status = 'rejected';
-      await offer.save();
+    // Если оффер в статусе in_inspection, проверяем, истекло ли время
+    if (offer.status === 'in_inspection') {
+      const now = new Date();
+      const inspectionDeadline = new Date(offer.updatedAt);
+      inspectionDeadline.setHours(inspectionDeadline.getHours() + 24); // 24 часа
+
+      if (now > inspectionDeadline) {
+        offer.status = 'rejected'; // Можно добавить статус expired
+        await offer.save();
+      }
     }
 
     return offer;
@@ -80,6 +87,7 @@ export class OfferService {
 
       // Обновляем статус
       offer.status = status;
+      offer.updatedAt = new Date();
       await offer.save();
 
       // Отправка уведомления (можно делать более точно по статусу)

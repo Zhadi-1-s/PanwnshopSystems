@@ -13,7 +13,7 @@
   <div class="d-flex flex-wrap gap-2 gallery">
     <div *ngFor="let photo of photos.slice(); let i = index" class="gallery-item position-relative">
       <img
-        [src]="photo"
+        [src]="photo.url"
         alt="product photo"
         class="rounded border gallery-img"
         width="100"
