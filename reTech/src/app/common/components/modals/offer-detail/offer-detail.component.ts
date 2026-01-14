@@ -5,12 +5,13 @@ import { CommonModule } from '@angular/common';
 import { User } from '../../../../shared/interfaces/user.interface';
 import { AuthService } from '../../../../shared/services/auth.service';
 import { error } from 'console';
-import { Observable, tap } from 'rxjs';
+import { map, Observable, tap } from 'rxjs';
 import { Product } from '../../../../shared/interfaces/product.interface';
 import { ProductService } from '../../../../shared/services/product.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ProductDetailComponent } from '../product-detail/product-detail.component';
 import { OfferService } from '../../../../shared/services/offer.service';
+import { LombardService } from '../../../../shared/services/lombard.service';
 
 @Component({
   selector: 'app-offer-detail',
@@ -24,6 +25,8 @@ export class OfferDetailComponent implements OnInit{
   @Input() offer:Offer;
   @Input() user:User;
 
+  @Input() pawnshopId:string;
+
   countdown:string;
   inspectionDeadline:Date;
 
@@ -31,10 +34,13 @@ export class OfferDetailComponent implements OnInit{
 
   prod:Product;
 
+  pawnshopAddress:string;
+
   constructor(
     private productService:ProductService,
     private modalService:NgbModal,
-    private offerService:OfferService
+    private offerService:OfferService,
+    private pawnshopService:LombardService
   ){
 
   }
@@ -47,6 +53,16 @@ export class OfferDetailComponent implements OnInit{
           console.log('Loaded product:', product);
         })
       )
+      console.log('pawnshopId in offer detail:', this.pawnshopId);
+
+      this.pawnshopService.getLombardById(this.pawnshopId).pipe(
+        map(pawnshop => pawnshop.address),
+        tap(address => {
+          this.pawnshopAddress = address;
+          console.log('Loaded pawnshop address:', address);
+      })
+    ).subscribe();
+
       if (this.offer?.status === 'in_inspection') {
         // допустим 48 часов после принятия оффера
         this.inspectionDeadline = new Date(this.offer.updatedAt);

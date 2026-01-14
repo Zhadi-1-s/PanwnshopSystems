@@ -9,4 +9,5 @@ export interface User{
     avatarUrl:string;
     favoritePawnshops:string[]; 
     favoriteItems:string[];
+    refreshToken?:string;
 }

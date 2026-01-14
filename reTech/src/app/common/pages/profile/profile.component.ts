@@ -62,6 +62,8 @@ export class ProfileComponent implements OnInit {
 
   offerSection: 'active' | 'completed' = 'active';
 
+  pawnshopIdFromOffer:string;
+
   sections = [
     { id: 'offers', label: 'Offers' },
     { id: 'system', label: 'System' },
@@ -180,6 +182,7 @@ export class ProfileComponent implements OnInit {
         );
 
         console.log('Offers by id loaded', this.offersById);
+        console.log('pawnshopId',this.offersById[Object.keys(this.offersById)[0]]?.pawnshopId);
       })
     ).subscribe(); // ❗ ВОТ ЭТОГО НЕ ХВАТАЛО
   }
@@ -228,6 +231,7 @@ export class ProfileComponent implements OnInit {
 
     modalRef.componentInstance.offer = offer;
     modalRef.componentInstance.user = user;
+    modalRef.componentInstance.pawnshopId = offer.pawnshopId;
 
 
   }
@@ -273,8 +277,8 @@ export class ProfileComponent implements OnInit {
     );
   }
 
-
   private getOfferByNotification(n: AppNotification): Offer | null {
+    this.pawnshopIdFromOffer = this.offersById[Object.keys(this.offersById)[0]]?.pawnshopId;
     return this.offersById?.[n.refId] ?? null;
   }
 

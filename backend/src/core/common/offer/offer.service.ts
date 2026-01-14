@@ -68,7 +68,7 @@ export class OfferService {
       inspectionDeadline.setHours(inspectionDeadline.getHours() + 24); // 24 часа
 
       if (now > inspectionDeadline) {
-        offer.status = 'rejected'; // Можно добавить статус expired
+        offer.status = 'no_show'; // Можно добавить статус expired
         await offer.save();
       }
     }
@@ -79,7 +79,7 @@ export class OfferService {
   // Обновить статус (accept / reject)
   async updateStatus(
       offerId: string,
-      status: 'pending' | 'completed' | 'rejected' | 'in_inspection',
+      status: 'pending' | 'completed' | 'rejected' | 'in_inspection' | 'no_show',
   ) {
       const offer = await this.offerModel.findById(offerId);
 

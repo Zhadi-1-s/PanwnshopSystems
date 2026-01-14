@@ -9,12 +9,14 @@ import { User } from "../interfaces/user.interface";
 import { Product } from "../interfaces/product.interface";
 import { PawnshopProfile } from "../interfaces/shop-profile.interface";
 
+import { environment } from "../../../environments/environment";
+
 @Injectable({
     providedIn: 'root'
 })
 export class AuthService{
 
-    private apiUrl = 'http://localhost:3000/auth';
+    private apiUrl = environment.apiUrl.auth;
 
     private currentUserSubject = new BehaviorSubject<User | null>(null);
     currentUser$ = this.currentUserSubject.asObservable();
@@ -31,7 +33,7 @@ export class AuthService{
         return this.http.post<LoginResponse>(`${this.apiUrl}/login`, dto).pipe(
         tap((response: LoginResponse) => {
            if( typeof localStorage !== 'undefined'){
-                    localStorage.setItem('access_token', response.access_token)
+                    localStorage.setItem('access_token', response.accessToken)
                 }
             this.getUserProfile().subscribe(user => this.currentUserSubject.next(user));
         })
@@ -74,7 +76,11 @@ export class AuthService{
     }
 
     logout(): void {
-        localStorage.removeItem('access_token');
+       this.http.post(this.apiUrl + '/logout',{}).subscribe({
+        complete: ()=> {
+                localStorage.removeItem('access_token');
+        },
+       })
     }
 
     getToken(): string | null {

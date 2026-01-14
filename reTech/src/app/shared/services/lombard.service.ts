@@ -3,13 +3,14 @@ import { Observable } from 'rxjs';
 import { PawnshopProfile } from '../interfaces/shop-profile.interface';
 import { HttpClient } from '@angular/common/http';
 import { Review } from '../interfaces/reviews.interface';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LombardService {
 
-  private apiUrl = 'http://localhost:3000/pawnshops';
+  private apiUrl = environment.apiUrl.pawnshops;
 
   constructor(private http:HttpClient) { }
 

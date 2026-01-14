@@ -5,7 +5,7 @@ export interface Offer{
     productOwnerId: string;
     price: number;
     message?: string;
-    status: 'pending' | 'completed' | 'rejected' | 'in_inspection';
+    status: 'pending' | 'completed' | 'rejected' | 'in_inspection' | 'no_show';
     createdAt?: Date;
     updatedAt?:Date
 }

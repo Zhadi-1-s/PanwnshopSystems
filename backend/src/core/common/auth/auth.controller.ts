@@ -76,6 +76,13 @@ export class AuthController {
     return this.authService.updateUser(req.user.userId, userData); // достаём ID юзера из токена
   }
 
+
+  @UseGuards(JwtAuthGuard)
+  @Post('logout')
+  @ApiBearerAuth()
+  async logout(@Request() req) {
+    return this.authService.logout(req.user.userId); // достаём ID юзера из токена
+  }
   // Пример защищённого эндпоинта
 
   //   @UseGuards(JwtAuthGuard)

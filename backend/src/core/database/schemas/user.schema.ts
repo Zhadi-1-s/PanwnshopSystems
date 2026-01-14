@@ -1,8 +1,8 @@
 // user.schema.ts
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document ,Types} from 'mongoose';
+import { Document ,HydratedDocument,Types} from 'mongoose';
 
-export type UserDocument = User & Document;
+export type UserDocument = HydratedDocument<User>
 
 @Schema({ timestamps: { createdAt: true, updatedAt: false } })
 export class User {
@@ -26,6 +26,9 @@ export class User {
 
   @Prop({type:[{type:Types.ObjectId, ref:'Product'}] , default:[]})
   favoriteItems:Types.ObjectId[];
+
+  @Prop({select:false})
+  refreshToken:string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -54,9 +54,9 @@ export class LoginComponent {
       this.authService.login(this.loginForm.value).subscribe({
         next: (response) => {
           console.log('Login successful:', response);
-          const token = response.access_token
- 
-          localStorage.setItem('access_token', response.access_token);
+          const token = response.accessToken
+          console.log('Access Token:', token);
+          localStorage.setItem('access_token', response.accessToken);
 
           const decoded: JwtPayload = jwtDecode(token);
           console.log('Decoded token:', decoded);

@@ -2,13 +2,15 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Evaluation } from '../interfaces/offer.interface';
 import { Observable } from 'rxjs';
+import e from 'express';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EvaluationService {
 
-  private apiUrl = 'http://localhost:3000/evaluations';
+  private apiUrl = environment.apiUrl.evaluation;
 
   constructor(private http:HttpClient) { }
 

@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { Observable,BehaviorSubject,tap } from 'rxjs';
 import { Product } from '../interfaces/product.interface';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductService{
 
-  private apiUrl = 'http://localhost:3000/products';
+  private apiUrl = environment.apiUrl.products;
 
   private products$ = new BehaviorSubject<Product[]>([]);
 

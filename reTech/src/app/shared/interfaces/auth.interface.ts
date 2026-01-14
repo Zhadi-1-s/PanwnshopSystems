@@ -3,7 +3,8 @@ export interface LoginDto{
     password: string;
 }
 export interface LoginResponse{
-    access_token: string;
+    accessToken: string;
+    refreshToken: string;
 }
 export interface RegisterDto{
     email:string;

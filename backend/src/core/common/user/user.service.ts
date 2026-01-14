@@ -77,4 +77,16 @@ export class UserService {
     return this.userModel.findById(userId).populate('favoriteItems')
   }
 
+  async setRefreshToken(userId: string, refreshToken: string | null) {
+    return this.userModel.findByIdAndUpdate(
+      userId,
+      { refreshToken },
+      { new: true }
+    );
+  }
+
+  async findByRefreshToken(refreshToken: string) {
+    return this.userModel.findOne({ refreshToken }).select('+refreshToken');
+  }
+
 }

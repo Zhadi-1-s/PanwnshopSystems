@@ -90,6 +90,9 @@
 
   <div *ngIf="offer?.status === 'in_inspection'" class="mb-5 p-4 rounded-xl bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-700 text-yellow-800 dark:text-yellow-200 text-sm font-medium">
     {{ 'Please bring your product for final inspection within:' | translate }}
+    <br>
+    <strong>{{ pawnshopAddress }}</strong>
+    <br>
     <span>{{ countdown }}</span>
   </div>
 

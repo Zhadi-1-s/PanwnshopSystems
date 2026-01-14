@@ -5,6 +5,7 @@ import { UserService } from '../user/user.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { MailService } from '../services/mail.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -14,6 +15,7 @@ export class AuthService {
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
     private readonly mailService: MailService,
+    private readonly configService:ConfigService
   ) {}
 
   // Регистрация пользователя
@@ -33,14 +35,15 @@ export class AuthService {
       avatarUrl: dto.avatarUrl
     });
 
+    
+    const access_token = this.generateAccessToken(user);
+    const refresh_token = this.generateRefreshToken(user);
+    
+    await this.userService.setRefreshToken(user._id.toString(), refresh_token);
+    
     const { password: _, ...result } = user.toObject();
 
-    const payload = { email: user.email, sub: user._id, role: user.role };
-
-    return {
-      ...result,
-      access_token: this.jwtService.sign(payload),
-    };
+    return { ...result, access_token, refresh_token };
   }
 
   updateUser(userId:string,UserData: Partial<any>):Promise<any>{
@@ -122,15 +125,63 @@ export class AuthService {
   }
 
   // Авторизация и генерация токена
-  async login(dto:LoginDto) {
-
+  async login(dto: LoginDto) {
     const user = await this.validateUser(dto.email, dto.password);
 
-    const payload = { email: user.email, sub: user._id , role: user.role };
-    this.logger.log(`User ${user.email} logged in`);
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
+    // генерируем оба токена
+    const accessToken = this.generateAccessToken(user);
+    const refreshToken = this.generateRefreshToken(user);
+
+    // сохраняем refresh token в базе
+    await this.userService.setRefreshToken(user._id, refreshToken);
+
+    return { accessToken, refreshToken };
   }
+
+  async logout(userId: string) {
+    await this.userService.setRefreshToken(userId, null);
+    return { message: 'Logged out successfully' };
+  }
+
+  private generateAccessToken(user: any) {
+    const payload = { sub: user._id, email: user.email, role: user.role };
+    return this.jwtService.sign(payload, {
+      secret: this.configService.get('JWT_SECRET'),
+      expiresIn: this.configService.get('JWT_EXPIRES_IN'),
+    });
+  }
+
+  private generateRefreshToken(user: any) {
+    const payload = { sub: user._id };
+    return this.jwtService.sign(payload, {
+      secret: this.configService.get('JWT_REFRESH_SECRET'),
+      expiresIn: this.configService.get('JWT_REFRESH_EXPIRES_IN'),
+    });
+  }
+
+  async refreshToken(oldRefreshToken: string) {
+    try {
+      const payload = this.jwtService.verify(oldRefreshToken, {
+        secret: this.configService.get('JWT_REFRESH_SECRET'),
+      });
+
+      const user = await this.userService.findOne({ _id: payload.sub });
+
+      if (!user || user.refreshToken !== oldRefreshToken) {
+        throw new UnauthorizedException('Invalid refresh token');
+      }
+
+      const newAccessToken = this.generateAccessToken(user);
+      const newRefreshToken = this.generateRefreshToken(user);
+
+      await this.userService.setRefreshToken(user._id.toString(), newRefreshToken);
+
+      return { accessToken: newAccessToken, refreshToken: newRefreshToken };
+    } catch (err) {
+      throw new UnauthorizedException('Invalid or expired refresh token');
+    }
+  }
+
+
 }
 
