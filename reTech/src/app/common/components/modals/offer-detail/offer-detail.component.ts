@@ -12,11 +12,12 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ProductDetailComponent } from '../product-detail/product-detail.component';
 import { OfferService } from '../../../../shared/services/offer.service';
 import { LombardService } from '../../../../shared/services/lombard.service';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-offer-detail',
   standalone: true,
-  imports: [TranslateModule,CommonModule],
+  imports: [TranslateModule,CommonModule,ReactiveFormsModule,FormsModule],
   templateUrl: './offer-detail.component.html',
   styleUrl: './offer-detail.component.scss'
 })
@@ -29,6 +30,14 @@ export class OfferDetailComponent implements OnInit{
 
   countdown:string;
   inspectionDeadline:Date;
+
+  showCancelReasons = false;
+
+   cancelReasons = [
+    { value: 'no_show', label: 'User did not bring the item', selected: false },
+    { value: 'bad_condition', label: 'Item in bad condition', selected: false },
+    { value: 'other', label: 'Other reason', selected: false }
+  ];
 
   product$:Observable<Product>;
 
@@ -54,7 +63,7 @@ export class OfferDetailComponent implements OnInit{
         })
       )
       console.log('pawnshopId in offer detail:', this.pawnshopId);
-
+      console.log('user in offer detail:', this.user);  
       this.pawnshopService.getLombardById(this.pawnshopId).pipe(
         map(pawnshop => pawnshop.address),
         tap(address => {
@@ -124,6 +133,19 @@ export class OfferDetailComponent implements OnInit{
           console.error('Reject offer failed', err);
         }
       });
+  }
+
+  submitCancelReasons() {
+    const selected = this.cancelReasons
+      .filter(r => r.selected)
+      .map(r => r.value);
+
+    console.log('Selected cancel reasons:', selected);
+
+    // Тут можно вызвать сервис, например:
+    // this.offerService.cancelOffer(offerId, selected).subscribe(...)
+    
+    this.showCancelReasons = false; // скрываем блок
   }
 
 }

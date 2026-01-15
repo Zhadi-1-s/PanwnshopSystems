@@ -423,7 +423,11 @@
                               'bg-yellow-100 text-yellow-700': n.data.status === 'pending',
                               'bg-green-100 text-green-700': n.data.status === 'accepted',
                               'bg-red-100 text-red-700': n.data.status === 'rejected'
-                            }">
+                            }"
+                            [ngbTooltip]="'offerStatusTooltipLombard.' + n.data.status | translate"
+                            placement="top"
+                            >
+                            
                           {{ n.data.status  |translate }}
                         </div>
                       
@@ -780,7 +784,7 @@
                 <tr class="hover:bg-blue-50 transition-colors duration-150" *ngFor="let item of products$ | async">
                   <td class="px-4 py-3">
                     <img
-                      [src]="item.photos?.[0] || 'assets/png/default-product.png'"
+                      [src]="item.photos?.[0]?.url"
                       alt="{{ item.title }}"
                       class="w-14 h-14 rounded-lg object-cover shadow-sm"
                     />

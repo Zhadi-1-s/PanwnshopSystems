@@ -20,12 +20,12 @@ import { AppNotification } from '../../../shared/interfaces/notification.interfa
 import { OfferService } from '../../../shared/services/offer.service';
 import { Offer } from '../../../shared/interfaces/offer.interface';
 import { OfferDetailComponent } from '../../components/modals/offer-detail/offer-detail.component';
-
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslateModule],
+  imports: [CommonModule, RouterModule, TranslateModule, NgbTooltipModule],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'] 
 })
@@ -96,7 +96,7 @@ export class ProfileComponent implements OnInit {
       tap(notifications => {
         // Сохраняем все уведомления
         this.notificationsList = notifications;
-        console.log(notifications, 'loaded notifications');
+        // console.log(notifications, 'loaded notifications');
       }),
       switchMap(notifications => {
         // Фильтруем только уведомления напрямую на продукты
@@ -323,7 +323,7 @@ export class ProfileComponent implements OnInit {
       }
 
       // COMPLETED
-      return offer.status === 'rejected' || offer.status === 'completed';
+      return offer.status === 'rejected' || offer.status === 'completed' || offer.status === 'no_show';
     });
   }
 

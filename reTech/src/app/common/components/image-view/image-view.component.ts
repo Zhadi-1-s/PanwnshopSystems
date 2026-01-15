@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input,Output,EventEmitter } from '@angular/core';
+import { Component, Input,Output,EventEmitter, OnInit } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
@@ -9,7 +9,7 @@ import { TranslateModule } from '@ngx-translate/core';
   templateUrl: './image-view.component.html',
   styleUrl: './image-view.component.scss'
 })
-export class ImageViewComponent {
+export class ImageViewComponent  implements  OnInit {
 
   @Input() photos: { url: string; publicId: string }[];
   @Input() editable:boolean ;
@@ -20,6 +20,10 @@ export class ImageViewComponent {
   selectedPhoto: string | null = null;
 
   selectedIndex: number | null = null;
+
+  ngOnInit(): void {
+      console.log(this.photos)
+  }
 
   openPhoto(index: number) {
     this.selectedIndex = index;

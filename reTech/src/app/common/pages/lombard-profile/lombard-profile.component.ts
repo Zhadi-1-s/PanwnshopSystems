@@ -33,6 +33,7 @@ import { OfferService } from '../../../shared/services/offer.service';
 import { UserService } from '../../../shared/services/user.service';
 import { SlotDetailComponent } from '../../components/modals/slot-detail/slot-detail.component';
 import { Offer } from '../../../shared/interfaces/offer.interface';
+import { OfferDetailComponent } from '../../components/modals/offer-detail/offer-detail.component';
 
 @Component({
   selector: 'app-lombard-profile',
@@ -101,6 +102,8 @@ export class LombardProfileComponent implements OnInit{
     { id: 'others', label: 'Others' },
   ];
 
+  products:Product[];
+
   constructor(
     private lombardService:LombardService,
     private authService:AuthService,
@@ -118,11 +121,16 @@ export class LombardProfileComponent implements OnInit{
 
     this.profile$ = this.authService.currentUser$.pipe(
       filter((user): user is User => !!user?._id),
+      tap(user => this.user = user),
       switchMap(user => this.lombardService.getLombardByUserId(user._id)),
       tap(profile =>  this.profile = profile)
     );
 
-    this.products$ = this.productService.getProducts();
+    this.products$ = this.productService.getProducts().pipe(
+      tap(products => {
+        this.products = products;
+      })
+    );
 
     this.profile$
       .pipe(
@@ -559,12 +567,22 @@ export class LombardProfileComponent implements OnInit{
 
   }
 
-  
+  openOfferDetail(offer:Offer){
+    const modalRef = this.modalService.open(OfferDetailComponent, { size: 'lg',centered:true });
+
+    modalRef.componentInstance.offer = offer;
+    modalRef.componentInstance.pawnshopId = this.profile?._id || '';
+    modalRef.componentInstance.user = this.user;
+  }
 
   openNotificationDetail(n: any) {
+    console.log('Opening notification detail for:', n);
     if (n.type === 'sent-offer') {
-      // если есть продукт в n.data
-      if (n.data?.productId) {
+      const offer = this.offersById[n._id];
+      if(offer && offer.status === 'in_inspection'){
+        this.openOfferDetail(offer);
+      }
+      else if(n.data?.productId){
         const product = this.prodcuctsFromNotifications[n.refId];
         if (product) {
           this.openProductDetail(product);

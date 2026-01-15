@@ -238,6 +238,23 @@
     "Enter your name":"Enter your name",
     "Enter your email":"Enter your email",
     "Upload avatar":"Upload Avatar",
-    "Please bring your product for final inspection within:":"Please bring your product for final inspection within:"
+    "Please bring your product for final inspection within:":"Please bring your product for final inspection within:",
+    "no_show":"No show",
+    "offerStatusTooltip": {
+        "no_show": "You did not bring the item for the final offline evaluation.",
+        "rejected": "You declined the offer.",
+        "in_inspection": "You accepted the offer and must visit a pawnshop branch for final inspection.",
+        "completed": "You successfully completed the deal.",
+        "pending": "You are reviewing the offer and have not made a decision yet."
+    },
+    "offerStatusTooltipLombard": {
+        "no_show": "The user did not bring the item for the final evaluation.",
+        "rejected": "The seller declined your offer.",
+        "in_inspection": "The user accepted the offer and should come to the pawnshop for final inspection.",
+        "completed": "The deal has been successfully completed.",
+        "pending": "The offer is awaiting the user's decision."
+    },
+    "Cancel Offer":"Cancel offer",
+    "Edit Offer":"Edit offer"
 
 }

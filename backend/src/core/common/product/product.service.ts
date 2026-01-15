@@ -115,7 +115,19 @@ export class ProductService {
     return { message: 'Product deleted successfully' };
   }
 
-  async findByOwner(ownerId: string): Promise<Product[]> {
-    return this.productModel.find({ ownerId: new Types.ObjectId(ownerId) }).exec();
+ async findByOwner(ownerId: string): Promise<Product[]> {
+    const products = await this.productModel
+      .find({ ownerId: new Types.ObjectId(ownerId) })
+      .populate('ownerId', 'name email')
+      .lean()
+      .exec();
+
+    // Нормализуем photos
+    return products.map(product => ({
+      ...product,
+      photos: product.photos.map(p =>
+        typeof p === 'string' ? { url: p, publicId: '' } : p
+      ),
+    }));
   }
 }
