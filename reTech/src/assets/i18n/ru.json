@@ -261,6 +261,11 @@
         "pending": "Предложение ожидает решения пользователя."
     },
     "Cancel Offer":"Отменить предложение",
-    "Edit Offer":"Редактировать предложение"
+    "Edit Offer":"Редактировать предложение",
+    "Select reasons for canceling":"Выберите причины отмены",
+    "User did not bring the item":"Пользователь не принёс товар",
+    "Item in bad condition":"Товар в плохом состоянии",
+    "Other reason":"Другая причина",
+    "Submit":"Отправить"
 
 }

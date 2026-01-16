@@ -20,8 +20,7 @@ export class OfferService {
 
   // Создать оффер
   async create(dto: CreateOfferDto) {
-    const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + 10);
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // истекает через 24 часа
 
     const offer = await this.offerModel.create({
       ...dto,
@@ -61,20 +60,18 @@ export class OfferService {
     const offer = await this.offerModel.findById(id).exec();
     if (!offer) throw new NotFoundException('Offer not found');
 
-    // Если оффер в статусе in_inspection, проверяем, истекло ли время
-    if (offer.status === 'in_inspection') {
-      const now = new Date();
-      const inspectionDeadline = new Date(offer.updatedAt);
-      inspectionDeadline.setHours(inspectionDeadline.getHours() + 24); // 24 часа
-
-      if (now > inspectionDeadline) {
-        offer.status = 'no_show'; // Можно добавить статус expired
-        await offer.save();
-      }
+    if (
+      offer.status === 'in_inspection' &&
+      offer.expiresAt &&
+      new Date() > offer.expiresAt
+    ) {
+      offer.status = 'no_show';
+      await offer.save();
     }
 
     return offer;
   }
+
 
   // Обновить статус (accept / reject)
   async updateStatus(
@@ -84,6 +81,10 @@ export class OfferService {
       const offer = await this.offerModel.findById(offerId);
 
       if (!offer) throw new NotFoundException('Offer not found');
+
+      if(status === 'in_inspection'){
+        offer.expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 48 часов на инспекцию
+      }
 
       // Обновляем статус
       offer.status = status;

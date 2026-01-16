@@ -74,9 +74,7 @@ export class OfferDetailComponent implements OnInit{
 
       if (this.offer?.status === 'in_inspection') {
         // допустим 48 часов после принятия оффера
-        this.inspectionDeadline = new Date(this.offer.updatedAt);
-        this.inspectionDeadline.setHours(this.inspectionDeadline.getHours() + 48);
-
+        this.inspectionDeadline = new Date(this.offer.expiresAt);
         this.startCountdown();
       }
   }

@@ -255,6 +255,11 @@
         "pending": "The offer is awaiting the user's decision."
     },
     "Cancel Offer":"Cancel offer",
-    "Edit Offer":"Edit offer"
+    "Edit Offer":"Edit offer",
+    "Select reasons for canceling":"Select reasons for canceling",
+    "User did not bring the item":"User did not bring the item",
+    "Item in bad condition":"Item in bad condition",
+    "Other reason":"Other reason",
+    "Submit":"Submit"
 
 }

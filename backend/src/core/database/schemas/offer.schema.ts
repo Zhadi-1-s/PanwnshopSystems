@@ -31,8 +31,11 @@ export class Offer {
   status: 'pending' | 'completed' | 'rejected' | 'in_inspection' | 'no_show';
 
   // 👇 поле, по которому Mongo будет удалять документ
-  @Prop({ required: true })
+  @Prop({ required: false })
   expiresAt: Date;
+
+  @Prop({required:false})
+  cancelReason?: string;
 }
 
 export const OfferSchema = SchemaFactory.createForClass(Offer);

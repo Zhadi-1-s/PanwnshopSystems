@@ -7,7 +7,9 @@ export interface Offer{
     message?: string;
     status: 'pending' | 'completed' | 'rejected' | 'in_inspection' | 'no_show';
     createdAt?: Date;
-    updatedAt?:Date
+    updatedAt?:Date;
+    expiresAt?: string | Date;
+    cancelReason?: string;
 }
 
 export interface Evaluation{
