@@ -30,7 +30,7 @@ export class OfferDetailComponent implements OnInit{
 
   countdown:string;
   inspectionDeadline:Date;
-
+  otherReason:string = '';
   showCancelReasons = false;
 
    cancelReasons = [
@@ -134,16 +134,35 @@ export class OfferDetailComponent implements OnInit{
   }
 
   submitCancelReasons() {
+    if (!this.offer?._id) return;
+    if (this.user?.role !== 'pawnshop') return;
+
     const selected = this.cancelReasons
-      .filter(r => r.selected)
+      .filter(r => r.selected && r.value !== 'other')
       .map(r => r.value);
 
-    console.log('Selected cancel reasons:', selected);
+    if (this.isOtherSelected && this.otherReason.trim()) {
+      selected.push(this.otherReason.trim());
+    }
 
-    // Тут можно вызвать сервис, например:
-    // this.offerService.cancelOffer(offerId, selected).subscribe(...)
-    
-    this.showCancelReasons = false; // скрываем блок
+    const cancelReason = selected.join(', ');
+
+    this.offerService
+      .cancelOffer(this.offer._id, cancelReason)
+      .subscribe({
+        next: offer => {
+          this.offer = offer;
+          this.showCancelReasons = false;
+        },
+        error: err => console.error(err)
+      });
+  }
+
+
+  get isOtherSelected(): boolean {
+    return this.cancelReasons.some(
+      r => r.value === 'other' && r.selected
+    );
   }
 
 }

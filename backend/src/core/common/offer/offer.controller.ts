@@ -36,4 +36,12 @@ export class OfferController {
   ) {
     return this.offerService.updateStatus(id, dto.status);
   }
+
+  @Patch(':id/cancel')
+  cancelOffer(
+    @Param('id') id: string,
+    @Body() dto: { reason: string },
+  ) {
+    return this.offerService.cancelOffer(id, dto.reason);
+  }
 }

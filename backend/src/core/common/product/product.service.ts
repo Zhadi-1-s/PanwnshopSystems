@@ -42,7 +42,13 @@ export class ProductService {
   }
 
   async findAll(): Promise<Product[]> {
-    return this.productModel.find().lean().exec();
+    const products = await this.productModel.find().lean().exec();
+    return products.map(product => ({
+      ...product,
+      photos: product.photos.map(p =>
+        typeof p === 'string' ? { url: p, publicId: '' } : p
+      ),
+    }))
   }
 
   async findById(id: string): Promise<Product> {
@@ -122,7 +128,6 @@ export class ProductService {
       .lean()
       .exec();
 
-    // Нормализуем photos
     return products.map(product => ({
       ...product,
       photos: product.photos.map(p =>

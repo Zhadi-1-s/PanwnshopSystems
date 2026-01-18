@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { LombardService } from '../../../shared/services/lombard.service';
-import { Observable, switchMap, tap,map,of,take } from 'rxjs';
+import { Observable, switchMap, tap,map,of,take, Subject, filter, takeUntil, shareReplay } from 'rxjs';
 import { PawnshopProfile } from '../../../shared/interfaces/shop-profile.interface';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -27,7 +27,7 @@ import { EvalutaionComponent } from '../../components/modals/evalutaion/evalutai
   templateUrl: './pawnshop-detail.component.html',
   styleUrl: './pawnshop-detail.component.scss'
 })
-export class PawnshopDetailComponent implements OnInit{
+export class PawnshopDetailComponent implements OnInit, OnDestroy {
 
   id:string;
   pawnShop:PawnshopProfile;
@@ -44,6 +44,8 @@ export class PawnshopDetailComponent implements OnInit{
 
   favoriteItems:any[] = [];
 
+  private destroy$ = new Subject<void>();
+
   newRating: number = 5;
   newComment: string = '';
   commentError = false;
@@ -52,6 +54,8 @@ export class PawnshopDetailComponent implements OnInit{
   reviews:string[];
 
   favorites:any[];
+
+  products:any;
 
   constructor(
     private lombardService:LombardService,
@@ -68,60 +72,94 @@ export class PawnshopDetailComponent implements OnInit{
 
   ngOnInit(): void {
 
-    this.authService.currentUser$.subscribe(
-      (user) => {
-        this.user = user;
-        this.authService.currentUser$.subscribe(user => {
-        this.user = user;
-
-        if (!user) return;
-
-        this.userService.getAllFavorites(user._id).subscribe(res => {
-          this.favoriteItems = res.items;
-          this.favorites = res.shops;
-
-          console.log('Товары:', res.items);
-          console.log('Ломбарды:', res.shops);
-        });
-      });
-
-      }
+    this.authService.currentUser$.pipe(
+      filter(Boolean),
+      tap(user => this.user = user),
+      switchMap(user => this.userService.getFavoriteItems(user._id)),
+      takeUntil(this.destroy$)
     )
+    .subscribe(res => {
+      this.favoriteItems = res.items;
+      this.favorites = res.shops;
+    })
+
+    // this.authService.currentUser$.subscribe(
+    //   (user) => {
+    //     this.user = user;
+    //     this.authService.currentUser$.subscribe(user => {
+    //     this.user = user;
+
+    //     if (!user) return;
+
+    //     this.userService.getAllFavorites(user._id).subscribe(res => {
+    //       this.favoriteItems = res.items;
+    //       this.favorites = res.shops;
+
+    //       console.log('Товары:', res.items);
+    //       console.log('Ломбарды:', res.shops);
+    //     });
+    //   });
+
+    //   }
+    // )
     this.id = this.route.snapshot.paramMap.get('id')!;
 
     if(this.id){
-      this.pawnShop$ = this.lombardService.getLombardById(this.id)
+      this.pawnShop$ = this.lombardService.getLombardById(this.id).pipe(
+        shareReplay(1)
+      )
       
-      this.pawnShop$.subscribe(profile => {
-        this.pawnShop = profile;
-      });
+      // this.pawnShop$.subscribe(profile => {
+      //   this.pawnShop = profile;
+      //   console.log(this.pawnShop, 'pawnshop profile');
+      // });
 
     }
 
-    this.pawnShop$.subscribe(profile => {
-      if (profile?.openTime && profile?.closeTime) {
-        const now = new Date();
-        const [openHour, openMinute] = profile.openTime.split(':').map(Number);
-        const [closeHour, closeMinute] = profile.closeTime.split(':').map(Number);
+    this.pawnShop$.pipe(
+      tap(profile => {
+        this.pawnShop = profile;
 
-        const open = new Date();
-        open.setHours(openHour, openMinute);
+        if (profile?.openTime && profile?.closeTime) {
+          const now = new Date();
+          const [openHour, openMinute] = profile.openTime.split(':').map(Number);
+          const [closeHour, closeMinute] = profile.closeTime.split(':').map(Number);
 
-        const close = new Date();
-        close.setHours(closeHour, closeMinute);
+          const open = new Date();
+          open.setHours(openHour, openMinute);
 
-        this.isOpenNow = now >= open && now <= close;
-      }
-    });
+          const close = new Date();
+          close.setHours(closeHour, closeMinute);
+
+          this.isOpenNow = now >= open && now <= close;
+        }
+      }),
+      take(1)
+    )
+    .subscribe(profile => {
+      this.productService.loadProductsByOwner(profile._id);
+    })
    // продукты — только из store
-    this.products$ = this.productService.getProducts();
+    this.products$ = this.productService.getProducts().pipe(
+      tap(products => {
+        this.products = products;
+        console.log(this.products, 'products from store');
+      }
+    )
+    );
 
     // когда загрузился ломбард → грузим продукты
     this.pawnShop$
       .pipe(take(1))
       .subscribe(profile => {
         this.productService.loadProductsByOwner(profile._id);
+        
       });
+  }
+
+  ngOnDestroy(){
+      this.destroy$.next();
+      this.destroy$.complete();
   }
 
   showTerms = false;

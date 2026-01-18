@@ -31,6 +31,9 @@ export class ProductDetailComponent implements OnInit,OnChanges {
   }
   
   ngOnChanges(changes: SimpleChanges): void {
+      if(changes['product']) {
+        this.normalizePhotos();
+      }
       if (changes['user']) {
         console.log('USER ПРИШЁЛ В МОДАЛКУ:', this.user);
       }
@@ -100,5 +103,31 @@ export class ProductDetailComponent implements OnInit,OnChanges {
   onPhotoAdded() {
     console.log('Open upload dialog...');
   }
+
+  private normalizePhotos(): void {
+    if (!Array.isArray(this.product.photos)) {
+      this.product.photos = [];
+      return;
+    }
+
+    this.product.photos = this.product.photos.map((photo: any) => {
+      // если строка — превращаем в объект
+      if (typeof photo === 'string') {
+        return {
+          url: photo,
+          publicId: ''
+        };
+      }
+
+      // если уже объект — оставляем как есть
+      if (photo?.url) {
+        return photo;
+      }
+
+      // на случай мусора
+      return null;
+    }).filter(Boolean);
+  }
+
 
 }

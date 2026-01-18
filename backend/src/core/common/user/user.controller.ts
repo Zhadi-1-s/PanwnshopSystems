@@ -96,10 +96,7 @@ export class UserController {
   @ApiOperation({ summary: 'Получить все избранные товары пользователя' })
   @ApiParam({ name: 'userId', description: 'ID пользователя', type: String })
   async getFavoriteItems(@Param('userId') userId: string) {
-    
-    const user = await this.userService.getFavoriteItems(userId);
-    if (!user) throw new NotFoundException('User not found');
-    return user.favoriteItems;
+    return this.userService.getFavoriteItems(userId);
   }
 
 }

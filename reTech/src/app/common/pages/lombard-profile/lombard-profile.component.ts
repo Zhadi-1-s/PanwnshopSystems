@@ -239,6 +239,7 @@ export class LombardProfileComponent implements OnInit{
   loadOffers() {
      this.authService.currentUser$.pipe(
        filter((user): user is User => !!user?._id),
+       take(1),
        switchMap(user => this.lombardService.getLombardByUserId(user._id)),
        switchMap(pawnshop => this.offerService.getOffersByPawnshop(pawnshop._id))
      ).subscribe(offers => {
@@ -290,6 +291,7 @@ export class LombardProfileComponent implements OnInit{
   loadSlots() {
     this.authService.currentUser$.pipe(
       filter((user): user is User => !!user?._id),
+      take(1),
       switchMap(user => this.lombardService.getLombardByUserId(user._id)),
       switchMap(pawnshop => this.slotService.getSlotsByPawnshopId(pawnshop._id)),
       map(slots => slots.filter(slot => slot.status === 'active')),
@@ -584,6 +586,7 @@ export class LombardProfileComponent implements OnInit{
       }
       else if(n.data?.productId){
         const product = this.prodcuctsFromNotifications[n.refId];
+        console.log('Product from notification:', product);
         if (product) {
           this.openProductDetail(product);
         }

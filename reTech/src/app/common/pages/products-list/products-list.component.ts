@@ -1,7 +1,7 @@
 import { CommonModule,isPlatformBrowser } from '@angular/common';
-import { Component, OnInit,Inject,PLATFORM_ID } from '@angular/core';
+import { Component, OnInit,Inject,PLATFORM_ID, OnDestroy } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BehaviorSubject, Observable,of,combineLatest,map, filter, tap, switchMap,startWith,shareReplay,take } from 'rxjs';
+import { BehaviorSubject, Observable,of,combineLatest,map, filter, tap, switchMap,startWith,shareReplay,take ,Subject, takeUntil} from 'rxjs';
 import { Product } from '../../../shared/interfaces/product.interface';
 import { ProductService } from '../../../shared/services/product.service';
 import { RouterModule } from '@angular/router';
@@ -54,7 +54,7 @@ import { UserService } from '../../../shared/services/user.service';
     ])
   ]
 })
-export class ProductsListComponent implements OnInit {
+export class ProductsListComponent implements OnInit, OnDestroy {
 
   user:User;
   
@@ -92,6 +92,8 @@ export class ProductsListComponent implements OnInit {
 
   toogleFilterBlock: boolean = false;
 
+  private destroy$ = new Subject<void>();
+
   searchHelpItemsList: string[] = [
     'Iphone',
     'Samsung',
@@ -124,7 +126,8 @@ export class ProductsListComponent implements OnInit {
     this.loadFavorites();
     this.authService.currentUser$.pipe(
       filter((user): user is User => !!user?._id),
-      switchMap(user => this.userService.getFavoriteItems(user._id))
+      switchMap(user => this.userService.getFavoriteItems(user._id)),
+      takeUntil(this.destroy$),
     ).subscribe(favorites => {
       this.favitems = favorites;  // сразу массив
     });
@@ -135,7 +138,7 @@ export class ProductsListComponent implements OnInit {
     ]).pipe(
       switchMap(([items, user]) => {
         this.user = user;
-
+        console.log(items);
         if (!user?._id) return of(items.filter(p => p.status === 'active'));
         return this.pawnShopService.getLombardByUserId(user._id).pipe(
           map(pawnshop => {
@@ -197,6 +200,11 @@ export class ProductsListComponent implements OnInit {
     );
   }
 
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   // Добавление help-item в фильтр
   onHelpItemClick(item: string) {
     const current = this.appliedFilters$.value;
@@ -240,7 +248,7 @@ export class ProductsListComponent implements OnInit {
 
   openProductDetails(item:Product){
     const modalRef = this.modalService.open(ProductDetailComponent)
-
+    console.log('OPEN DETAIL FOR PRODUCT:', item);
     modalRef.componentInstance.product = item;
     modalRef.componentInstance.user = this.user;
     modalRef.componentInstance.pawnshop = this.pawnshop;

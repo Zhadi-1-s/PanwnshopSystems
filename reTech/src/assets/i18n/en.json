@@ -245,14 +245,16 @@
         "rejected": "You declined the offer.",
         "in_inspection": "You accepted the offer and must visit a pawnshop branch for final inspection.",
         "completed": "You successfully completed the deal.",
-        "pending": "You are reviewing the offer and have not made a decision yet."
+        "pending": "You are reviewing the offer and have not made a decision yet.",
+        "rejected_by_pawnshop": "The offer was rejected by the pawnshop."
     },
     "offerStatusTooltipLombard": {
         "no_show": "The user did not bring the item for the final evaluation.",
         "rejected": "The seller declined your offer.",
         "in_inspection": "The user accepted the offer and should come to the pawnshop for final inspection.",
         "completed": "The deal has been successfully completed.",
-        "pending": "The offer is awaiting the user's decision."
+        "pending": "The offer is awaiting the user's decision.",
+        "rejected_by_pawnshop": "The offer was rejected by the pawnshop."
     },
     "Cancel Offer":"Cancel offer",
     "Edit Offer":"Edit offer",
@@ -260,6 +262,12 @@
     "User did not bring the item":"User did not bring the item",
     "Item in bad condition":"Item in bad condition",
     "Other reason":"Other reason",
-    "Submit":"Submit"
+    "Submit":"Submit",
+    "Products for Sale":"Products for Sale",
+    "No products available":"No products available",
+    "rejected_by_pawnshop":"Rejected by pawnshop",
+    "Offer was canceled by pawnshop":"Offer was canceled by pawnshop.",
+    "bad_condition":"Item in bad condition",
+    "Reason":"Reason"
 
 }

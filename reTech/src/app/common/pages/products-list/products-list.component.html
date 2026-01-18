@@ -142,88 +142,100 @@
       <div *ngIf="(filteredProducts$ | async) as products; else loading">
         
         <div *ngIf="products.length > 0; else noProducts" 
-          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
           
           <div *ngFor="let product of products" 
-            class="group bg-white rounded-2xl shadow-sm hover:shadow-xl border border-gray-100 overflow-hidden transition-all duration-300 transform hover:-translate-y-1 cursor-pointer"
+            class="group relative bg-white rounded-2xl border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-blue-100/50 hover:border-blue-100 hover:-translate-y-1.5 cursor-pointer"
             (click)="openProductDetails(product)">
             
-            <!-- Product Image -->
-            <div class="relative overflow-hidden bg-gray-100 h-48 sm:h-56">
-              <img
-                *ngIf="product.photos?.length > 0; else noPhoto"
-                [src]="product.photos[0]"
-                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                alt="{{ product.title }}"
-              />
+            <!-- Product Image Container -->
+            <div class="relative overflow-hidden bg-gradient-to-br from-slate-50 to-gray-100">
+              <div class="aspect-[4/3]">
+                <img
+                  *ngIf="product.photos?.length > 0; else noPhoto"
+                  [src]="product.photos[0].url"
+                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out"
+                  alt="{{ product.title }}"
+                />
 
-              <ng-template #noPhoto>
-                <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
-                  <i class="fa-solid fa-image text-gray-400 text-5xl"></i>
-                </div>
-              </ng-template>
+                <ng-template #noPhoto>
+                  <div class="w-full h-full flex items-center justify-center">
+                    <div class="text-center">
+                      <i class="fa-solid fa-cube text-gray-200 text-4xl"></i>
+                    </div>
+                  </div>
+                </ng-template>
+              </div>
+
+              <!-- Gradient Overlay -->
+              <div class="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
               <!-- Favorite Button -->
               <button
-                class="absolute top-3 right-3 w-10 h-10 flex items-center justify-center bg-white/90 backdrop-blur-sm hover:bg-white rounded-full shadow-lg transition-all duration-200 transform hover:scale-110 z-10"
+                class="absolute top-3 right-3 w-9 h-9 flex items-center justify-center bg-white/90 backdrop-blur-md rounded-xl shadow-sm border border-white/50 transition-all duration-200 hover:scale-110 hover:bg-white z-10"
                 (click)="toggleFavorite(product, $event)">
                 <i 
-                  class="fa-solid fa-heart text-lg transition-colors duration-200"
-                  [ngClass]="isFavorite(product._id, favitems) ? 'text-red-500' : 'text-gray-300'">
+                  class="fa-solid fa-heart text-base transition-all duration-200"
+                  [ngClass]="isFavorite(product._id, favitems) ? 'text-rose-500 scale-110' : 'text-gray-300 group-hover:text-gray-400'">
                 </i>
               </button>
+
+              <!-- Category Badge -->
+              <div class="absolute bottom-2.5 left-2.5 px-2.5 py-1 bg-white/90 backdrop-blur-md rounded-lg text-xs font-medium text-gray-600 border border-white/50 shadow-sm">
+                {{ product.category | translate }}
+              </div>
             </div>
 
-            <!-- Product Details -->
-            <div class="p-4 sm:p-5 space-y-3">
-              <h5 class="text-lg font-bold text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors duration-200">
+            <!-- Product Info -->
+            <div class="p-4 space-y-2.5">
+              <!-- Title -->
+              <h5 class="text-sm font-semibold text-gray-800 leading-snug line-clamp-2 group-hover:text-blue-600 transition-colors duration-200">
                 {{ product.title }}
               </h5>
 
-              <div class="space-y-2">
-                <!-- Price -->
-                <div class="flex items-center gap-2 text-gray-600">
-                  <i class="fa-solid fa-tag text-blue-500 text-sm"></i>
-                  <span class="text-xl font-bold text-blue-600">{{ product.price | number:'1.0-0' }} ₸</span>
+              <!-- Price & Date Row -->
+              <div class="flex items-end justify-between gap-2">
+                <div class="space-y-0.5">
+                  <span class="block text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                    {{ product.price | number:'1.0-0' }} ₸
+                  </span>
                 </div>
-
-                <!-- Category -->
-                <div class="flex items-center gap-2 text-sm text-gray-600">
-                  <i class="fa-solid fa-layer-group text-gray-400"></i>
-                  <span>{{ product.category | translate }}</span>
-                </div>
-
-                <!-- Date -->
-                <div class="flex items-center gap-2 text-sm text-gray-500">
-                  <i class="fa-regular fa-calendar text-gray-400"></i>
-                  <span>{{ product.createdAt | date:'dd.MM.yyyy' }}</span>
-                </div>
+                <span class="text-xs text-gray-400 font-medium whitespace-nowrap">
+                  {{ product.createdAt | date:'dd MMM' }}
+                </span>
               </div>
             </div>
+
+            <!-- Hover Action Indicator -->
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-indigo-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
           </div>
         </div>
 
-        <!-- No Products State -->
+        <!-- Empty State -->
         <ng-template #noProducts>
-          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 text-center">
-            <div class="max-w-md mx-auto space-y-4">
-              <div class="w-20 h-20 mx-auto bg-gray-100 rounded-full flex items-center justify-center">
-                <i class="fa-regular fa-folder-open text-gray-400 text-4xl"></i>
+          <div class="bg-gradient-to-br from-white to-slate-50 rounded-2xl border border-gray-100 p-14 text-center">
+            <div class="max-w-sm mx-auto space-y-4">
+              <div class="w-20 h-20 mx-auto bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl flex items-center justify-center shadow-inner">
+                <i class="fa-solid fa-box-open text-blue-400 text-3xl"></i>
               </div>
-              <p class="text-lg font-semibold text-gray-900">Нет доступных товаров</p>
-              <p class="text-gray-500">Попробуйте изменить фильтры или поисковый запрос</p>
+              <div class="space-y-2">
+                <p class="text-lg font-semibold text-gray-700">Нет доступных товаров</p>
+                <p class="text-sm text-gray-400">Попробуйте изменить параметры поиска или фильтры</p>
+              </div>
             </div>
           </div>
         </ng-template>
       </div>
     </div>
 
-    <!-- Loading Template -->
+    <!-- Loading State -->
     <ng-template #loading>
-      <div class="flex justify-center items-center py-16">
+      <div class="flex flex-col items-center justify-center py-14 space-y-4">
         <div class="relative">
-          <div class="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+          <div class="w-12 h-12 border-2 border-blue-100 rounded-full"></div>
+          <div class="absolute inset-0 w-12 h-12 border-2 border-transparent border-t-blue-500 rounded-full animate-spin"></div>
         </div>
+        <span class="text-sm text-gray-400 font-medium">Загрузка...</span>
       </div>
     </ng-template>
 

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from 'src/core/database/schemas/user.schema';
@@ -73,9 +73,27 @@ export class UserService {
   async getFavorites(userId: string) {
     return this.userModel.findById(userId).populate('favoritePawnshops');
   }
-  async getFavoriteItems(userId:string){
-    return this.userModel.findById(userId).populate('favoriteItems')
+  async getFavoriteItems(userId: string) {
+    const user = await this.userModel
+      .findById(userId)
+      .populate('favoriteItems')
+      .lean()
+      .exec();
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return (user.favoriteItems || []).map((item: any) => ({
+      ...item,
+      photos: (item.photos || []).map(p =>
+        typeof p === 'string'
+          ? { url: p, publicId: '' }
+          : p
+      ),
+    }));
   }
+
 
   async setRefreshToken(userId: string, refreshToken: string | null) {
     return this.userModel.findByIdAndUpdate(

@@ -28,6 +28,7 @@ export class Notification {
       'new-offer',
       'offer-accepted',
       'offer-rejected',
+      'offer-cancelled',
       'offer-updated',
       'new-message',
       'system',

@@ -197,6 +197,7 @@
                             <img [src]="photo" 
                                  alt="Фото ломбарда"
                                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
+                                 
                             <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300"></div>
                         </div>
                     </div>
@@ -209,7 +210,7 @@
                      *ngIf="products$ | async as products">
                     <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2 mb-6">
                         <i class="fa-solid fa-box-open text-blue-600"></i>
-                        Товары ломбарда на продаже
+                        {{'Products for Sale' | translate}}
                     </h3>
 
                     <div *ngIf="products.length > 0; else noProducts" 
@@ -220,7 +221,7 @@
                             
                             <!-- Product Image -->
                             <div class="relative aspect-square overflow-hidden bg-gray-100">
-                                <img [src]="product.photos[0]" 
+                                <img [src]="product.photos[0].url" 
                                      alt="product photo"
                                      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
                                 
@@ -251,7 +252,7 @@
                     <ng-template #noProducts>
                         <div class="text-center py-12">
                             <i class="fa-solid fa-box-open text-gray-300 text-5xl mb-4"></i>
-                            <p class="text-gray-500">Пока нет товаров на продаже</p>
+                            <p class="text-gray-500">{{'No products available' | translate}}</p>
                         </div>
                     </ng-template>
                 </div>

@@ -8,7 +8,7 @@ import { EditModalComponent } from '../../components/modals/edit-modal/edit-moda
 import { TranslateService } from '@ngx-translate/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { ProductService } from '../../../shared/services/product.service';
-import { Observable,map,pipe ,filter, switchMap, tap,firstValueFrom,of, forkJoin,catchError} from 'rxjs';
+import { Observable,map,pipe ,filter, switchMap, tap,firstValueFrom,of, forkJoin,catchError, take} from 'rxjs';
 import { Product } from '../../../shared/interfaces/product.interface';
 import { CreateProductComponent } from '../../components/modals/create-product/create-product.component';
 import { ProductDetailComponent } from '../../components/modals/product-detail/product-detail.component';
@@ -159,6 +159,7 @@ export class ProfileComponent implements OnInit {
   loadOffers() {
     this.authService.currentUser$.pipe(
       filter((user): user is User => !!user?._id),
+      take(1),
       switchMap(user => this.notificationService.getUserNotifications(user._id)),
       map(notifications =>
         notifications.filter(n => n.type === 'new-offer' && !!n.refId)
@@ -184,7 +185,7 @@ export class ProfileComponent implements OnInit {
         console.log('Offers by id loaded', this.offersById);
         console.log('pawnshopId',this.offersById[Object.keys(this.offersById)[0]]?.pawnshopId);
       })
-    ).subscribe(); // ❗ ВОТ ЭТОГО НЕ ХВАТАЛО
+    ).subscribe();
   }
 
   deleteProduct(itemId:string){
@@ -295,12 +296,12 @@ export class ProfileComponent implements OnInit {
 
   get completedOfferNotifications() {
     return (this.notificationsList || []).filter(n => {
-      if (!['new-offer','offer-accepted','offer-rejected'].includes(n.type)) {
+      if (!['new-offer','offer-accepted','offer-rejected','offer-canceled'].includes(n.type)) {
         return false;
       }
 
       const offer = this.getOfferByNotification(n);
-      return offer && ['rejected', 'completed'].includes(offer.status);
+      return offer && ['rejected', 'completed','rejected_by_pawnshop'].includes(offer.status);
     });
   }
 
@@ -323,7 +324,7 @@ export class ProfileComponent implements OnInit {
       }
 
       // COMPLETED
-      return offer.status === 'rejected' || offer.status === 'completed' || offer.status === 'no_show';
+      return offer.status === 'rejected' || offer.status === 'completed' || offer.status === 'no_show' || offer.status === 'rejected_by_pawnshop';
     });
   }
 

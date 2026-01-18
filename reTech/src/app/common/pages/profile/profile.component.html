@@ -465,7 +465,7 @@
                  class="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700 rounded-lg p-3 mb-3 hover:shadow-md transition-shadow relative">
               
               <div class="flex items-center gap-3">
-                <img [src]="item.photos?.[0] || 'assets/png/no-photo.png'"
+                <img [src]="item.photos[0].url"
                      alt="product"
                      class="w-14 h-18 object-cover rounded-lg flex-shrink-0">
                 
@@ -603,7 +603,7 @@
             <div *ngFor="let product of favoriteProducts$ | async;let i = index"
                  class="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700 rounded-lg p-3 mb-3 cursor-pointer hover:shadow-md hover:-translate-y-0.5 transition-all relative">
               <div class="flex items-center gap-3">
-                <img [src]="product.photos?.[0].url || 'assets/png/no-photo.png'"
+                <img [src]="product.photos[0].url || 'assets/png/no-photo.png'"
                      alt="product"
                      class="w-12 h-12 object-cover rounded-full flex-shrink-0">
                 <div class="flex-1 min-w-0">

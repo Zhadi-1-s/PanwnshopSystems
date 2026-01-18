@@ -76,7 +76,7 @@ export class OfferService {
   // Обновить статус (accept / reject)
   async updateStatus(
       offerId: string,
-      status: 'pending' | 'completed' | 'rejected' | 'in_inspection' | 'no_show',
+      status: 'pending' | 'completed' | 'rejected' | 'in_inspection' | 'no_show' | 'rejected_by_pawnshop'
   ) {
       const offer = await this.offerModel.findById(offerId);
 
@@ -104,6 +104,31 @@ export class OfferService {
       return offer;
   }
 
+  async cancelOffer(offerId:string,reason:string){
+    const offer = await this.offerModel.findById(offerId);
 
+    if (!offer) throw new NotFoundException('Offer not found');
+
+    if(offer.status !== 'in_inspection'){
+      throw new NotFoundException('Only in_inspection offers can be cancelled');
+    }
+
+    offer.status = 'rejected_by_pawnshop';
+    offer.cancelReason = reason;
+    offer.updatedAt = new Date();
+
+    await offer.save();
+
+    await this.notificationService.create({
+      userId:offer.productOwnerId.toString(),
+      senderId:offer.pawnshopId.toString(),
+      type:'offer-cancelled',
+      title:'Offer cancelled by pawnshop',
+      message:reason,
+      refId:offer._id.toString(),
+      isRead:false
+    })
+
+  }
 
 }

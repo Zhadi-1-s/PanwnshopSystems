@@ -32,4 +32,9 @@ export class OfferService {
   updateStatus(id: string, status: 'pending' | 'completed' | 'rejected'| 'in_inspection'): Observable<Offer> {
     return this.http.patch<Offer>(`${this.apiUrl}/${id}/status`, { status });
   }
+
+  cancelOffer(id:string,reason:string):Observable<Offer>{
+    return this.http.patch<Offer>(`${this.apiUrl}/${id}/cancel`,{reason})
+  }
+
 }

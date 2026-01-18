@@ -7,6 +7,7 @@ export interface AppNotification {
     | 'offer-accepted'
     | 'offer-rejected'
     | 'offer-updated'
+    | 'offer-canceled'
     | 'new-message'
     | 'system'
     | 'chat-opened'
