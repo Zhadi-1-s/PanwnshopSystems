@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { EvaluationService } from '../../../../shared/services/evaluation.service';
 import { Evaluation } from '../../../../shared/interfaces/offer.interface';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
@@ -28,7 +28,9 @@ export class EvaluationDetailComponent implements OnInit {
   ){}
 
   ngOnInit() {
-    this.evaluation$ = this.evaluationService.getEvaluationById(this.evaluationId);
+    this.evaluation$ = this.evaluationService.getEvaluationById(this.evaluationId).pipe(
+     tap( evaluation => console.log(evaluation))
+    );
   }
 
   close(){

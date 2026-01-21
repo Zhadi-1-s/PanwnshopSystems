@@ -86,7 +86,7 @@
         <div class="grid grid-cols-3 gap-4">
           <img
             *ngFor="let photo of evaluation.photos"
-            [src]="photo"
+            [src]="photo.url"
             alt="Product photo"
             class="w-full h-32 object-cover rounded-lg shadow-sm border border-gray-200" />
         </div>

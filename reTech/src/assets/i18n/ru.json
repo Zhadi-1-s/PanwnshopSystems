@@ -274,6 +274,18 @@
     "rejected_by_pawnshop":"Отклонено ломбардом",
     "Offer was canceled by pawnshop":"Предложение было отменено ломбардом.",
     "bad_condition":"Товар в плохом состоянии",
-    "Reason":"Причина"
+    "Reason":"Причина",
+    "Products list":"Список продуктов",
+    "Apply":"Применить",
+    "Clear":"Очистить",
+    "Favorites":"Избранные",
+    "Iphone": "iPhone",
+    "Samsung": "Samsung",
+    "Xiaomi": "Xiaomi",
+    "Laptop": "Ноутбук",
+    "Headphones": "Наушники",
+    "Camera": "Камера",
+    "Watch": "Часы",
+    "Tablet": "Планшет"
 
 }

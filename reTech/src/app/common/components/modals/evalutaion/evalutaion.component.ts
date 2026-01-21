@@ -13,6 +13,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { Options} from '@angular-slider/ngx-slider';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { CloudinaryService } from '../../../../shared/services/cloudinary.service';
+import { finalize,distinctUntilChanged } from 'rxjs';
 @Component({
   selector: 'app-evalutaion',
   standalone: true,
@@ -58,7 +59,10 @@ export class EvalutaionComponent implements OnInit {
       expectedPrice: [0, Validators.required],
       termDays: [1, Validators.required],
       manualMode: [false],
-      userTelephoneNumber: ['', Validators.required]
+      userTelephoneNumber: ['', [
+        Validators.required,
+        Validators.pattern(/^(\+7|7|8)\d{10}$/)
+      ]]
     });
   }
 
@@ -77,8 +81,12 @@ export class EvalutaionComponent implements OnInit {
     this.form.get('termDays')?.setValue(this.term?.minTermDays || 1);
 
     // Подписка на изменения цены и дней для перерасчета
-    this.expectedPriceControl.valueChanges.subscribe(() => this.updateInterest());
-    this.form.get('termDays')?.valueChanges.subscribe(() => this.updateInterest());
+    this.expectedPriceControl.valueChanges
+      .pipe(distinctUntilChanged())
+      .subscribe(() => this.updateInterest());
+    this.form.get('termDays')?.valueChanges
+      .pipe(distinctUntilChanged())
+      .subscribe(() => this.updateInterest());
 
     this.updateInterest();
   }
@@ -114,6 +122,7 @@ export class EvalutaionComponent implements OnInit {
         uploadedUrls.push(url);
       } catch (err) {
         console.error('Ошибка загрузки фото:', err);
+        this.uploading = false;
       }
     }
 
@@ -124,10 +133,22 @@ export class EvalutaionComponent implements OnInit {
       userId: this.userId
     };
 
-    this.service.createEvaluation(payload).subscribe(() => {
-      this.closed.emit();
-    });
-  }
+    this.service.createEvaluation(payload)
+      .pipe(
+        finalize(() => {
+          this.uploading = false;
+        })
+      )
+      .subscribe({
+        next: () => {
+          this.activeModal.close(); // ← ЗАКРЫВАЕМ МОДАЛКУ
+          this.closed.emit();
+        },
+        error: (err) => {
+          console.error('Ошибка отправки:', err);
+        }
+      });
+    }
 
   close() {
     this.activeModal.close();

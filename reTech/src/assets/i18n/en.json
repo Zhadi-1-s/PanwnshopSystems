@@ -268,6 +268,18 @@
     "rejected_by_pawnshop":"Rejected by pawnshop",
     "Offer was canceled by pawnshop":"Offer was canceled by pawnshop.",
     "bad_condition":"Item in bad condition",
-    "Reason":"Reason"
+    "Reason":"Reason",
+    "Products list":"Products list",
+    "Apply":"Apply",
+    "Clear":"Clear",
+    "Favorites":"Favorites",
+    "Iphone": "iPhone",
+    "Samsung": "Samsung",
+    "Xiaomi": "Xiaomi",
+    "Laptop": "Laptop",
+    "Headphones": "Headphones",
+    "Camera": "Camera",
+    "Watch": "Watch",
+    "Tablet": "Tablet"
 
 }

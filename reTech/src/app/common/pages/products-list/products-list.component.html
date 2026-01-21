@@ -4,7 +4,7 @@
     <!-- Header Section -->
     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6 mb-6">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <h3 class="text-2xl sm:text-3xl font-bold text-gray-900">Список продуктов</h3>
+        <h3 class="text-2xl sm:text-3xl font-bold text-gray-900">{{'Products list'|translate}}</h3>
         <span class="inline-flex items-center px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-semibold">
           {{ (filteredProducts$ | async)?.length || 0 }} {{ 'Results' | translate }}
         </span>
@@ -33,7 +33,7 @@
           <button 
             class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl font-medium transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
             (click)="toogleFilterBlock = !toogleFilterBlock">
-            <span>Фильтры</span>
+            <span>{{'Filters' | translate}}</span>
             <i class="fa-solid fa-sliders"></i>
           </button>
           <button
@@ -45,7 +45,7 @@
             (click)="toggleFavorites()"
           >
             <i class="fa-solid fa-heart"></i>
-            <span>Избранные</span>
+            <span>{{'Favorites' | translate}}</span>
 
             <span
               *ngIf="(favoriteItems$ | async)?.length"
@@ -109,7 +109,7 @@
               *ngFor="let item of searchHelpItemsList" 
               class="px-3 py-1.5 bg-white hover:bg-blue-50 border border-gray-200 hover:border-blue-300 rounded-lg text-sm text-gray-700 hover:text-blue-700 cursor-pointer transition-all duration-200"
               (click)="onHelpItemClick(item)">
-              <span>{{ item }}</span>
+              <span>{{ item | translate}}</span>
             </div>
           </div>
 
@@ -118,12 +118,12 @@
             <button 
               class="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl font-medium transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
               (click)="updateAppliedFilters()">
-              Применить
+              {{'Apply' | translate}}
             </button>
             <button 
               class="px-6 py-2.5 bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 hover:border-gray-400 rounded-xl font-medium transition-all duration-200"
               (click)="clearFilters()">
-              Очистить
+              {{'Clear' | translate}}
             </button>
           </div>
         </div>

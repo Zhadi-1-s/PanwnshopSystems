@@ -13,7 +13,7 @@
     </div>
 
     <!-- Scrollable Content -->
-    <div class="p-6 overflow-y-auto flex-1 space-y-5">
+    <div class="p-6 overflow-y-auto flex-1 space-y-5 relative">
       <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-5">
         <div>
           <label class="block text-sm font-semibold mb-1 text-gray-700">{{ 'Название товара' | translate }}</label>
@@ -150,6 +150,9 @@
           <input type="tel" formControlName="userTelephoneNumber"
                  class="w-full px-4 py-2.5 rounded-lg border border-gray-300"
                  placeholder="+7 777 777 77 77" />
+          <p class="text-red-600 text-xs mt-1" *ngIf="form.get('userTelephoneNumber')?.invalid && form.get('userTelephoneNumber')?.touched">
+            {{ 'Введите корректный номер телефона' | translate }}
+          </p>
         </div>
 
         <!-- Submit -->
@@ -159,6 +162,9 @@
         </button>
 
       </form>
+       <div class="spinner-overlay" *ngIf="uploading">
+        <div class="spinner-border text-danger" role="status"></div>
+      </div>
     </div>
 
   </div>

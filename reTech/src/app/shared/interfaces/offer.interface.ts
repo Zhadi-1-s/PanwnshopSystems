@@ -23,12 +23,14 @@ export interface Evaluation{
     title: string;
     description?: string;
     condition: 'new' | 'good' | 'used' | 'broken';
-    photos: string[];
+     photos: { url: string; publicId: string }[];
  
     expectedPrice?: number;
     termDays:number;
  
-    status: 'pending' | 'viewed' | 'responded' | 'in_inspection';
+    status: 'pending' | 'in_inspection' | 'rejected' | 'no_show';
 
     createdAt?: Date;
+
+    type:'sale' | 'loan'
 }
