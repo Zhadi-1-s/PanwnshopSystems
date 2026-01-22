@@ -18,7 +18,7 @@ export class User {
   @Prop({ required: true, enum: ['user', 'pawnshop', 'admin']})
   role: 'user' | 'pawnshop' | 'admin';
 
-  @Prop({required:true})
+  @Prop({required:false})
   avatarUrl:string;
 
   @Prop({ type: [{ type: Types.ObjectId, ref: 'PawnshopProfile' }], default: [] })

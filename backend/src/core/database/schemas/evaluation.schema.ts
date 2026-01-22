@@ -45,12 +45,6 @@ export class Evaluation extends Document {
   @Prop({ required: true, enum: ['pending', 'in_inspection', 'rejected','no_show'], default: 'pending' })
   status: 'pending'|'in_inspection'|'rejected'|'no_show';
 
-  @Prop({ 
-    required: true, 
-    enum: ['sale', 'loan'], 
-    default: 'loan' 
-  })
-  type: 'sale' | 'loan';
 }
 
 export const EvaluationSchema = SchemaFactory.createForClass(Evaluation);

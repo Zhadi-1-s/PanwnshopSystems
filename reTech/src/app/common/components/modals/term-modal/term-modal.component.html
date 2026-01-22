@@ -1,47 +1,50 @@
-<div class="modal-header">
-  <h5 class="modal-title d-flex align-items-center">
-    <i class="fa-solid fa-scale-balanced text-primary me-2"></i>
-    Условия сделки
-  </h5>
-  <button type="button" class="btn-close" (click)="close()" aria-label="Close"></button>
-</div>
-
-<div class="modal-body">
+<ul class="bg-white shadow-md rounded-lg p-6 space-y-4 max-w-md mx-auto">
   
-  <!-- ОБВЕРТКА В СТИЛЕ description-block -->
-  <div class="terms-modal-wrapper">
+  <!-- Процентная ставка -->
+  <li *ngIf="terms?.interest" class="flex justify-between items-center">
+    <span class="font-semibold text-gray-700">Процентная ставка:</span>
+    <span class="text-gray-900">
+      {{ terms.interest.rate }}%
+      {{ terms.interest.period === 'day' ? 'в день' : 'в месяц' }}
+      <span *ngIf="terms.interest.startsAfterDays > 0" class="text-gray-400 text-sm">
+        (начисляется с {{ terms.interest.startsAfterDays }} дня)
+      </span>
+    </span>
+  </li>
 
-    <ul class="terms-list">
+  <!-- Минимальные дни начисления -->
+  <li *ngIf="terms?.interest?.minChargeDays" class="flex justify-between items-center">
+    <span class="font-semibold text-gray-700">Минимальный срок начисления:</span>
+    <span class="text-gray-900">{{ terms.interest.minChargeDays }} дней</span>
+  </li>
 
-      <li *ngIf="terms?.interestRate">
-        <strong>Процентная ставка:</strong> {{ terms.interestRate }}%
-      </li>
+  <!-- Лимиты займа -->
+  <li *ngIf="terms?.limits?.minAmount" class="flex justify-between items-center">
+    <span class="font-semibold text-gray-700">Минимальная сумма займа:</span>
+    <span class="text-gray-900">{{ terms.limits.minAmount | number:'1.0-0' }} ₸</span>
+  </li>
+  <li *ngIf="terms?.limits?.maxAmount" class="flex justify-between items-center">
+    <span class="font-semibold text-gray-700">Максимальная сумма займа:</span>
+    <span class="text-gray-900">{{ terms.limits.maxAmount | number:'1.0-0' }} ₸</span>
+  </li>
 
-      <li *ngIf="terms?.minTermDays">
-        <strong>Минимальный срок:</strong> {{ terms.minTermDays }} дней
-      </li>
+  <!-- Комиссия -->
+  <li *ngIf="terms?.fees" class="flex justify-between items-center">
+    <span class="font-semibold text-gray-700">Комиссия:</span>
+    <span class="text-gray-900">
+      <ng-container *ngIf="terms.fees.type === 'fixed'">
+        {{ terms.fees.value | number:'1.0-0' }} ₸
+      </ng-container>
+      <ng-container *ngIf="terms.fees.type === 'percent'">
+        {{ terms.fees.value }}%
+      </ng-container>
+    </span>
+  </li>
 
-      <li *ngIf="terms?.maxAmount">
-        <strong>Максимальная сумма:</strong> {{ terms.maxAmount | number:'1.0-0' }} ₸
-      </li>
+  <!-- Корректировка цены -->
+  <li *ngIf="terms?.priceAdjustmentLimitPercent" class="flex justify-between items-center">
+    <span class="font-semibold text-gray-700">Допустимая корректировка цены:</span>
+    <span class="text-gray-900">±{{ terms.priceAdjustmentLimitPercent }}%</span>
+  </li>
 
-      <li *ngIf="terms?.fees">
-        <strong>Комиссия:</strong> {{ terms.fees }} ₸
-      </li>
-
-      <li *ngIf="terms?.additional">
-        <strong>Дополнительно:</strong>
-        <div class="text-muted mt-1" style="white-space: pre-line;">
-          {{ terms.additional }}
-        </div>
-      </li>
-
-    </ul>
-
-  </div>
-
-</div>
-
-<div class="modal-footer">
-  <button type="button" class="btn btn-secondary" (click)="close()">Закрыть</button>
-</div>
+</ul>

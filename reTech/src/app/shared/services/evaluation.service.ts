@@ -30,7 +30,7 @@ export class EvaluationService {
     return this.http.get<Evaluation>(`${this.apiUrl}/${id}`);
   }
 
-  updateStatus(id: string, status: 'pending' | 'viewed' | 'responded'): Observable<Evaluation> {
+  updateStatus(id: string, status: 'pending' |'in_inspection' | 'rejected' | 'no_show'): Observable<Evaluation> {
     return this.http.patch<Evaluation>(`${this.apiUrl}/${id}/status`, { status });
   }
 

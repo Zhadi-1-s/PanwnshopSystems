@@ -34,22 +34,35 @@ export class CreateLombardComponent {
       private uploadService:CloudinaryService
   ){
       this.lombardForm = this.fb.group({
-        name: ['', Validators.required],
-        address: ['', Validators.required],
-        phone: ['', [Validators.required, Validators.pattern(/^\+?\d{10,15}$/)]],
-        slotLimit: [null, [Validators.required, Validators.min(0)]],
-        openTime: ['', Validators.required],
-        closeTime: ['', Validators.required],
+        name: [null, Validators.required],
+        logo: [null],
+        photos: [[]],
+        address: [null, Validators.required],
+        phone: [null, Validators.required],
+        slotLimit: [0, Validators.required],
+        openTime: ['09:00', Validators.required],
+        closeTime: ['18:00', Validators.required],
         description: [''],
-        photos: this.fb.control<string[]>([]),
+        
         terms: this.fb.group({
-            interestRate: [null],
-            minTermDays: [null],
-            maxAmount: [null],
-            fees: [null],
-            additional: ['']
-          })
+          interest: this.fb.group({
+            rate: [null, Validators.required],
+            period: ['month', Validators.required],
+            startsAfterDays: [0, Validators.required],
+            minChargeDays: [null]
+          }),
+          limits: this.fb.group({
+            maxAmount: [null, Validators.required],
+            minAmount: [null]
+          }),
+          fees: this.fb.group({
+            type: ['percent'], // или 'fixed'
+            value: [null]
+          }),
+          priceAdjustmentLimitPercent: [0, Validators.required]
+        })
       });
+
   }
 
   async submit() {

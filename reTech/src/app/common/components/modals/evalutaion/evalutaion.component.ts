@@ -78,7 +78,7 @@ export class EvalutaionComponent implements OnInit {
     this.isBrowser = isPlatformBrowser(this.platformId);
 
     // Устанавливаем минимальное количество дней
-    this.form.get('termDays')?.setValue(this.term?.minTermDays || 1);
+    this.form.get('termDays')?.setValue(this.term?.interest?.minChargeDays || 1);
 
     // Подписка на изменения цены и дней для перерасчета
     this.expectedPriceControl.valueChanges
@@ -93,21 +93,50 @@ export class EvalutaionComponent implements OnInit {
 
   updateInterest() {
     const price = this.expectedPriceControl.value || 0;
-    const days = this.form.get('termDays')?.value || this.term.minTermDays;
+
+    // Берём дни из формы
+    const days = this.form.get('termDays')?.value || 1;
+
+    // Передаём в calculateInterest
     this.interestResult = this.calculateInterest(price, days);
   }
+
 
   calculateInterest(price: number, days: number): number {
     if (!this.term) return price;
 
-    const rate = this.term.interestRate || 0;
-    const fees = this.term.fees || 0;
+    // Процент
+    const rate = this.term.interest?.rate || 0;
+    const period = this.term.interest?.period || 'day';
+    const startsAfterDays = this.term.interest?.startsAfterDays || 0;
+    const minChargeDays = this.term.interest?.minChargeDays || 0;
 
-    const interest = price * (rate / 100) * days;
-    const fee = price * (fees / 100);
+    // Кол-во дней для начисления
+    const chargeDays = Math.max(days - startsAfterDays, minChargeDays);
+
+    // Рассчитываем процент
+    let interest = 0;
+    if (chargeDays > 0) {
+      interest = price * (rate / 100) * chargeDays;
+      // Если процент за месяц, пересчитываем в дни (пример: 30 дней в месяце)
+      if (period === 'month') {
+        interest = interest * (chargeDays / 30);
+      }
+    }
+
+    // Комиссия
+    let fee = 0;
+    if (this.term.fees) {
+      if (this.term.fees.type === 'fixed') {
+        fee = this.term.fees.value;
+      } else if (this.term.fees.type === 'percent') {
+        fee = price * (this.term.fees.value / 100);
+      }
+    }
 
     return price + interest + fee;
   }
+
 
   async submit() {
     if (this.form.invalid) return;

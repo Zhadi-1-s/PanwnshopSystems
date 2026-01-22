@@ -15,6 +15,7 @@ export class CreateTermComponent {
 
   @Input() pawnshopId:string
 
+  
   termsForm!: FormGroup;
   loading = false;
 
@@ -30,11 +31,21 @@ export class CreateTermComponent {
 
   private initForm() {
     this.termsForm = this.fb.group({
-      interestRate: [null, Validators.required],
-      minTermDays: [null, Validators.required],
-      maxAmount: [null, Validators.required],
-      fees: [null],
-      additional: ['']
+      interest: this.fb.group({
+        rate: [null, Validators.required],
+        period: ['month', Validators.required], // можно выбрать дефолт
+        startsAfterDays: [0, Validators.required],
+        minChargeDays: [null]
+      }),
+      limits: this.fb.group({
+        maxAmount: [null, Validators.required],
+        minAmount: [null]
+      }),
+      fees: this.fb.group({
+        type: ['percent'], // дефолт
+        value: [null]
+      }),
+      priceAdjustmentLimitPercent: [0, Validators.required]
     });
   }
 

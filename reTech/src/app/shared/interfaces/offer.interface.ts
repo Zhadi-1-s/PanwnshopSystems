@@ -32,5 +32,4 @@ export interface Evaluation{
 
     createdAt?: Date;
 
-    type:'sale' | 'loan'
 }

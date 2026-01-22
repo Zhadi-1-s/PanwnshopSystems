@@ -100,31 +100,60 @@
       <label class="form-label">Условия ломбарда</label>
 
       <div formGroupName="terms">
-        <div class="mb-2">
+
+        <!-- Процентная ставка -->
+        <div formGroupName="interest" class="mb-2">
           <label class="form-label">Процентная ставка (%)</label>
-          <input type="number" class="form-control" formControlName="interestRate" placeholder="3.5">
+          <input type="number" class="form-control" formControlName="rate" placeholder="3.5">
         </div>
 
-        <div class="mb-2">
-          <label class="form-label">Минимальный срок (дней)</label>
-          <input type="number" class="form-control" formControlName="minTermDays" placeholder="7">
+        <div formGroupName="interest" class="mb-2">
+          <label class="form-label">Период</label>
+          <select class="form-control" formControlName="period">
+            <option value="day">В день</option>
+            <option value="month">В месяц</option>
+          </select>
         </div>
 
-        <div class="mb-2">
+        <div formGroupName="interest" class="mb-2">
+          <label class="form-label">Начисление после дней</label>
+          <input type="number" class="form-control" formControlName="startsAfterDays" placeholder="0">
+        </div>
+
+        <div formGroupName="interest" class="mb-2">
+          <label class="form-label">Минимальный срок начисления (дней)</label>
+          <input type="number" class="form-control" formControlName="minChargeDays" placeholder="7">
+        </div>
+
+        <!-- Лимиты -->
+        <div formGroupName="limits" class="mb-2">
           <label class="form-label">Максимальная сумма</label>
           <input type="number" class="form-control" formControlName="maxAmount" placeholder="500000">
         </div>
 
-        <div class="mb-2">
-          <label class="form-label">Комиссия (%)</label>
-          <input type="number" class="form-control" formControlName="fees" placeholder="2.5">
+        <div formGroupName="limits" class="mb-2">
+          <label class="form-label">Минимальная сумма</label>
+          <input type="number" class="form-control" formControlName="minAmount" placeholder="10000">
         </div>
 
-        <div class="mb-2">
-          <label class="form-label">Дополнительно</label>
-          <textarea class="form-control" formControlName="additional" rows="2" placeholder="Особые условия или примечания"></textarea>
+        <!-- Комиссия -->
+        <div formGroupName="fees" class="mb-2">
+          <label class="form-label">Комиссия</label>
+          <select class="form-control" formControlName="type">
+            <option value="percent">Процент</option>
+            <option value="fixed">Фиксированная</option>
+          </select>
+          <input type="number" class="form-control mt-1" formControlName="value" placeholder="1.5">
         </div>
+
+        <!-- Допустимая корректировка цены -->
+        <div class="mb-2">
+          <label class="form-label">Допустимая корректировка цены (%)</label>
+          <input type="number" class="form-control" formControlName="priceAdjustmentLimitPercent" placeholder="10">
+        </div>
+
       </div>
+
     </div>
 
 
