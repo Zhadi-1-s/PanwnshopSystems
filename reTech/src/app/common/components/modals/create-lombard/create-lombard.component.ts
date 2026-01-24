@@ -89,7 +89,7 @@ export class CreateLombardComponent {
       const payload: PawnshopProfile = {
         userId: this.userId,
         ...this.lombardForm.value,
-        logo,
+        logoUrl: logo?.url || 'assets/png/pawnshopLogo.jpg', 
         photos: uploadedPhotos
       };
 

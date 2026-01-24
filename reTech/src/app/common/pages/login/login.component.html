@@ -30,28 +30,60 @@
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
 
           <div class="mb-3">
-            <label class="form-label">{{'Email address' | translate}}</label>
-            <input type="email" formControlName="email" class="form-control" placeholder="{{'Enter your email'|translate}}">
-            <div *ngIf="submitted && loginForm.controls['email'].errors" class="text-danger small">
-              <div *ngIf="loginForm.controls['email'].errors['required']">{{'Email is required' | translate}}</div>
-              <div *ngIf="loginForm.controls['email'].errors['email']">{{'Invalid email' | translate}}</div>
+            <label class="form-label">{{ 'Email address' | translate }}</label>
+            <input
+              type="email"
+              formControlName="email"
+              class="form-control"
+              placeholder="{{ 'Enter your email' | translate }}"
+              [class.is-invalid]="submitted && loginForm.controls['email'].invalid"
+            />
+
+            <div *ngIf="submitted && loginForm.controls['email'].invalid" class="text-danger small">
+              <div *ngIf="loginForm.controls['email'].errors?.['required']">
+                {{ 'Email is required' | translate }}
+              </div>
+              <div *ngIf="loginForm.controls['email'].errors?.['email']">
+                {{ 'Invalid email' | translate }}
+              </div>
             </div>
+
+
           </div>
 
           <div class="mb-3 d-flex justify-content-between align-items-center">
-            <label class="form-label mb-0">{{'Password' | translate}}</label>
-            <a class="small text-decoration-none" (click)="forgotPassword()">{{'Forgot password?' | translate}}</a>
+            <label class="form-label mb-0">{{ 'Password' | translate }}</label>
+            <a class="small text-decoration-none" (click)="forgotPassword()">{{ 'Forgot password?' | translate }}</a>
           </div>
 
-          <input type="password" formControlName="password" class="form-control mb-3" placeholder="{{'Enter your password'|translate}}">
-          <div *ngIf="submitted && loginForm.controls['password'].errors" class="text-danger small">
-            <div *ngIf="loginForm.controls['password'].errors['required']">{{'Password is required' | translate}}</div>
-            <div *ngIf="loginForm.controls['password'].errors['minlength']">{{'Password must be at least 6 characters' | translate}}</div>
+         <input
+            type="password"
+            formControlName="password"
+            class="form-control mb-3"
+            placeholder="{{ 'Enter your password' | translate }}"
+            [class.is-invalid]="submitted && loginForm.controls['password'].invalid"
+          />
+
+          <div *ngIf="submitted && loginForm.controls['password'].invalid" class="text-danger small">
+            <div *ngIf="loginForm.controls['password'].errors?.['required']">
+              {{ 'Password is required' | translate }}
+            </div>
+            <div *ngIf="loginForm.controls['password'].errors?.['minlength']">
+              {{ 'Password must be at least 6 characters' | translate }}
+            </div>
           </div>
 
-          <button type="submit" class="btn btn-dark w-100 mb-3">{{'Sign in' | translate}}</button>
+
+          <button
+            type="submit"
+            class="btn btn-dark w-100 mb-3"
+            [disabled]="loginForm.invalid && submitted"
+          >
+            {{ 'Sign in' | translate }}
+          </button>
 
         </form>
+
 
         <div *ngIf="serverError" class="text-danger text-center py-2">
           {{ serverError }}

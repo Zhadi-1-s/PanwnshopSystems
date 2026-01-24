@@ -4,6 +4,7 @@ import { Document, Types } from 'mongoose';
 import { Review, ReviewSchema } from './reviews.schema';
 import { PawnshopTerms,PawnshopTermsSchema } from './pawnshop-term.schema';
 
+
 export type PawnshopProfileDocument = PawnshopProfile & Document;
 
 @Schema({ timestamps: { createdAt: true, updatedAt: false } })
@@ -39,8 +40,16 @@ export class PawnshopProfile {
   @Prop()
   description?: string;
 
-  @Prop({ type: [String], default: [] })
-  photos?: string[];
+  @Prop({
+    type: [
+      {
+        url: { type: String, required: true },
+        publicId: { type: String, required: true },
+      }
+    ],
+    default: []
+  })
+  photos?: { url: string; publicId: string }[];
 
   @Prop({ type: [{ type: Types.ObjectId, ref: 'Slot' }], default: [] })
   activeSlots: Types.ObjectId[];

@@ -101,42 +101,42 @@
 
       <div formGroupName="terms">
 
-        <!-- Процентная ставка -->
-        <div formGroupName="interest" class="mb-2">
-          <label class="form-label">Процентная ставка (%)</label>
-          <input type="number" class="form-control" formControlName="rate" placeholder="3.5">
+  <!-- Interest -->
+        <div formGroupName="interest">
+          <div class="mb-2">
+            <label class="form-label">Процентная ставка (%)</label>
+            <input type="number" class="form-control" formControlName="rate" placeholder="3.5">
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Период</label>
+            <select class="form-control" formControlName="period">
+              <option value="day">В день</option>
+              <option value="month">В месяц</option>
+            </select>
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Начисление после дней</label>
+            <input type="number" class="form-control" formControlName="startsAfterDays" placeholder="0">
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Минимальный срок начисления (дней)</label>
+            <input type="number" class="form-control" formControlName="minChargeDays" placeholder="7">
+          </div>
         </div>
 
-        <div formGroupName="interest" class="mb-2">
-          <label class="form-label">Период</label>
-          <select class="form-control" formControlName="period">
-            <option value="day">В день</option>
-            <option value="month">В месяц</option>
-          </select>
+        <!-- Limits -->
+        <div formGroupName="limits">
+          <div class="mb-2">
+            <label class="form-label">Максимальная сумма</label>
+            <input type="number" class="form-control" formControlName="maxAmount" placeholder="500000">
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Минимальная сумма</label>
+            <input type="number" class="form-control" formControlName="minAmount" placeholder="10000">
+          </div>
         </div>
 
-        <div formGroupName="interest" class="mb-2">
-          <label class="form-label">Начисление после дней</label>
-          <input type="number" class="form-control" formControlName="startsAfterDays" placeholder="0">
-        </div>
-
-        <div formGroupName="interest" class="mb-2">
-          <label class="form-label">Минимальный срок начисления (дней)</label>
-          <input type="number" class="form-control" formControlName="minChargeDays" placeholder="7">
-        </div>
-
-        <!-- Лимиты -->
-        <div formGroupName="limits" class="mb-2">
-          <label class="form-label">Максимальная сумма</label>
-          <input type="number" class="form-control" formControlName="maxAmount" placeholder="500000">
-        </div>
-
-        <div formGroupName="limits" class="mb-2">
-          <label class="form-label">Минимальная сумма</label>
-          <input type="number" class="form-control" formControlName="minAmount" placeholder="10000">
-        </div>
-
-        <!-- Комиссия -->
+        <!-- Fees -->
         <div formGroupName="fees" class="mb-2">
           <label class="form-label">Комиссия</label>
           <select class="form-control" formControlName="type">
@@ -146,13 +146,14 @@
           <input type="number" class="form-control mt-1" formControlName="value" placeholder="1.5">
         </div>
 
-        <!-- Допустимая корректировка цены -->
+        <!-- Price adjustment -->
         <div class="mb-2">
           <label class="form-label">Допустимая корректировка цены (%)</label>
           <input type="number" class="form-control" formControlName="priceAdjustmentLimitPercent" placeholder="10">
         </div>
 
       </div>
+
 
     </div>
 

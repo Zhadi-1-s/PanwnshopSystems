@@ -93,64 +93,93 @@
                 </div>
 
                 <!-- Terms expandable section with modern card styling -->
-                <div *ngIf="showTerms" class="mb-6 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-200 shadow-sm">
+                <div *ngIf="showTerms && profile?.terms"
+                        class="mb-6 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-200 shadow-sm">
+
                     <h4 class="text-lg font-bold text-gray-800 flex items-center gap-2 mb-4">
                         <i class="fa-solid fa-scale-balanced text-blue-600"></i>
                         Условия ломбарда
                     </h4>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div *ngIf="profile.terms.interestRate" class="flex items-center gap-3 p-3 bg-white rounded-lg">
-                            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                                <i class="fa-solid fa-percent text-blue-600"></i>
-                            </div>
-                            <div>
-                                <p class="text-xs text-gray-500 font-medium">Процентная ставка</p>
-                                <p class="text-sm font-bold text-gray-800">{{ profile.terms.interestRate }}%</p>
-                            </div>
+
+                        <!-- Процентная ставка -->
+                        <div *ngIf="profile.terms.interest?.rate"
+                            class="flex items-center gap-3 p-3 bg-white rounded-lg">
+                        <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                            <i class="fa-solid fa-percent text-blue-600"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500 font-medium">Процентная ставка</p>
+                            <p class="text-sm font-bold text-gray-800">
+                            {{ profile.terms.interest.rate }}%
+                            <span class="text-xs text-gray-500">
+                                / {{ profile.terms.interest.period === 'day' ? 'день' : 'месяц' }}
+                            </span>
+                            </p>
+                        </div>
                         </div>
 
-                        <div *ngIf="profile.terms.minTermDays" class="flex items-center gap-3 p-3 bg-white rounded-lg">
-                            <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center">
-                                <i class="fa-solid fa-calendar-days text-indigo-600"></i>
-                            </div>
-                            <div>
-                                <p class="text-xs text-gray-500 font-medium">Минимальный срок</p>
-                                <p class="text-sm font-bold text-gray-800">{{ profile.terms.minTermDays }} дней</p>
-                            </div>
+                        <!-- Минимальный срок начисления -->
+                        <div *ngIf="profile.terms.interest?.minChargeDays"
+                            class="flex items-center gap-3 p-3 bg-white rounded-lg">
+                        <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                            <i class="fa-solid fa-calendar-days text-indigo-600"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500 font-medium">Минимальный срок</p>
+                            <p class="text-sm font-bold text-gray-800">
+                            {{ profile.terms.interest.minChargeDays }} дней
+                            </p>
+                        </div>
                         </div>
 
-                        <div *ngIf="profile.terms.maxAmount" class="flex items-center gap-3 p-3 bg-white rounded-lg">
-                            <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                                <i class="fa-solid fa-money-bill-wave text-green-600"></i>
-                            </div>
-                            <div>
-                                <p class="text-xs text-gray-500 font-medium">Максимальная сумма</p>
-                                <p class="text-sm font-bold text-gray-800">{{ profile.terms.maxAmount | number:'1.0-0' }} ₸</p>
-                            </div>
+                        <!-- Максимальная сумма -->
+                        <div *ngIf="profile.terms.limits?.maxAmount"
+                            class="flex items-center gap-3 p-3 bg-white rounded-lg">
+                        <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                            <i class="fa-solid fa-money-bill-wave text-green-600"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500 font-medium">Максимальная сумма</p>
+                            <p class="text-sm font-bold text-gray-800">
+                            {{ profile.terms.limits.maxAmount | number:'1.0-0' }} ₸
+                            </p>
+                        </div>
                         </div>
 
-                        <div *ngIf="profile.terms.fees" class="flex items-center gap-3 p-3 bg-white rounded-lg">
-                            <div class="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center">
-                                <i class="fa-solid fa-coins text-yellow-600"></i>
-                            </div>
-                            <div>
-                                <p class="text-xs text-gray-500 font-medium">Комиссия</p>
-                                <p class="text-sm font-bold text-gray-800">{{ profile.terms.fees }} ₸</p>
-                            </div>
+                        <!-- Комиссия -->
+                        <div *ngIf="profile.terms.fees"
+                            class="flex items-center gap-3 p-3 bg-white rounded-lg">
+                        <div class="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center">
+                            <i class="fa-solid fa-coins text-yellow-600"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500 font-medium">Комиссия</p>
+                            <p class="text-sm font-bold text-gray-800">
+                            {{ profile.terms.fees.value }}
+                            {{ profile.terms.fees.type === 'percent' ? '%' : '₸' }}
+                            </p>
+                        </div>
                         </div>
 
-                        <div *ngIf="profile.terms.additional" class="col-span-1 md:col-span-2 flex items-start gap-3 p-3 bg-white rounded-lg">
-                            <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
-                                <i class="fa-solid fa-info-circle text-purple-600"></i>
-                            </div>
-                            <div>
-                                <p class="text-xs text-gray-500 font-medium">Дополнительно</p>
-                                <p class="text-sm text-gray-700">{{ profile.terms.additional }}</p>
-                            </div>
+                        <!-- Корректировка цены -->
+                        <div *ngIf="profile.terms.priceAdjustmentLimitPercent"
+                            class="flex items-center gap-3 p-3 bg-white rounded-lg md:col-span-2">
+                        <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
+                            <i class="fa-solid fa-arrows-left-right text-purple-600"></i>
                         </div>
-                    </div>
+                        <div>
+                            <p class="text-xs text-gray-500 font-medium">Корректировка цены</p>
+                            <p class="text-sm font-bold text-gray-800">
+                            ±{{ profile.terms.priceAdjustmentLimitPercent }}%
+                            </p>
+                        </div>
+                        </div>
+
+                        </div>
                 </div>
+
 
                 <!-- Description with better typography -->
                 <p class="text-gray-600 leading-relaxed text-base">

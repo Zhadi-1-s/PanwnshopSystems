@@ -3,6 +3,14 @@ import { IsNotEmpty, IsOptional, IsString, IsNumber, IsArray, ArrayUnique,IsMong
 import { PawnshopTermsDto } from './pawnshop-terms.dto';
 import { Type } from 'class-transformer';
 
+class PhotoDto {
+  @ApiProperty()
+  url: string;
+
+  @ApiProperty()
+  publicId: string;
+}
+
 export class CreatePawnshopDto {
 
   @IsNotEmpty()
@@ -54,11 +62,10 @@ export class CreatePawnshopDto {
   @IsString()
   description?: string;
 
-
-  @ApiProperty({example:'[src/img/photo1, photo2]'})
+  @ApiProperty({ type: [PhotoDto] })
   @IsOptional()
   @IsArray()
-  photos?: string[];
+  photos?: PhotoDto[];
 
   @ApiProperty({
     example: ['66fb0aa2a50a9d75bc3d33f2', '66fb0aa2a50a9d75bc3d33f3'],
@@ -79,11 +86,10 @@ export class CreatePawnshopDto {
   @IsNumber()
   slotLimit: number;
 
-  @ApiProperty({ type: PawnshopTermsDto, required: false })
-  @IsOptional()
+  @ApiProperty({ type: PawnshopTermsDto })
   @ValidateNested()
   @Type(() => PawnshopTermsDto)
-  terms?: PawnshopTermsDto;
+  terms: PawnshopTermsDto;
 
 }
 

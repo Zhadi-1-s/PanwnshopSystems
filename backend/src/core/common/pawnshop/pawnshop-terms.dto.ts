@@ -1,39 +1,74 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
-  IsNotEmpty,
-  IsOptional,
-  IsString,
   IsNumber,
-  IsArray,
-  ArrayUnique,
-  IsMongoId,
+  IsOptional,
+  IsIn,
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
+/* ---------- Interest ---------- */
+export class PawnshopInterestDto {
+  @ApiProperty({ example: 3.5 })
+  @IsNumber()
+  rate: number;
+
+  @ApiProperty({ example: 'month', enum: ['day', 'month'] })
+  @IsIn(['day', 'month'])
+  period: 'day' | 'month';
+
+  @ApiProperty({ example: 0 })
+  @IsNumber()
+  startsAfterDays: number;
+
+  @ApiProperty({ example: 7, required: false })
+  @IsOptional()
+  @IsNumber()
+  minChargeDays?: number;
+}
+
+/* ---------- Limits ---------- */
+export class PawnshopLimitsDto {
+  @ApiProperty({ example: 500000 })
+  @IsNumber()
+  maxAmount: number;
+
+  @ApiProperty({ example: 10000, required: false })
+  @IsOptional()
+  @IsNumber()
+  minAmount?: number;
+}
+
+/* ---------- Fees ---------- */
+export class PawnshopFeesDto {
+  @ApiProperty({ example: 'percent', enum: ['fixed', 'percent'] })
+  @IsIn(['fixed', 'percent'])
+  type: 'fixed' | 'percent';
+
+  @ApiProperty({ example: 2.5 })
+  @IsNumber()
+  value: number;
+}
+
+/* ---------- Main DTO ---------- */
 export class PawnshopTermsDto {
-  @ApiProperty({ example: 3.5, description: 'Процентная ставка в день или месяц' })
-  @IsOptional()
-  @IsNumber()
-  interestRate?: number;
+  @ApiProperty({ type: PawnshopInterestDto })
+  @ValidateNested()
+  @Type(() => PawnshopInterestDto)
+  interest: PawnshopInterestDto;
 
-  @ApiProperty({ example: 7, description: 'Минимальный срок займа в днях' })
-  @IsOptional()
-  @IsNumber()
-  minTermDays?: number;
+  @ApiProperty({ type: PawnshopLimitsDto })
+  @ValidateNested()
+  @Type(() => PawnshopLimitsDto)
+  limits: PawnshopLimitsDto;
 
-  @ApiProperty({ example: 500000, description: 'Максимальная сумма займа' })
+  @ApiProperty({ type: PawnshopFeesDto, required: false })
   @IsOptional()
-  @IsNumber()
-  maxAmount?: number;
+  @ValidateNested()
+  @Type(() => PawnshopFeesDto)
+  fees?: PawnshopFeesDto;
 
-  @ApiProperty({ example: 2.5, description: 'Комиссия в процентах' })
-  @IsOptional()
+  @ApiProperty({ example: 10 })
   @IsNumber()
-  fees?: number;
-
-  @ApiProperty({ example: 'Залог должен быть в хорошем состоянии', description: 'Дополнительные условия' })
-  @IsOptional()
-  @IsString()
-  additional?: string;
+  priceAdjustmentLimitPercent: number;
 }
