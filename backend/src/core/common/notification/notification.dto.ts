@@ -17,7 +17,8 @@ export class CreateNotificationDto {
     'system',
     'chat-opened',
     'product-sold',
-    'price-changed'
+    'price-changed',
+    'evaluation'
   ])
   type: string;
 

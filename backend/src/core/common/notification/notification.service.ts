@@ -16,6 +16,10 @@ export class NotificationService {
     return this.notificationModel.create(dto);
   }
 
+  async createMany(dtos: CreateNotificationDto[]) {
+    return this.notificationModel.insertMany(dtos);
+  }
+
   async findOne(filter: any) {
     return this.notificationModel.findOne(filter).exec();
   }

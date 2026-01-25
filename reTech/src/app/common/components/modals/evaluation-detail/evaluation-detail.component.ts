@@ -21,6 +21,7 @@ export class EvaluationDetailComponent implements OnInit {
 
   showCounterOffer = false;
 
+  evaluation : Evaluation;
 
   constructor(
     private evaluationService:EvaluationService,
@@ -29,12 +30,24 @@ export class EvaluationDetailComponent implements OnInit {
 
   ngOnInit() {
     this.evaluation$ = this.evaluationService.getEvaluationById(this.evaluationId).pipe(
-     tap( evaluation => console.log(evaluation))
+     tap( evaluation => this.evaluation = evaluation)
     );
   }
 
   close(){
     this.activeModal.close()
+  }
+
+  rejectEvaluation(id:string){
+    this.evaluationService.updateStatus(id,'rejected').subscribe(
+      next => {
+        this.evaluation.status = next.status;
+        this.close()
+      },
+      error => {
+        console.error(error.message);
+      }
+    )
   }
 
 }

@@ -16,8 +16,6 @@ export class EvaluationService {
   ) {}
 
   async create(dto: CreateEvaluationDto): Promise<Evaluation> {
-
-  // 1. Проверяем на дубль
     const duplicate = await this.evaluationModel.findOne({
       userId: dto.userId,
       pawnshopId: dto.pawnshopId,
@@ -25,23 +23,13 @@ export class EvaluationService {
       expectedPrice: dto.expectedPrice
     });
 
-    
     if (duplicate) {
       return duplicate;
     }
 
-    const evaluation = new this.evaluationModel(dto);
-    await evaluation.save();
+    const evaluation = await this.evaluationModel.create(dto);
 
-    await this.notificationService.create({
-      userId: dto.pawnshopId,
-      senderId: dto.userId,
-      type: 'new-offer',
-      title: 'New evaluation request',
-      message: `You have a new evaluation request for product ${dto.title} (${dto.expectedPrice})`,
-      refId: evaluation._id?.toString(),
-      isRead: false
-    });
+    await this.createEvaluationNotifications(evaluation, dto);
 
     return evaluation;
   }
@@ -69,4 +57,34 @@ export class EvaluationService {
     if (!updated) throw new NotFoundException('Evaluation not found');
     return updated;
   }
+
+  private async createEvaluationNotifications(
+    evaluation: Evaluation,
+    dto: CreateEvaluationDto
+  ) {
+    const refId = evaluation._id?.toString();
+
+    await this.notificationService.createMany([
+      {
+        userId: dto.pawnshopId,
+        senderId: dto.userId,
+        type: 'new-offer',
+        title: 'New evaluation request',
+        message: `You have a new evaluation request for product ${dto.title} (${dto.expectedPrice})`,
+        refId,
+        isRead: false
+      },
+      {
+        userId: dto.userId,
+        senderId: dto.pawnshopId,
+        type: 'evaluation-created',
+        title: 'Evaluation sent',
+        message: `You sent an evaluation request for ${dto.title}`,
+        refId,
+        isRead: false
+      }
+    ]);
+  }
+
+
 }
