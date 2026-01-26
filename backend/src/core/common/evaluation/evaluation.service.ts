@@ -6,12 +6,13 @@ import { CreateEvaluationDto } from './evaluation.dto';
 import { UpdateEvaluationStatusDto } from './evaluation.dto';
 import { NotificationService } from '../notification/notification.service';
 import { send } from 'process';
+import { EvaluationDocument } from 'src/core/database/schemas/evaluation.schema';
 
 @Injectable()
 export class EvaluationService {
   constructor(
     @InjectModel(Evaluation.name)
-    private evaluationModel: Model<Evaluation>,
+    private evaluationModel: Model<EvaluationDocument>,
     private notificationService: NotificationService,
   ) {}
 
@@ -48,15 +49,38 @@ export class EvaluationService {
     return evalFound;
   }
 
-  async updateStatus(id: string, dto: UpdateEvaluationStatusDto): Promise<Evaluation> {
-    const updated = await this.evaluationModel.findByIdAndUpdate(
-      id,
-      { status: dto.status },
-      { new: true },
-    );
-    if (!updated) throw new NotFoundException('Evaluation not found');
-    return updated;
+  async updateStatus(
+    id: string,
+    dto: UpdateEvaluationStatusDto
+  ): Promise<Evaluation> {
+    // Находим документ
+    const evaluation = await this.evaluationModel.findById(id);
+    if (!evaluation) throw new NotFoundException('Evaluation not found');
+
+    // Если статус in_inspection — ставим дату окончания
+    if (dto.status === 'in_inspection') {
+      evaluation.expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    }
+
+    // Обновляем статус и дату изменения
+    evaluation.status = dto.status;
+    evaluation.updatedAt = new Date();
+
+    // Сохраняем в БД
+    await evaluation.save();
+
+    await this.notificationService.create({
+      userId: evaluation.pawnshopId.toString(),
+      senderId: evaluation.userId.toString(),
+      type: dto.status === 'pending' ? 'evaluation-accepted' : 'evaluation-updated',
+      title: `Evaluation ${dto.status}`,
+      refId: (evaluation._id as string).toString(),
+      isRead: false,
+    });
+
+    return evaluation;
   }
+
 
   private async createEvaluationNotifications(
     evaluation: Evaluation,
