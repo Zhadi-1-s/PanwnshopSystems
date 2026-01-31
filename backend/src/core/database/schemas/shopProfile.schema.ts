@@ -66,6 +66,19 @@ export class PawnshopProfile {
   @Prop({ type: PawnshopTermsSchema, default: {} })
   terms: PawnshopTerms;
 
+  @Prop({
+    type: {
+      code: { type: String, required: true },
+      name: { type: String, required: true },
+    },
+    required: true,
+    index: true,
+  })
+  city: {
+    code: string; // 'almaty'
+    name: string; // 'Алматы'
+  };
+
 }
 
 export const PawnshopProfileSchema = SchemaFactory.createForClass(PawnshopProfile);

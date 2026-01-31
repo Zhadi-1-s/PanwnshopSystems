@@ -27,6 +27,7 @@
     "@fortawesome/fontawesome-free": "^7.0.1",
     "@fortawesome/free-solid-svg-icons": "^7.0.1",
     "@ng-bootstrap/ng-bootstrap": "17",
+    "@ng-select/ng-select": "12",
     "@ngx-translate/core": "15",
     "@ngx-translate/http-loader": "8",
     "@popperjs/core": "^2.11.8",

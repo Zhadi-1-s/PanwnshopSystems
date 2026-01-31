@@ -1,7 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString, IsNumber, IsArray, ArrayUnique,IsMongoId,ValidateNested } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsNumber, IsArray, ArrayUnique,IsMongoId,ValidateNested, IsIn } from 'class-validator';
 import { PawnshopTermsDto } from './pawnshop-terms.dto';
 import { Type } from 'class-transformer';
+
+import { CITIES } from 'src/core/database/cities.constants';
 
 class PhotoDto {
   @ApiProperty()
@@ -90,6 +92,9 @@ export class CreatePawnshopDto {
   @ValidateNested()
   @Type(() => PawnshopTermsDto)
   terms: PawnshopTermsDto;
+
+  @IsIn(CITIES.map(c => c.code))
+  cityCode: string;
 
 }
 

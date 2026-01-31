@@ -7,6 +7,24 @@ import { PawnshopProfile } from '../../../../shared/interfaces/shop-profile.inte
 import { TranslateModule } from '@ngx-translate/core';
 import { CloudinaryService } from '../../../../shared/services/cloudinary.service';
 import { ImageViewComponent } from '../../image-view/image-view.component';
+
+export const cities = [
+  { code: 'almaty', name: 'Алматы' },
+  { code: 'astana', name: 'Астана' },
+  { code: 'shymkent', name: 'Шымкент' },
+  { code: 'karaganda', name: 'Караганда' },
+  {code: 'aktobe', name: 'Актобе'},
+  {code: 'pavlodar', name: 'Павлодар'},
+  {code: 'uralsk', name: 'Уральск'},
+  {code: 'kostanai', name: 'Костанай'},
+  {code: 'semei', name: 'Семей'},
+  {code: 'taraz', name: 'Тараз'},
+  {code: 'atyrau', name: 'Атырау'},
+  {code:'qyzylorda', name: 'Кызылорда'},
+];
+
+
+
 @Component({
   selector: 'app-create-lombard',
   standalone: true,
@@ -27,6 +45,8 @@ export class CreateLombardComponent {
   selectedFiles: File[] = [];
   previewUrls: string[] = [];
 
+  cities = cities;
+
   constructor(
       private lombardService:LombardService,
       private fb: FormBuilder,
@@ -37,6 +57,7 @@ export class CreateLombardComponent {
         name: [null, Validators.required],
         logo: [null],
         photos: [[]],
+        cityCode: ['', Validators.required],
         address: [null, Validators.required],
         phone: [null, Validators.required],
         slotLimit: [0, Validators.required],

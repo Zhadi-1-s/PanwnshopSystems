@@ -22,4 +22,8 @@ export interface PawnshopProfile {
   createdAt?: Date;
   reviews?: Review[]; 
   terms:PawnshopTerms;
+  city:{
+    code:string;
+    name:string;
+  }
 }

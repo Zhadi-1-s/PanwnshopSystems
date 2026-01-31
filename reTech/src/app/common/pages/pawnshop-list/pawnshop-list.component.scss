@@ -136,3 +136,29 @@
 .tooltip-item:hover {
   background-color: #f1f1f1;
 }
+
+/* Изменяем цвет выбранных тегов */
+.ng-select .ng-value {
+  background-color: #e0f2fe; /* светло-голубой */
+  color: #0369a1; /* темно-синий текст */
+  border-radius: 0.5rem;
+  padding: 0.125rem 0.5rem;
+  margin-right: 0.25rem;
+}
+
+/* Опции в списке */
+.ng-select .ng-dropdown-panel .ng-option {
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  cursor: pointer;
+}
+
+.ng-select .ng-dropdown-panel .ng-option:hover {
+  background-color: #f0f9ff; /* светлый голубой при наведении */
+}
+
+/* Placeholder */
+.ng-select .ng-placeholder {
+  color: #94a3b8;
+  font-style: italic;
+}

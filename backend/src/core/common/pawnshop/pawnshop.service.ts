@@ -5,6 +5,8 @@ import { PawnshopProfile } from 'src/core/database/schemas/shopProfile.schema';
 import { CreatePawnshopDto,UpdatePawnshopDto } from './pawnshop.dto';
 import { Review } from 'src/core/database/schemas/reviews.schema';
 
+import { CITIES } from 'src/core/database/cities.constants';
+
 @Injectable()
 export class PawnshopService {
   constructor(
@@ -20,6 +22,10 @@ export class PawnshopService {
 
     const pawnShopData = { 
       ...createDto,
+      city:{
+        code:createDto.cityCode,
+        name:CITIES.find(c=>c.code===createDto.cityCode)?.name
+      },
       rating:defaultRating,
       terms: createDto.terms
     }

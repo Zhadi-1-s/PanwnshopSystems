@@ -5,9 +5,9 @@
     <!-- Header Section -->
     <div class="mb-8">
       <h1 class="text-3xl md:text-4xl font-bold text-slate-900 mb-2 text-balance">
-        Список Продоваемых товаров
+        {{'List of products from pawnshops' | translate}}
       </h1>
-      <p class="text-slate-600 text-lg">Найдите лучшие ломбарды в вашем городе</p>
+      <p class="text-slate-600 text-lg">{{'Find the best products in your city' | translate}}</p>
     </div>
 
     <!-- Search and Filter Bar -->
@@ -28,6 +28,23 @@
           </div>
         </div>
 
+        <div class="w-full lg:w-1/5">
+          <!-- <label class="form-label text-sm font-medium text-slate-700">{{'City' | translate}}</label> -->
+          <ng-select
+            [items]="cities"
+            bindLabel="name"
+            bindValue="code"
+            [(ngModel)]="selectedCityCodes"
+            [multiple]="true"
+            (ngModelChange)="onCitiesChange($event)"
+            placeholder="{{ 'All cities' | translate }}"
+            [closeOnSelect]="false"
+            [searchable]="true"
+            class="mt-1 w-full border border-slate-300 rounded-lg bg-white shadow-sm"
+          >
+          </ng-select>
+        </div>
+
         <!-- Results Count and Sort -->
         <div class="flex items-center gap-4 ml-auto">
           <span class="text-sm font-medium text-slate-600 whitespace-nowrap">
@@ -40,7 +57,7 @@
               (click)="toggleTooltip()"
               class="flex items-center gap-2 px-4 py-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl transition-all duration-200 text-sm font-medium text-slate-700"
             >
-              <span>Рейтинг</span>
+              <span>{{'Rating' | translate}}</span>
               <i
                 [class.fa-solid]="true"
                 [class.fa-arrow-up-wide-short]="sortOrder === 'asc'"
@@ -59,14 +76,14 @@
                 (click)="onSortChange('asc'); toggleTooltip()"
               >
                 <i class="fa-solid fa-arrow-up-wide-short text-blue-600"></i>
-                <span class="text-sm font-medium text-slate-700">По возрастанию</span>
+                <span class="text-sm font-medium text-slate-700">{{'Ascending' | translate}}</span>
               </div>
               <div
                 class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 cursor-pointer transition-colors"
                 (click)="onSortChange('desc'); toggleTooltip()"
               >
                 <i class="fa-solid fa-arrow-down-short-wide text-blue-600"></i>
-                <span class="text-sm font-medium text-slate-700">По убыванию</span>
+                <span class="text-sm font-medium text-slate-700">{{'Descending' | translate}}</span>
               </div>
             </div>
           </div>

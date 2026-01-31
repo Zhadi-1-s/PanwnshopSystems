@@ -57,6 +57,26 @@
     </div>
 
     <div class="mb-3">
+      <label class="form-label">Город</label>
+      <select
+        class="form-select"
+        formControlName="cityCode"
+      >
+        <option value="" disabled selected>Выберите город</option>
+        <option *ngFor="let city of cities" [value]="city.code">
+          {{ city.name }}
+        </option>
+      </select>
+
+      <div
+        class="text-danger mt-1"
+        *ngIf="lombardForm.get('cityCode')?.touched && lombardForm.get('cityCode')?.invalid"
+      >
+        Пожалуйста, выберите город
+      </div>
+    </div>
+
+    <div class="mb-3">
       <label class="form-label">Адрес</label>
       <input formControlName="address" class="form-control" placeholder="Введите адрес">
     </div>

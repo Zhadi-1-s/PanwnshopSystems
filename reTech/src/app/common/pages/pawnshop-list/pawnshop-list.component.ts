@@ -12,10 +12,14 @@ import { AuthService } from '../../../shared/services/auth.service';
 import { User } from '../../../shared/interfaces/user.interface';
 import { RouterModule } from '@angular/router';
 
+import { cities } from '../../components/modals/create-lombard/create-lombard.component';
+
+import { NgSelectModule } from '@ng-select/ng-select';
+
 @Component({
   selector: 'app-pawnshop-list',
   standalone: true,
-  imports: [CommonModule,TranslateModule, ReactiveFormsModule,FormsModule,RouterModule],
+  imports: [CommonModule,TranslateModule, ReactiveFormsModule,FormsModule,RouterModule,NgSelectModule],
   templateUrl: './pawnshop-list.component.html',
   styleUrl: './pawnshop-list.component.scss'
 })
@@ -33,6 +37,10 @@ export class PawnshopListComponent implements OnInit{
 
   user :User;
 
+  cities = cities;
+
+  selectedCityCode: string = '';
+
   favorites: any[] = [];
 
   searchHelpItemsList: string[] = [
@@ -48,6 +56,8 @@ export class PawnshopListComponent implements OnInit{
 
   isTooltipOpen = false;
   sortOrder: 'asc' | 'desc' | null = 'desc';
+
+  selectedCityCodes: string[] = []; // массив выбранных кодов городов
 
   constructor(
     private lombardService:LombardService,
@@ -102,6 +112,11 @@ export class PawnshopListComponent implements OnInit{
             )
           );
         }
+
+        if (this.selectedCityCodes.length > 0) {
+          filtered = filtered.filter(l => this.selectedCityCodes.includes(l.city?.code));
+        }
+
         if (this.sortOrder === 'asc') {
           filtered = filtered.sort((a, b) => (a.rating || 0) - (b.rating || 0));
         } else if (this.sortOrder === 'desc') {
@@ -115,6 +130,12 @@ export class PawnshopListComponent implements OnInit{
 
     
 
+  }
+
+  onCitiesChange(codes: string[]) {
+    this.selectedCityCodes = codes;
+    // триггерим фильтрацию
+    this.searchTerm$.next(this.searchTerm$.value);
   }
 
   loadFavorites(){

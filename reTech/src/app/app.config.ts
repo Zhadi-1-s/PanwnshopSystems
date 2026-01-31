@@ -10,6 +10,7 @@ import { provideLegacyTranslate } from './translate.config';
 import { registerLocaleData } from '@angular/common';
 import localeRu from '@angular/common/locales/ru';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 registerLocaleData(localeRu, 'ru');
 
@@ -28,6 +29,6 @@ export const appConfig: ApplicationConfig = {
       provide: LOCALE_ID,
       useValue: 'ru',
      },
-     importProvidersFrom(BrowserAnimationsModule)
+     importProvidersFrom(BrowserAnimationsModule),
     ]
 };
