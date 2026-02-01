@@ -72,6 +72,8 @@ export class ProductsListComponent implements OnInit, OnDestroy {
   isBrowser = false;
   isLoading = true;
 
+  typeFilter: 'all' | 'sale' | 'loan' = 'all';
+
   sliderMinOptions: Options = {
     floor: 0,
     ceil: 500000,
@@ -177,6 +179,10 @@ export class ProductsListComponent implements OnInit, OnDestroy {
           result = result.filter(p => favIds.has(p._id));
         }
 
+        if (this.typeFilter !== 'all') {
+            result = result.filter(p => p.type === this.typeFilter);
+        }
+
         // Фильтр по help-items
         appliedFilters.forEach(f => {
           if (this.searchHelpItemsList.includes(f)) {
@@ -229,6 +235,13 @@ export class ProductsListComponent implements OnInit, OnDestroy {
     // Сохраняем существующие help-items
     const helpItems = this.appliedFilters$.value.filter(f => this.searchHelpItemsList.includes(f));
     this.appliedFilters$.next([...filters, ...helpItems]);
+  }
+
+
+  setTypeFilter(type: 'all' | 'sale' | 'loan') {
+    this.typeFilter = type;
+    // триггерим перерасчет фильтра
+    this.appliedFilters$.next([...this.appliedFilters$.value]);
   }
 
   // Кнопка "Очистить"

@@ -103,6 +103,28 @@
             </div>
           </div>
 
+          <!-- Тип товара -->
+          <div class="flex gap-3 mb-4">
+            <button
+              (click)="setTypeFilter('all')"
+              [class.bg-blue-600]="typeFilter === 'all'"
+              class="px-4 py-1 rounded-lg border border-gray-300">
+              Все
+            </button>
+            <button
+              (click)="setTypeFilter('sale')"
+              [class.bg-blue-600]="typeFilter === 'sale'"
+              class="px-4 py-1 rounded-lg border border-gray-300">
+              Продажа
+            </button>
+            <button
+              (click)="setTypeFilter('loan')"
+              [class.bg-blue-600]="typeFilter === 'loan'"
+              class="px-4 py-1 rounded-lg border border-gray-300">
+              Залог
+            </button>
+          </div>
+
           <!-- Help Tooltips -->
           <div class="flex flex-wrap gap-2 mb-6" *ngIf="searchHelpItemsList?.length">
             <div 
