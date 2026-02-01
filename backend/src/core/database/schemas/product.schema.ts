@@ -44,5 +44,24 @@ export class Product {
   @Prop({ required: true, type: Number, min: 0 })
   price: number;
 
+  @Prop({ required: true, enum: ['sale', 'loan'], default: 'sale' })
+  type: 'sale' | 'loan';
+
+  @Prop({
+    type: Number,
+    min: 1,
+    validate: {
+      validator: function (value: number) {
+        // this.type доступно только при create/update
+        if (this.type === 'loan') {
+          return value > 0;
+        }
+        return true; // для sale поле необязательно
+      },
+      message: 'loanTerm должен быть указан и > 0, если type = loan',
+    },
+  })
+  loanTerm?: number;
+
 }
 export const ProductSchema = SchemaFactory.createForClass(Product);

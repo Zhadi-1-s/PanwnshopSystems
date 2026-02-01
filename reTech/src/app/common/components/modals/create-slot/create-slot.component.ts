@@ -97,7 +97,9 @@ export class CreateSlotComponent implements OnInit {
         category: this.form.value.category,
         photos: this.form.value.photos || [],
         price: 0,
-        status: Status.CLOSED
+        status: Status.CLOSED,
+        type:'loan',
+        loanTerm: Math.ceil((new Date(this.form.value.endDate).getTime() - new Date(this.form.value.startDate).getTime()) / (1000 * 60 * 60 * 24))
       }
 
       const createdProduct = await this.productService.createProduct(productPayload).toPromise();

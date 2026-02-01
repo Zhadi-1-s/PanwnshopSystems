@@ -11,4 +11,6 @@ export interface Product {
   price: number;
   createdAt?: Date;
   updatedAt?: Date;
+  type:'sale' | 'loan';
+  loanTerm?:number;
 }
