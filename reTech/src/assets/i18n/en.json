@@ -294,6 +294,11 @@
     "Leave a review": "Leave a review",
     "All cities": "All cities",
     "List of products from pawnshops": "List of products from pawnshops",
-    "Hold Ctrl/Cmd to select multiple cities": "Hold Ctrl/Cmd to select multiple cities"
+    "Hold Ctrl/Cmd to select multiple cities": "Hold Ctrl/Cmd to select multiple cities",
+    "Sale": "Sale",
+    "Loan": "Loan",
+    "Rating":"Rating",
+    "Ascending":"Ascending",
+    "Descending":"Descending"
 
 }

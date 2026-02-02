@@ -300,6 +300,10 @@
     "Leave a review": "Оставить отзыв",
     "All cities": "Все города",
     "List of products from pawnshops": "Список Продоваемых товаров",
-    "Hold Ctrl/Cmd to select multiple cities": "Удерживайте Ctrl/Cmd, чтобы выбрать несколько городов"
+    "Hold Ctrl/Cmd to select multiple cities": "Удерживайте Ctrl/Cmd, чтобы выбрать несколько городов",
+    "Sale": "Продажа",
+    "Loan": "Залог",
+    "Descending":"По убыванию",
+    "Ascending":"По возрастанию"
 
 }

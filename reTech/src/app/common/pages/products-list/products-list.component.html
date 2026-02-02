@@ -107,21 +107,29 @@
           <div class="flex gap-3 mb-4">
             <button
               (click)="setTypeFilter('all')"
-              [class.bg-blue-600]="typeFilter === 'all'"
-              class="px-4 py-1 rounded-lg border border-gray-300">
-              Все
+              [ngClass]="typeFilter === 'all'
+                ? 'bg-blue-100 text-blue-700 border-blue-300'
+                : 'bg-white text-gray-700 border-gray-300 hover:bg-blue-50'"
+              class="px-4 py-1 rounded-lg border transition-colors">
+              {{ 'All' | translate }}
             </button>
+
             <button
               (click)="setTypeFilter('sale')"
-              [class.bg-blue-600]="typeFilter === 'sale'"
-              class="px-4 py-1 rounded-lg border border-gray-300">
-              Продажа
+              [ngClass]="typeFilter === 'sale'
+                ? 'bg-blue-100 text-blue-700 border-blue-300'
+                : 'bg-white text-gray-700 border-gray-300 hover:bg-blue-50'"
+              class="px-4 py-1 rounded-lg border transition-colors">
+              {{ 'Sale' | translate }}
             </button>
+
             <button
               (click)="setTypeFilter('loan')"
-              [class.bg-blue-600]="typeFilter === 'loan'"
-              class="px-4 py-1 rounded-lg border border-gray-300">
-              Залог
+              [ngClass]="typeFilter === 'loan'
+                ? 'bg-blue-100 text-blue-700 border-blue-300'
+                : 'bg-white text-gray-700 border-gray-300 hover:bg-blue-50'"
+              class="px-4 py-1 rounded-lg border transition-colors">
+              {{ 'Loan' | translate }}
             </button>
           </div>
 
@@ -173,6 +181,20 @@
             <!-- Product Image Container -->
             <div class="relative overflow-hidden bg-gradient-to-br from-slate-50 to-gray-100">
               <div class="aspect-[4/3]">
+                <!-- Type Badge -->
+                <div
+                  class="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-lg text-xs font-semibold backdrop-blur-md border shadow-sm"
+                  [ngClass]="product.type === 'loan'
+                    ? 'bg-amber-100/90 text-amber-700 border-amber-200'
+                    : 'bg-emerald-100/90 text-emerald-700 border-emerald-200'">
+
+                  <i
+                    class="fa-solid mr-1"
+                    [ngClass]="product.type === 'loan' ? 'fa-hand-holding-dollar' : 'fa-tag'">
+                  </i>
+
+                  {{ product.type === 'loan' ? ('Loan' | translate) : ('Sale' | translate) }}
+                </div>
                 <img
                   *ngIf="product.photos?.length > 0; else noPhoto"
                   [src]="product.photos[0].url"
@@ -198,7 +220,7 @@
                 (click)="toggleFavorite(product, $event)">
                 <i 
                   class="fa-solid fa-heart text-base transition-all duration-200"
-                  [ngClass]="isFavorite(product._id, favitems) ? 'text-rose-500 scale-110' : 'text-gray-300 group-hover:text-gray-400'">
+                  [ngClass]="isFavorite(product._id) ? 'text-rose-500 scale-110' : 'text-gray-300'">
                 </i>
               </button>
 

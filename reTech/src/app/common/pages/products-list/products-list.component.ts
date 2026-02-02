@@ -14,6 +14,8 @@ import { LombardService } from '../../../shared/services/lombard.service';
 import { TranslateModule } from '@ngx-translate/core';
 import {NgxSliderModule,Options} from '@angular-slider/ngx-slider'
 
+import { LoginRequiredComponent } from '../../components/modals/login-required/login-required.component';
+
 import {
   trigger,
   state,
@@ -68,7 +70,7 @@ export class ProductsListComponent implements OnInit, OnDestroy {
   showFavoritesOnly$ = new BehaviorSubject<boolean>(false);
 
   favoriteItems$:Observable<Product[]>;
-  favitems:Product[];
+
   isBrowser = false;
   isLoading = true;
 
@@ -91,6 +93,8 @@ export class ProductsListComponent implements OnInit, OnDestroy {
     hidePointerLabels:true,
     hideLimitLabels:true
   };
+
+  favitems$ = new BehaviorSubject<Product[]>([]);
 
   toogleFilterBlock: boolean = false;
 
@@ -131,8 +135,8 @@ export class ProductsListComponent implements OnInit, OnDestroy {
       switchMap(user => this.userService.getFavoriteItems(user._id)),
       takeUntil(this.destroy$),
     ).subscribe(favorites => {
-      this.favitems = favorites;  // сразу массив
-    });
+        this.favitems$.next(favorites);
+      });
     // 1. Базовые продукты с учетом пользователя
     this.products$ = combineLatest([
       this.productService.getProcutsList(),
@@ -158,8 +162,8 @@ export class ProductsListComponent implements OnInit, OnDestroy {
     );
     
     // 2. Фильтр + поиск + сортировка
-    this.filteredProducts$ = combineLatest([this.products$, this.searchTerm$, this.appliedFilters$,this.showFavoritesOnly$]).pipe(
-      map(([products, search, appliedFilters,showFavoritesOnly]) => {
+    this.filteredProducts$ = combineLatest([this.products$, this.searchTerm$, this.appliedFilters$,this.showFavoritesOnly$,this.favitems$]).pipe(
+      map(([products, search, appliedFilters,showFavoritesOnly,favitems]) => {
         let result = [...products];
 
         // Фильтр по цене
@@ -174,8 +178,8 @@ export class ProductsListComponent implements OnInit, OnDestroy {
           result = result.filter(p => p.price <= val);
         }
 
-        if (showFavoritesOnly) {
-          const favIds = new Set(this.favitems?.map(f => f._id));
+       if (showFavoritesOnly) {
+          const favIds = new Set(favitems.map(f => f._id));
           result = result.filter(p => favIds.has(p._id));
         }
 
@@ -271,20 +275,28 @@ export class ProductsListComponent implements OnInit, OnDestroy {
     this.favoriteItems$ = this.authService.currentUser$.pipe(
       filter((user): user is User => !!user?._id),
       switchMap(user => this.userService.getFavoriteItems(user._id)),
-      tap(favorites => this.favitems = favorites)
+      takeUntil(this.destroy$),
     )
   }
 
-  isFavorite(productId: string, favorites: Product[]): boolean {
-    return favorites?.some(f => f._id === productId) ?? false;
+  isFavorite(productId: string): boolean {
+    return this.favitems$.value.some(f => f._id === productId);
   }
 
   toggleFavorite(product: Product, event: MouseEvent) {
     console.log(product)
     event.stopPropagation();
-    if (!this.user?._id) return;
+    if (!this.user?._id) {
+      this.modalService.open(LoginRequiredComponent, {
+        centered: true,
+        backdrop: 'static'
+      });
+      return;
+    }
 
-    const isFav = this.favitems?.some(f => f._id === product._id);
+    const current = this.favitems$.value;
+
+    const isFav = current.some(f => f._id === product._id);
 
     const req$ = isFav
       ? this.userService.removeFavoriteItem(this.user._id, product._id)
@@ -292,10 +304,11 @@ export class ProductsListComponent implements OnInit, OnDestroy {
 
     req$.subscribe({
       next: () => {
+
         if (isFav) {
-          this.favitems = this.favitems.filter(f => f._id !== product._id);
+          this.favitems$.next(current.filter(f => f._id !== product._id));
         } else {
-          this.favitems = [...(this.favitems || []), product];
+          this.favitems$.next([...current, product]);
         }
       },
       error: (err) => console.error('Ошибка при обновлении избранного:', err)
