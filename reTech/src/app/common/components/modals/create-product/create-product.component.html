@@ -32,6 +32,28 @@
       </div>
     </div>
 
+    <div class="col-md-6 mb-3">
+      <label class="form-label">{{ 'Type' | translate }}</label>
+      <select class="form-select" formControlName="type">
+        <option value="sale">{{ 'Sale' | translate }}</option>
+        <option value="loan">{{ 'Loan' | translate }}</option>
+      </select>
+    </div>
+
+    <div class="col-md-6 mb-3" *ngIf="productForm.get('type')?.value === 'loan'">
+      <label class="form-label">{{ 'Loan term (days)' | translate }}</label>
+      <input
+        type="number"
+        class="form-control"
+        formControlName="loanTerm"
+        min="1"
+      />
+       <small class="text-muted d-block mt-2">
+        Цена является ориентировочной. Ломбарды могут предложить другую сумму
+        в зависимости от состояния товара.
+      </small>
+    </div>
+
     <!-- Категория -->
     <div class="mb-3">
           <label class="form-label">{{ 'Category' | translate }}</label>

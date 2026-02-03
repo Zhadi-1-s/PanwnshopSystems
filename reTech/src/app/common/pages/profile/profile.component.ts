@@ -189,7 +189,10 @@ export class ProfileComponent implements OnInit {
   }
 
   deleteProduct(itemId:string){
-
+    this.productService.deleteProduct(itemId).subscribe({
+      next:() => console.log('Product deleted'),
+      error: err => console.error('Error deleting product', err)
+    });
   }
 
   editProduct(item:Product){

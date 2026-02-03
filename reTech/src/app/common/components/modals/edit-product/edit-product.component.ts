@@ -40,8 +40,26 @@ export class EditProductComponent {
       category: [this.product.category, Validators.required],
       price: [this.product.price, [Validators.required, Validators.min(0)]],
       status: [this.product.status, Validators.required],
+      type: ['sale', Validators.required],
+      loanTerm: [null]
     });
     this.photos = [...(this.product.photos || [])];
+
+    this.form.get('type')!.valueChanges.subscribe(type => {
+      const loanTermCtrl = this.form.get('loanTerm');
+
+      if (type === 'loan') {
+        loanTermCtrl?.setValidators([
+          Validators.required,
+          Validators.min(1)
+        ]);
+      } else {
+        loanTermCtrl?.clearValidators();
+        loanTermCtrl?.setValue(null);
+      }
+
+      loanTermCtrl?.updateValueAndValidity();
+    });
   }
 
   async onFileSelect(): Promise<void> {

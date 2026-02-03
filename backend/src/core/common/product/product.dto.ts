@@ -1,8 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional, IsArray, IsEnum, IsMongoId, isString, IsNumber,ValidateNested } from 'class-validator';
+import { IsString, IsOptional, IsArray, IsEnum, IsMongoId, isString, IsNumber,ValidateNested, Min,ValidateIf } from 'class-validator';
 import { Category } from '../enums/category.enum';
 import { Status } from '../enums/status.enum';
 import { Type } from 'class-transformer';
+import { ProductType } from '../enums/produtc.type.enum';
 
 class ProductPhotoDto {
   @ApiProperty({ example: 'https://res.cloudinary.com/...' })
@@ -50,4 +51,21 @@ export class CreateProductDto {
   @ApiProperty({example:'1000 тг',required:true})
   @IsNumber()
   price:number;
+
+  @IsEnum(ProductType)
+  @ApiProperty({
+    enum: ProductType,
+    default: ProductType.SALE,
+  })
+  type: ProductType;
+
+  @ApiProperty({
+    example: 30,
+    required: false,
+    description: 'Срок займа (обязателен если type = loan)'
+  })
+  @ValidateIf(o => o.type === ProductType.LOAN)
+  @IsNumber()
+  @Min(1)
+  loanTerm?: number;
 }

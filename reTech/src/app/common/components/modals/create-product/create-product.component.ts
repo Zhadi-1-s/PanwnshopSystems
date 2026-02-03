@@ -40,6 +40,23 @@ export class CreateProductComponent {
       photos: this.fb.control<string[]>([]),
       status: ['active'],
       price: [null, [Validators.required, Validators.min(1)]],
+      type: ['sale', Validators.required],
+      loanTerm: [null]
+    });
+    this.productForm.get('type')!.valueChanges.subscribe(type => {
+      const loanTermCtrl = this.productForm.get('loanTerm');
+
+      if (type === 'loan') {
+        loanTermCtrl?.setValidators([
+          Validators.required,
+          Validators.min(1)
+        ]);
+      } else {
+        loanTermCtrl?.clearValidators();
+        loanTermCtrl?.setValue(null);
+      }
+
+      loanTermCtrl?.updateValueAndValidity();
     });
   }
 

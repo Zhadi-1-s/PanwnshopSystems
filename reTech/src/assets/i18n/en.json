@@ -299,6 +299,12 @@
     "Loan": "Loan",
     "Rating":"Rating",
     "Ascending":"Ascending",
-    "Descending":"Descending"
+    "Descending":"Descending",
+    "Loan term (days)":"Loan term (days)",
+    "Enter description (optional)":"Enter description (optional)",
+    "For sale":"For sale",
+    "For loan":"For loan",
+    "No favorite shops yet":"No favorite shops yet",
+    "No favorite products yet":"No favorite products yet"
 
 }
