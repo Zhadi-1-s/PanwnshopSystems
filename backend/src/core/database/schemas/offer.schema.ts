@@ -36,6 +36,23 @@ export class Offer {
 
   @Prop({required:false})
   cancelReason?: string;
+
+  @Prop({
+    required: false,
+    type: {
+      rate: { type: Number },
+      period: { type: String, enum: ['day', 'month'] },
+      loanTerm: { type: Number },
+      estimatedRepayment: { type: Number },
+    },
+  })
+  loanDetails?: {
+    rate: number;
+    period: 'day' | 'month';
+    loanTerm: number;
+    estimatedRepayment: number;
+  };
+  
 }
 
 export const OfferSchema = SchemaFactory.createForClass(Offer);

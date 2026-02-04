@@ -26,6 +26,15 @@ export class OfferModalComponent implements OnInit {
 
   product:Product;
 
+  isLoan = false;
+
+  loanDetails?: {
+    rate: number;
+    period: 'day' | 'month';
+    loanTerm: number;
+    estimatedRepayment: number;
+  };
+
   constructor(
     public activeModal: NgbActiveModal,
     private fb: FormBuilder,
@@ -51,6 +60,7 @@ export class OfferModalComponent implements OnInit {
 
       // Если тип товара - залог (loan), делаем расчеты
       if (this.product.type === 'loan') {
+        this.isLoan = true;
         this.calculateLoanOffer();
       }
     });
@@ -59,20 +69,30 @@ export class OfferModalComponent implements OnInit {
   submit() {
     if (this.offerForm.invalid) return;
 
-    const offer: Offer = {
+    const baseOffer = {
       productId: this.productId,
       pawnshopId: this.pawnshopId,
       productOwnerId: this.productOwnerId,
       price: Number(this.offerForm.value.price),
-      message: this.offerForm.value.message || '',
-      status: 'pending'
+      message: this.offerForm.value.message || undefined
     };
 
-    this.offerService.createOffer(offer).subscribe((next) => {
-      console.log(next, 'Offer sended succesfully')
-      this.activeModal.close(offer); 
-    })
+    const payload: Partial<Offer> = this.isLoan
+      ? {
+          ...baseOffer,
+          loanDetails: this.loanDetails
+        }
+      : baseOffer;
 
+    this.offerService.createOffer(payload).subscribe({
+      next: (offer) => {
+        console.log('Offer sent successfully', offer);
+        this.activeModal.close(offer);
+      },
+      error: (err) => {
+        console.error('Failed to send offer', err);
+      }
+    });
   }
 
   cancel() {
