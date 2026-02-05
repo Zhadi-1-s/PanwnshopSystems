@@ -75,7 +75,28 @@
       {{ offer?.price | number:'1.0-0' }} <span class="text-lg font-semibold">₸</span>
     </p>
   </div>
-
+  <ng-container *ngIf="offer?.loanDetails">
+    <div class="mb-5 p-4 rounded-xl bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700 text-blue-800 dark:text-blue-200 text-sm font-medium">
+      <p>
+        {{ 'Pawnshop' | translate }}: <strong>{{ pawnshopName }}</strong>
+      </p>
+      <p>
+        {{ 'Proposes the following amount' | translate }}: 
+        <strong>{{ offer.price | number:'1.0-0' }} ₸</strong>
+      </p>
+      <p>
+        {{ 'Loan Term' | translate }}: {{ offer.loanDetails.loanTerm }} 
+        {{ offer.loanDetails.period === 'day' ? ('days' | translate) : ('months' | translate) }}
+      </p>
+      <p>
+        {{ 'Interest Rate' | translate }}: {{ offer.loanDetails.rate }}% 
+        / {{ offer.loanDetails.period === 'day' ? ('day' | translate) : ('month' | translate) }}
+      </p>
+      <p>
+        {{ 'Estimated Repayment' | translate }}: {{ offer.loanDetails.estimatedRepayment | number:'1.0-0' }} ₸
+      </p>
+    </div>
+  </ng-container>
   <!-- Message -->
   <div *ngIf="offer?.message" class="mb-5">
     <p class="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">

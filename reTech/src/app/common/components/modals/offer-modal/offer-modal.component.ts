@@ -8,11 +8,12 @@ import { LombardService } from '../../../../shared/services/lombard.service';
 import { Product } from '../../../../shared/interfaces/product.interface';
 import { ProductService } from '../../../../shared/services/product.service';
 import { forkJoin } from 'rxjs';
+import { CommonModule, DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-offer-modal',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule,DecimalPipe,FormsModule,CommonModule],
   templateUrl: './offer-modal.component.html',
   styleUrl: './offer-modal.component.scss'
 })
@@ -64,6 +65,11 @@ export class OfferModalComponent implements OnInit {
         this.calculateLoanOffer();
       }
     });
+    this.offerForm.get('price')?.valueChanges.subscribe(() => {
+      if (this.isLoan) {
+        this.calculateLoanOffer();
+      }
+    });
   }
 
   submit() {
@@ -100,28 +106,61 @@ export class OfferModalComponent implements OnInit {
   }
 
   calculateLoanOffer() {
-    const basePrice = this.product.price;
+    if (!this.product || !this.pawnshopTerm) return;
+
+    const priceControl = this.offerForm.get('price');
+    const loanAmount = Number(priceControl?.value);
+
+    if (!loanAmount) {
+      this.loanDetails = undefined;
+      return;
+    }
+
     const terms = this.pawnshopTerm;
+    const loanTerm = this.product.loanTerm || 0;
 
-    // 1. Проверяем процент корректировки цены (например, ±10%)
-    const maxPrice = basePrice * (1 + terms.priceAdjustmentLimitPercent / 100);
-    const minPrice = basePrice * (1 - terms.priceAdjustmentLimitPercent / 100);
+    // --- проценты ---
+    const { rate, period, startsAfterDays, minChargeDays } = terms.interest;
 
-    // 2. Учитываем лимиты самого ломбарда
-    const finalMin = Math.max(minPrice, terms.limits.minAmount || 0);
-    const finalMax = Math.min(maxPrice, terms.limits.maxAmount);
+    let chargeDays = Math.max(loanTerm - startsAfterDays, 0);
 
-    // 3. Устанавливаем валидаторы динамически
-    this.offerForm.get('price')?.setValidators([
-      Validators.required,
-      Validators.min(finalMin),
-      Validators.max(finalMax)
-    ]);
+    if (minChargeDays) {
+      chargeDays = Math.max(chargeDays, minChargeDays);
+    }
 
-    // Предзаполняем цену (например, рекомендуемую)
-    this.offerForm.patchValue({ price: basePrice.toString() });
-    
-    this.offerForm.get('price')?.updateValueAndValidity();
+    let interestAmount = 0;
+
+    if (period === 'day') {
+      interestAmount = loanAmount * (rate / 100) * chargeDays;
+    } else {
+      interestAmount = loanAmount * (rate / 100) * (chargeDays / 30);
+    }
+
+    // --- комиссии ---
+    let feeAmount = 0;
+
+    if (terms.fees) {
+      if (terms.fees.type === 'fixed') {
+        feeAmount = terms.fees.value;
+      } else {
+        feeAmount = loanAmount * (terms.fees.value / 100);
+      }
+    }
+
+    // --- итог ---
+    const estimatedRepayment = Math.round(
+      loanAmount + interestAmount + feeAmount
+    );
+
+    this.loanDetails = {
+      rate,
+      period,
+      loanTerm,
+      estimatedRepayment
+    };
   }
+
+
+
 
 }

@@ -1,5 +1,8 @@
 <div class="modal-header">
-  <h5 class="modal-title">Создать оффер</h5>
+  <h5 class="modal-title">
+    {{ isLoan ? 'Предложение займа' : 'Создать оффер' }}
+  </h5>
+
   <button
     type="button"
     class="btn-close"
@@ -9,36 +12,112 @@
 </div>
 
 <div class="modal-body">
-
   <form [formGroup]="offerForm">
 
+    <!-- Сумма займа -->
     <div class="mb-3">
-      <label class="form-label">Цена</label>
+      <label class="form-label">
+        {{ isLoan ? 'Сумма, которую готовы выдать' : 'Цена' }}
+      </label>
+
       <input
         type="number"
         class="form-control"
         formControlName="price"
-        placeholder="Введите цену"
+        [placeholder]="isLoan ? 'Введите сумму займа' : 'Введите цену'"
       />
+
+      <!-- Ошибки -->
+      <div
+        class="text-danger small mt-1"
+        *ngIf="offerForm.get('price')?.invalid && offerForm.get('price')?.touched"
+      >
+        <div *ngIf="offerForm.get('price')?.errors?.['required']">
+          Обязательно
+        </div>
+        <div *ngIf="offerForm.get('price')?.errors?.['min']">
+          Сумма меньше допустимой
+        </div>
+        <div *ngIf="offerForm.get('price')?.errors?.['max']">
+          Сумма больше допустимой
+        </div>
+      </div>
     </div>
 
+
+    <!-- Расчёт займа -->
+    <div *ngIf="isLoan && loanDetails" class="alert alert-info">
+
+      <div>
+        <strong>Ставка:</strong>
+        {{ loanDetails.rate }}% /
+        {{ loanDetails.period === 'day' ? 'день' : 'месяц' }}
+      </div>
+
+      <div>
+        <strong>Срок займа:</strong>
+        {{ loanDetails.loanTerm }} дней
+      </div>
+
+      <div>
+        <strong>К возврату:</strong>
+        {{ loanDetails.estimatedRepayment | number:'1.0-0' }}
+      </div>
+
+    </div>
+
+
+    <!-- Информация по лимитам -->
+    <div *ngIf="isLoan && pawnshopTerm" class="alert alert-secondary">
+
+      <div>
+        <strong>Оценочная стоимость товара:</strong>
+        {{ product?.price | number:'1.0-0' }}
+      </div>
+
+      <div *ngIf="pawnshopTerm.limits">
+        <strong>Мин сумма:</strong>
+        {{ pawnshopTerm.limits.minAmount || '—' }}
+        <br>
+        <strong>Макс сумма:</strong>
+        {{ pawnshopTerm.limits.maxAmount }}
+      </div>
+
+      <div>
+        <strong>Допустимое отклонение:</strong>
+        ±{{ pawnshopTerm.priceAdjustmentLimitPercent }}%
+      </div>
+
+    </div>
+
+
+    <!-- Сообщение -->
     <div class="mb-3">
-      <label class="form-label">Сообщение (необязательно)</label>
+      <label class="form-label">
+        Сообщение клиенту (необязательно)
+      </label>
+
       <textarea
         class="form-control"
         rows="3"
         formControlName="message"
-        placeholder="Комментарий"
+        placeholder="Комментарий к офферу"
       ></textarea>
     </div>
 
   </form>
-
 </div>
 
 <div class="modal-footer">
-  <button class="btn btn-secondary" (click)="cancel()">Отмена</button>
-  <button class="btn btn-primary" (click)="submit()" [disabled]="offerForm.invalid">
-    Создать
+  <button class="btn btn-secondary" (click)="cancel()">
+    Отмена
+  </button>
+
+  <button
+    class="btn btn-primary"
+    (click)="submit()"
+    [disabled]="offerForm.invalid"
+  >
+    Отправить оффер
   </button>
 </div>

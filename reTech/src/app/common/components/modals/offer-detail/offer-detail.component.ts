@@ -33,6 +33,8 @@ export class OfferDetailComponent implements OnInit{
   otherReason:string = '';
   showCancelReasons = false;
 
+  pawnshopName: string;
+
    cancelReasons = [
     { value: 'no_show', label: 'User did not bring the item', selected: false },
     { value: 'bad_condition', label: 'Item in bad condition', selected: false },
@@ -65,12 +67,11 @@ export class OfferDetailComponent implements OnInit{
       console.log('pawnshopId in offer detail:', this.pawnshopId);
       console.log('user in offer detail:', this.user);  
       this.pawnshopService.getLombardById(this.pawnshopId).pipe(
-        map(pawnshop => pawnshop.address),
-        tap(address => {
-          this.pawnshopAddress = address;
-          console.log('Loaded pawnshop address:', address);
-      })
-    ).subscribe();
+        tap(p => {
+          this.pawnshopAddress = p.address;
+          this.pawnshopName = p.name; // <-- сохраняем название ломбарда
+        })
+      ).subscribe();
 
       if (this.offer?.status === 'in_inspection') {
         // допустим 48 часов после принятия оффера
