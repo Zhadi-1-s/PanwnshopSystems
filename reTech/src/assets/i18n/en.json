@@ -307,6 +307,11 @@
     "No favorite shops yet":"No favorite shops yet",
     "No favorite products yet":"No favorite products yet",
     "Loan Details":"Loan Details",
-    "Proposes the following amount":"Proposes the following amount"
+    "Proposes the following amount":"Proposes the following amount",
+    "Loan Term":"Loan Term",
+    "Interest Rate":"Interest Rate",
+    "Estimated Repayment":"Estimated Repayment",
+    "offers you a loan under these terms":"offers you a loan under these terms",
+    "Complete Offer":"Complete Offer"
 
 }

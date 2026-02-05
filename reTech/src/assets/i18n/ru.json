@@ -309,6 +309,11 @@
     "No favorite shops yet":"Пока нет избранных магазинов",
     "No favorite products yet":"Пока нет избранных товаров",
     "Loan Details":"Детали займа",
-    "Proposes the following amount":"Предлагает следующую сумму"
+    "Proposes the following amount":"Предлагает следующую сумму",
+    "Loan Term":"Срок займа",
+    "Interest Rate":"Процентная ставка",
+    "Estimated Repayment":"Оценочная сумма к возврату",
+    "offers you a loan under these terms":"предлагает вам займ на следующих условиях",
+    "Complete Offer":"Завершить предложение"
 
 }

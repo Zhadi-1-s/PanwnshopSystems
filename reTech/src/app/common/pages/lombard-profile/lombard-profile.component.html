@@ -40,10 +40,10 @@
                     </span>
                   </div>
                   
-                  <div class="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg">
+                  <!-- <div class="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg">
                     <i class="fa-regular fa-clock text-blue-600"></i>
                     <span>{{ currentTime | date:'shortTime' }}</span>
-                  </div>
+                  </div> -->
                   <!-- <button *ngIf="profile?.terms"
                             (click)="openTermsModal()"
                             class="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-full font-semibold transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
@@ -886,7 +886,7 @@
               <div class="flex justify-between items-start mb-4">
                 <div class="flex items-center gap-3">
                   <img
-                    [src]="item.product?.photos?.[0] || 'assets/png/default-product.png'"
+                    [src]="item.product?.photos?.[0].url || 'assets/png/default-product.png'"
                     alt="{{ item.product?.title }}"
                     class="w-16 h-16 rounded-lg object-cover shadow-md"
                   />
@@ -934,7 +934,7 @@
                   <span class="font-bold text-green-700">{{ item.slot.loanAmount }} тг</span>
                 </div>
                 <div class="flex justify-between items-center text-sm">
-                  <span class="text-gray-600 font-medium">{{ 'Interest rate' | translate }}:</span>
+                  <span class="text-gray-600 font-medium">{{ 'Interest Rate' | translate }}:</span>
                   <span class="font-bold text-blue-700">{{ item.slot.interestRate }}%</span>
                 </div>
                 <div class="flex justify-between items-center text-sm">

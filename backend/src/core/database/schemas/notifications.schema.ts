@@ -35,7 +35,10 @@ export class Notification {
       'chat-opened',
       'product-sold',
       'price-changed',
-      'evaluation'
+      'evaluation',
+      'offer-in-loan',
+      'evaluation-updated',
+      'evaluation-accepted'
     ],
   })
   type: NotificationType;

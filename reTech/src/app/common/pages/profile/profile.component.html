@@ -10,22 +10,23 @@
         <!-- Avatar Section -->
         <div class="flex-shrink-0">
           <div 
-              class="relative w-28 h-28 rounded-full bg-gray-200 dark:bg-gray-800 border-3 border-gray-200 dark:border-gray-700 overflow-hidden cursor-pointer transition-all hover:border-blue-500 hover:scale-105 group">
+            class="relative w-28 h-28 rounded-full bg-gray-200 dark:bg-gray-800 border-3 border-gray-200 dark:border-gray-700 overflow-hidden">
             
-            <!-- Блок с первой буквой -->
+            <!-- Буква -->
             <div class="w-full h-full flex items-center justify-center">
               <span class="text-4xl font-bold text-gray-500 dark:text-gray-400">
                 {{ user.name.charAt(0) | uppercase }}
               </span>
             </div>
 
-            <!-- Иконка камеры -->
-            <div class="absolute bottom-1.5 right-1.5 w-8 h-8 bg-blue-600 dark:bg-blue-500 border-3 border-white dark:border-gray-900 rounded-full flex items-center justify-center transition-all group-hover:bg-blue-700 group-hover:scale-110">
+            <!-- Камера -->
+            <div class="absolute bottom-1.5 right-1.5 w-8 h-8 bg-blue-600 dark:bg-blue-500 border-3 border-white dark:border-gray-900 rounded-full flex items-center justify-center">
               <i class="fa-solid fa-camera text-xs text-white"></i>
             </div>
 
           </div>
         </div>
+
 
         <!-- User Info Section -->
         <div class="flex-1 min-w-0 w-full">

@@ -12,7 +12,8 @@ export interface AppNotification {
     | 'system'
     | 'chat-opened'
     | 'product-sold'
-    | 'price-changed';
+    | 'price-changed'
+    | 'offer-in-loan';
 
   title: string;
   message: string;

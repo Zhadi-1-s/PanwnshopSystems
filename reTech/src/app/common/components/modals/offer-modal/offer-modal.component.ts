@@ -154,7 +154,7 @@ export class OfferModalComponent implements OnInit {
 
     this.loanDetails = {
       rate,
-      period,
+      period: 'day',
       loanTerm,
       estimatedRepayment
     };

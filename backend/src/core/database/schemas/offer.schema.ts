@@ -25,10 +25,10 @@ export class Offer {
   @Prop({
     type:String,
     required: true,
-    enum: ['pending', 'completed', 'rejected','in_inspection','no_show','rejected_by_pawnshop'],
+    enum: ['pending', 'completed', 'rejected','in_inspection','no_show','rejected_by_pawnshop','in_loan'],
     default: 'pending'
   })
-  status: 'pending' | 'completed' | 'rejected' | 'in_inspection' | 'no_show' | 'rejected_by_pawnshop';
+  status: 'pending' | 'completed' | 'rejected' | 'in_inspection' | 'no_show' | 'rejected_by_pawnshop'| 'in_loan';
 
   // 👇 поле, по которому Mongo будет удалять документ
   @Prop({ required: false })

@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { User } from '../../../../shared/interfaces/user.interface';
 import { AuthService } from '../../../../shared/services/auth.service';
 import { error } from 'console';
-import { map, Observable, tap } from 'rxjs';
+import { map, Observable, tap,switchMap } from 'rxjs';
 import { Product } from '../../../../shared/interfaces/product.interface';
 import { ProductService } from '../../../../shared/services/product.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -13,6 +13,8 @@ import { ProductDetailComponent } from '../product-detail/product-detail.compone
 import { OfferService } from '../../../../shared/services/offer.service';
 import { LombardService } from '../../../../shared/services/lombard.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {Router} from '@angular/router';
+import { SlotService } from '../../../../shared/services/slot.service';
 
 @Component({
   selector: 'app-offer-detail',
@@ -51,7 +53,9 @@ export class OfferDetailComponent implements OnInit{
     private productService:ProductService,
     private modalService:NgbModal,
     private offerService:OfferService,
-    private pawnshopService:LombardService
+    private pawnshopService:LombardService,
+    private router:Router,
+    private slotService:SlotService
   ){
 
   }
@@ -159,11 +163,33 @@ export class OfferDetailComponent implements OnInit{
       });
   }
 
+  completeOffer() {
+    if (!this.offer._id) return;
+
+    this.offerService.updateStatus(this.offer._id, 'completed')
+      .subscribe({
+        next: updatedOffer => {
+          this.offer.status = updatedOffer.status;
+          window.alert('Offer completed! If it is a loan, the slot is created automatically.');
+        },
+        error: err => {
+          console.error('Complete offer failed', err);
+        }
+      });
+  }
 
   get isOtherSelected(): boolean {
     return this.cancelReasons.some(
       r => r.value === 'other' && r.selected
     );
+  }
+
+  openPawnshopDetail(){
+    if (!this.pawnshopId) return;
+
+    this.router.navigate(['/pawnshop-detail', this.pawnshopId]);
+
+    this.modalService.dismissAll();
   }
 
 }

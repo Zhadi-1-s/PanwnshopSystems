@@ -10,15 +10,20 @@ export class CreateNotificationDto {
   senderId:string;
 
   @IsEnum([
-    'new-offer',
-    'offer-accepted',
-    'offer-rejected',
-    'new-message',
-    'system',
-    'chat-opened',
-    'product-sold',
-    'price-changed',
-    'evaluation'
+     'new-offer',
+      'offer-accepted',
+      'offer-rejected',
+      'offer-cancelled',
+      'offer-updated',
+      'new-message',
+      'system',
+      'chat-opened',
+      'product-sold',
+      'price-changed',
+      'evaluation',
+      'offer-in-loan',
+      'evaluation-updated',
+      'evauluation-accepted'
   ])
   type: string;
 
