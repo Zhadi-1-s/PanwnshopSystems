@@ -3,7 +3,7 @@ import { LombardService } from '../../../shared/services/lombard.service';
 import { Observable, switchMap, tap,map,of,take, Subject, filter, takeUntil, shareReplay } from 'rxjs';
 import { PawnshopProfile } from '../../../shared/interfaces/shop-profile.interface';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule,Location } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { Product } from '../../../shared/interfaces/product.interface';
 import { ProductService } from '../../../shared/services/product.service';
@@ -19,6 +19,7 @@ import { FormsModule } from '@angular/forms';
 import { TermModalComponent } from '../../components/modals/term-modal/term-modal.component';
 import { LoginRequiredComponent } from '../../components/modals/login-required/login-required.component';
 import { EvalutaionComponent } from '../../components/modals/evalutaion/evalutaion.component';
+import { WarningModalComponent } from '../../components/modals/warning-modal/warning-modal.component';
 
 @Component({
   selector: 'app-pawnshop-detail',
@@ -65,7 +66,8 @@ export class PawnshopDetailComponent implements OnInit, OnDestroy {
     private authService:AuthService,
     private userService:UserService,
     private pawnshopService:LombardService,
-    private router:Router
+    private router:Router,
+    private location: Location
   ){
 
   }
@@ -136,9 +138,6 @@ export class PawnshopDetailComponent implements OnInit, OnDestroy {
       }),
       take(1)
     )
-    .subscribe(profile => {
-      this.productService.loadProductsByOwner(profile._id);
-    })
    // продукты — только из store
     this.products$ = this.productService.getProducts().pipe(
       tap(products => {
@@ -185,6 +184,11 @@ export class PawnshopDetailComponent implements OnInit, OnDestroy {
     this.addReview(pawnshopId);
   }
 
+
+  goBack(){
+     this.location.back();
+  }
+
   addReview(pawnshopId: string) {
     if (!this.user || !pawnshopId) return;
 
@@ -196,25 +200,36 @@ export class PawnshopDetailComponent implements OnInit, OnDestroy {
       createdAt: new Date()
     };
 
-    this.pawnshopService.addReview(pawnshopId, review).subscribe({
-      next: updatedPawnshop => {
-        this.pawnShop$ = of(updatedPawnshop); // обновляем view
-        this.newRating = 5;
-        this.newComment = '';
-        console.log(updatedPawnshop, 'updated pawnshop');
-      },
-      error: err => {
-        if (err.status === 400) {
-          alert('Вы уже оставляли отзыв для этого ломбарда');
-        } else {
-          console.error(err);
+
+    if(this.user.role !=='pawnshop'){
+      this.pawnshopService.addReview(pawnshopId, review).subscribe({
+        next: updatedPawnshop => {
+          this.pawnShop$ = of(updatedPawnshop); // обновляем view
+          this.newRating = 5;
+          this.newComment = '';
+          console.log(updatedPawnshop, 'updated pawnshop');
+        },
+        error: err => {
+          if (err.status === 400) {
+            alert('Вы уже оставляли отзыв для этого ломбарда');
+          } else {
+            console.error(err);
+          }
         }
-      }
-    });
+      });
+    }
+    else{
+      this.openWarningModal();
+    }
   }
 
+  openWarningModal(){
+     this.modalService.open(WarningModalComponent, {
+      centered: true,
+      size: 'sm'
+    });
 
-
+  }
 
   openProductDetail(product: Product){
     const modalRef = this.modalService.open(ProductDetailComponent, {
@@ -295,7 +310,10 @@ export class PawnshopDetailComponent implements OnInit, OnDestroy {
       this.modalService.open(LoginRequiredComponent)
       return
     }
-    
+    if(this.user.role === 'pawnshop'){
+      this.openWarningModal();
+      return;
+    }
     const modalRef = this.modalService.open(EvalutaionComponent, {
       centered: true,
       size: 'md',

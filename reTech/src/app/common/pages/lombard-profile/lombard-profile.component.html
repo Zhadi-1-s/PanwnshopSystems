@@ -130,7 +130,7 @@
 
       <ng-container *ngIf="notifications$ | async as notifications; else noNotifications">
         
-        <div class="flex flex-col lg:flex-row min-h-[500px] min-w-0">
+        <div class="flex flex-col lg:flex-row min-h-[500px] min-w-0" *ngIf="notifications.length">
           
           <!-- Sidebar -->
           <div class="w-full lg:w-60 bg-gray-50 dark:bg-gray-800/30
@@ -190,7 +190,7 @@
                 <span class="text-sm font-medium">{{'Chats'|translate}}</span>
               </div>
               <span class="px-2 py-1 text-[10px] font-semibold bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded uppercase tracking-wider">
-                Soon
+               {{' Soon'|translate}}
               </span>
             </div>
 
@@ -289,7 +289,7 @@
                                       text-green-600 focus:ring-green-500"
                                       [(ngModel)]="statusFilter.completed">
                         <span class="text-sm text-gray-700 dark:text-gray-300">
-                          {{ 'Sold' | translate }}
+                          {{ 'Completed' | translate }}
                         </span>
                       </label>
                       <label
@@ -312,6 +312,39 @@
                                       [(ngModel)]="statusFilter.in_inspection">
                         <span class="text-sm text-gray-700 dark:text-gray-300">
                           {{ 'in_inspection' | translate }}
+                        </span>
+                      </label>
+                      <label
+                        class="flex items-center gap-3 p-2 rounded-lg cursor-pointer
+                              hover:bg-gray-100 dark:hover:bg-gray-800 transition">
+                        <input type="checkbox"
+                              class="w-4 h-4 rounded border-gray-300 dark:border-gray-600
+                                      text-green-600 focus:ring-green-500"
+                                      [(ngModel)]="statusFilter.in_loan">
+                        <span class="text-sm text-gray-700 dark:text-gray-300">
+                          {{ 'In loan' | translate }}
+                        </span>
+                      </label>
+                      <label
+                        class="flex items-center gap-3 p-2 rounded-lg cursor-pointer
+                              hover:bg-gray-100 dark:hover:bg-gray-800 transition">
+                        <input type="checkbox"
+                              class="w-4 h-4 rounded border-gray-300 dark:border-gray-600
+                                      text-green-600 focus:ring-green-500"
+                                      [(ngModel)]="statusFilter.no_show">
+                        <span class="text-sm text-gray-700 dark:text-gray-300">
+                          {{ 'No Show' | translate }}
+                        </span>
+                      </label>
+                      <label
+                        class="flex items-center gap-3 p-2 rounded-lg cursor-pointer
+                              hover:bg-gray-100 dark:hover:bg-gray-800 transition">
+                        <input type="checkbox"
+                              class="w-4 h-4 rounded border-gray-300 dark:border-gray-600
+                                      text-green-600 focus:ring-green-500"
+                                      [(ngModel)]="statusFilter.rejected_by_pawnshop">
+                        <span class="text-sm text-gray-700 dark:text-gray-300">
+                          {{ 'Rejected by pawnshop' | translate }}
                         </span>
                       </label>
                     </div>

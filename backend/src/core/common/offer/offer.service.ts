@@ -121,6 +121,11 @@ export class OfferService {
             status:Status.ACTIVE
           });
 
+           await this.productService.updateStatus(
+              offer.productId.toString(),
+              Status.CLOSED
+            );
+
           offer.status = 'in_loan';
           await this.notificationService.create({
             userId: offer.productOwnerId.toString(),

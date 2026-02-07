@@ -10,6 +10,7 @@ import { User, UserDocument } from 'src/core/database/schemas/user.schema';
 import { Mode } from 'fs';
 import { NotificationService } from '../notification/notification.service';
 import cloudinary from 'src/core/config/cloudinary.config';
+import { Status } from '../enums/status.enum';
 
 
 @Injectable()
@@ -63,6 +64,20 @@ export class ProductService {
     return product;
   }
 
+  async getActiveProducts(): Promise<Product[]> {
+    const products = await this.productModel
+      .find({ status: Status.ACTIVE })
+      .lean()
+      .exec();
+
+    return products.map(product => ({
+      ...product,
+      photos: product.photos.map(p =>
+        typeof p === 'string' ? { url: p, publicId: '' } : p
+      ),
+    }));
+  }
+
   async update(id: string, dto: UpdateProductDto): Promise<Product> {
     const existing = await this.productModel.findById(id).exec();
     if (!existing) throw new NotFoundException('Product not found');
@@ -104,6 +119,21 @@ export class ProductService {
     return updated;
   }
 
+  async updateStatus(id: string, status: Status): Promise<Product> {
+    const product = await this.productModel
+      .findByIdAndUpdate(
+        id,
+        { status },
+        { new: true }
+      )
+      .exec();
+
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
+
+    return product;
+  }
 
   async delete(id: string): Promise<{ message: string }> {
     const res = await this.productModel.findById(id).exec();

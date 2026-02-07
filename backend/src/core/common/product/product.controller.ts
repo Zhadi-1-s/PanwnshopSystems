@@ -33,6 +33,13 @@ export class ProductController {
     return this.productService.findAll();
   }
 
+  @Get('active')
+  @ApiOperation({ summary: 'Получить список активных продуктов' })
+  @ApiResponse({ status: 200, description: 'Список активных продуктов', type: [Product] })
+  getActiveProducts() {
+    return this.productService.getActiveProducts();
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Получить продукт по ID' })
   @ApiResponse({ status: 200, description: 'Данные продукта' })

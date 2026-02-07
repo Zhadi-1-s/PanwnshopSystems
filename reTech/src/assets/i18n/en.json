@@ -312,6 +312,15 @@
     "Interest Rate":"Interest Rate",
     "Estimated Repayment":"Estimated Repayment",
     "offers you a loan under these terms":"offers you a loan under these terms",
-    "Complete Offer":"Complete Offer"
+    "Complete Offer":"Complete Offer",
+    "Completed":"Completed",
+    "In loan":"In loan",
+    "No Show":"No show",
+    "In inspection":"In inspection",
+    "Rejected by pawnshop":"Rejected by pawnshop",
+    "Offer accepted, awaiting inspection":"Offer accepted, awaiting inspection",
+    "Offer rejected":"Offer rejected",
+    "Client did not bring the item":"Client did not bring the item",
+    "You will not be able to submit a product for evaluation.":"You will not be able to submit a product for evaluation."
 
 }

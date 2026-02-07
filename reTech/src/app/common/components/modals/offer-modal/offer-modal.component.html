@@ -110,7 +110,7 @@
 
 <div class="modal-footer">
   <button class="btn btn-secondary" (click)="cancel()">
-    Отмена
+    {{'Cancel' | translate}}
   </button>
 
   <button
@@ -118,6 +118,6 @@
     (click)="submit()"
     [disabled]="offerForm.invalid"
   >
-    Отправить оффер
+   {{'Sent offer' | translate}}
   </button>
 </div>

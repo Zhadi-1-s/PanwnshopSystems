@@ -89,7 +89,10 @@ export class LombardProfileComponent implements OnInit{
     rejected:false,
     in_inspection:false,
     pending:false,
-    completed:false
+    completed:false,
+    no_show:false,
+    rejected_by_pawnshop:false,
+    in_loan:false
   }
   sortByDate: 'newest' | 'oldest' = 'newest';
 
@@ -223,7 +226,7 @@ export class LombardProfileComponent implements OnInit{
 
             this.prodcuctsFromNotifications = {
               ...this.prodcuctsFromNotifications,
-              ...Object.fromEntries(refs.map(r => [r.id, r.data]))
+              ...Object.fromEntries(refs.filter(r => r && r.id).map(r => [r.id, r.data]))
             };
           }),
           map(() => notifications) 
@@ -397,9 +400,12 @@ export class LombardProfileComponent implements OnInit{
         const status = n.data?.status; // <-- важно
         return (
           (this.statusFilter.rejected && status === 'rejected') ||
-          (this.statusFilter.completed && status === 'sold') || 
+          (this.statusFilter.completed && status === 'completed') || 
           (this.statusFilter.in_inspection && status === 'in_inspection') ||
-          (this.statusFilter.pending && status === 'pending')
+          (this.statusFilter.pending && status === 'pending') ||
+          (this.statusFilter.no_show&& status === 'now_show') || 
+          (this.statusFilter.rejected_by_pawnshop && status === 'rejected_by_pawnshop') ||
+          (this.statusFilter.in_loan && status === 'in_loan')
         );
       });
     }

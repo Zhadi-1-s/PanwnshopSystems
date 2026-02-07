@@ -9,11 +9,12 @@ import { Product } from '../../../../shared/interfaces/product.interface';
 import { ProductService } from '../../../../shared/services/product.service';
 import { forkJoin } from 'rxjs';
 import { CommonModule, DecimalPipe } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-offer-modal',
   standalone: true,
-  imports: [ReactiveFormsModule,DecimalPipe,FormsModule,CommonModule],
+  imports: [ReactiveFormsModule,DecimalPipe,FormsModule,CommonModule, TranslateModule],
   templateUrl: './offer-modal.component.html',
   styleUrl: './offer-modal.component.scss'
 })

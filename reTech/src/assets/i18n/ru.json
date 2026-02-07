@@ -314,6 +314,15 @@
     "Interest Rate":"Процентная ставка",
     "Estimated Repayment":"Оценочная сумма к возврату",
     "offers you a loan under these terms":"предлагает вам займ на следующих условиях",
-    "Complete Offer":"Завершить предложение"
+    "Complete Offer":"Завершить предложение",
+    "Completed":"Завершён",
+    "In loan":"В займе",
+    "No Show":"Не явился",
+    "In inspection":"На проверке",
+    "Rejected by pawnshop":"Отклонено ломбардом",
+    "Offer accepted, awaiting inspection":"Предложение принято, ожидается проверка",
+    "Offer rejected":"Предложение отклонено",
+    "Client did not bring the item":"Клиент не принес товар",
+    "You will not be able to submit a product for evaluation.":"Вы не сможете отправить товар на оценку."
 
 }

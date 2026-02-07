@@ -62,6 +62,9 @@ export class ProductService{
     );
   }
 
+  getActiveProducts(): Observable<Product[]> {
+    return this.http.get<Product[]>(`${this.apiUrl}/active`);
+  }
 
   deleteProduct(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
