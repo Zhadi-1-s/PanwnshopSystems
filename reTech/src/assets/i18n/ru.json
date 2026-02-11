@@ -246,6 +246,8 @@
     "Upload avatar":"Загрузить аватар",
     "Please bring your product for final inspection within:":"Пожалуйста, принесите ваш товар для финальной проверки в течение:",
     "no_show":"Не явился",
+    "completed":"Завершён",
+    "in_loan":"В займе",
     "offerStatusTooltip": {
         "no_show": "Вы не принесли товар на финальную офлайн-оценку.",
         "rejected": "Вы отказались от предложения.",
@@ -323,6 +325,8 @@
     "Offer accepted, awaiting inspection":"Предложение принято, ожидается проверка",
     "Offer rejected":"Предложение отклонено",
     "Client did not bring the item":"Клиент не принес товар",
-    "You will not be able to submit a product for evaluation.":"Вы не сможете отправить товар на оценку."
+    "You will not be able to submit a product for evaluation.":"Вы не сможете отправить товар на оценку.",
+    "Loans":"Займы",
+    "No loan notifications":"Нет активных займов"
 
 }

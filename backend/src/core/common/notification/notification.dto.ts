@@ -23,7 +23,8 @@ export class CreateNotificationDto {
       'evaluation',
       'offer-in-loan',
       'evaluation-updated',
-      'evauluation-accepted'
+      'evauluation-accepted',
+      'slot-created'
   ])
   type: string;
 

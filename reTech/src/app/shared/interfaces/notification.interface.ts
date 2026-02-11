@@ -13,7 +13,8 @@ export interface AppNotification {
     | 'chat-opened'
     | 'product-sold'
     | 'price-changed'
-    | 'offer-in-loan';
+    | 'offer-in-loan'
+    | 'slot-created'
 
   title: string;
   message: string;

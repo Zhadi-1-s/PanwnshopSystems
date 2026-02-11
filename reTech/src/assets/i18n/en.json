@@ -240,6 +240,8 @@
     "Upload avatar":"Upload Avatar",
     "Please bring your product for final inspection within:":"Please bring your product for final inspection within:",
     "no_show":"No show",
+    "completed":"Completed",
+    "in_loan":"In loan",
     "offerStatusTooltip": {
         "no_show": "You did not bring the item for the final offline evaluation.",
         "rejected": "You declined the offer.",
@@ -321,6 +323,8 @@
     "Offer accepted, awaiting inspection":"Offer accepted, awaiting inspection",
     "Offer rejected":"Offer rejected",
     "Client did not bring the item":"Client did not bring the item",
-    "You will not be able to submit a product for evaluation.":"You will not be able to submit a product for evaluation."
+    "You will not be able to submit a product for evaluation.":"You will not be able to submit a product for evaluation.",
+    "loans":"Loans",
+    "No loan notifications":"No loan notifications"
 
 }

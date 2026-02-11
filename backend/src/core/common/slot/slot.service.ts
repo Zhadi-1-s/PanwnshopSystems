@@ -3,21 +3,37 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Slot,SlotDocument } from 'src/core/database/schemas/slot.schema';
 import { CreateSlotDto } from './create-slot.dto';
+import { NotificationService } from '../notification/notification.service';
 
 @Injectable()
 export class SlotService {
   constructor(
     @InjectModel(Slot.name) private readonly slotModel: Model<SlotDocument>,
+    private notificationService:NotificationService
   ) {}
 
   async createSlot(dto: CreateSlotDto): Promise<Slot> {
     const newSlot = new this.slotModel({
       ...dto,
-      status: 'active',
+      status: dto.status ?? 'active',
       createdAt: new Date(),
       updatedAt: new Date(),
     });
-    return newSlot.save();
+
+
+    const slot = await newSlot.save();
+
+    await this.notificationService.create({
+      userId: dto.userId,
+      senderId: dto.pawnshopId,
+      type: 'slot-created',
+      title: 'Loan created',
+      message: 'Ваш займ успешно оформлен.',
+      refId: slot._id?.toString(),
+      isRead: false,
+    });
+
+    return slot;
   }
 
 //   async closeSlot(id: string): Promise<Slot> {

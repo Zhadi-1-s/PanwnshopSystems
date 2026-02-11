@@ -21,6 +21,8 @@ import { OfferService } from '../../../shared/services/offer.service';
 import { Offer } from '../../../shared/interfaces/offer.interface';
 import { OfferDetailComponent } from '../../components/modals/offer-detail/offer-detail.component';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { Slot } from '../../../shared/interfaces/slot.interface';
+import { SlotService } from '../../../shared/services/slot.service';
 
 @Component({
   selector: 'app-profile',
@@ -41,7 +43,7 @@ export class ProfileComponent implements OnInit {
   currentTime: Date = new Date();
 
   selectedTab: 'active' | 'inactive' = 'active';
-  activeSection: 'offers' | 'system' | 'chats' | 'others' = 'offers';
+  activeSection: 'offers' | 'system' | 'chats' | 'others' | 'loans'= 'offers';
 
   user:User;
 
@@ -52,6 +54,8 @@ export class ProfileComponent implements OnInit {
   favoriteProducts$:Observable<Product[]>;
   notifications$:Observable<AppNotification[]>;
   product$:Observable<Product>;
+
+  slots$:Observable<Slot[]>;
 
   notificationsList:AppNotification[];
   product:Product;
@@ -67,6 +71,7 @@ export class ProfileComponent implements OnInit {
   sections = [
     { id: 'offers', label: 'Offers' },
     { id: 'system', label: 'System' },
+    { id: 'loans', label: 'Loans' },
     { id: 'chats', label: 'Chats', disabled: true },
     { id: 'others', label: 'Others' },
   ];
@@ -78,7 +83,8 @@ export class ProfileComponent implements OnInit {
               private userService:UserService,
               private notificationService:NotificationService,
               private offerService:OfferService,
-              private router: Router
+              private router: Router,
+              private slotService:SlotService
   ) {
 
   }
@@ -147,6 +153,13 @@ export class ProfileComponent implements OnInit {
       switchMap(user => this.userService.getFavorites(user._id)),
       tap(pawnshop => console.log(pawnshop,'loaded farvoire pawnshops'))
     )
+
+    this.slots$ = this.authService.currentUser$.pipe(
+      filter((user):user is User => !!user?._id),
+      switchMap(user => this.slotService.getSlotsByUserId(user._id)),
+      tap(loan => console.log(loan,'loaded slots of user'))
+    )
+
     this.favoriteProducts$ = this.authService.currentUser$.pipe(
       filter((user):user is User => !!user?._id),
       switchMap(user => this.userService.getFavoriteItems(user._id)),
@@ -333,6 +346,10 @@ export class ProfileComponent implements OnInit {
 
   get systemNotifications() {
     return (this.notificationsList || []).filter(n => n.type === 'system');
+  }
+  
+  get loanNotifications(){
+    return (this.notificationsList || []).filter(n => n.type === 'slot-created')
   }
 
   get chatNotifications() {

@@ -188,6 +188,22 @@
                 {{unreadOtherNotifications.length}}
               </span>
             </div>
+            <div (click)="activeSection = 'loans'"
+                [class.active-section]="activeSection === 'loans'"
+                class="sidebar-item flex items-center justify-between px-4 py-3.5 rounded-lg cursor-pointer transition-all whitespace-nowrap">
+              <div class="flex items-center gap-3">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path d="M12 1v22"></path>
+                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+                <span class="text-sm font-medium">{{'Loans' | translate}}</span>
+              </div>
+
+              <span *ngIf="loanNotifications.length > 0"
+                    class="px-2 py-0.5 text-xs font-semibold bg-red-600 dark:bg-red-500 text-white rounded-full min-w-[22px] text-center">
+                {{loanNotifications.length}}
+              </span>
+            </div>
           </div>
 
           <!-- Content Area -->
@@ -313,6 +329,37 @@
                 <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">{{'No offer notifications'|translate}}</p>
               </div>
             </div>
+
+            <div *ngIf="activeSection === 'loans'" class="animate-fade-in">
+              <div class="flex items-center justify-between mb-5 pb-4 border-b border-gray-200 dark:border-gray-800">
+                <h6 class="text-base font-semibold text-gray-900 dark:text-gray-50">
+                  {{'Loans' | translate}}
+                </h6>
+                <span class="text-sm text-gray-500 dark:text-gray-400 font-medium">
+                  {{loanNotifications.length}} {{'notifications' | translate}}
+                </span>
+              </div>
+
+              <div *ngFor="let slot of slots$ | async"
+                  class="relative notification-card bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700 rounded-xl p-4 mb-3 cursor-pointer transition-all hover:bg-gray-100 dark:hover:bg-gray-800 hover:shadow-md hover:-translate-y-0.5">
+                 {{ slot._id }}
+                  {{ slot.loanAmount }}
+                  {{ slot.startDate | date }}
+              </div>
+
+              <!-- <div *ngIf="loanNotifications.length === 0"
+                  class="empty-state flex flex-col items-center justify-center py-16 text-center">
+                <svg class="w-12 h-12 text-gray-300 dark:text-gray-700 mb-4 opacity-50"
+                    fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path d="M12 1v22"></path>
+                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+                <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
+                  {{'No loan notifications' | translate}}
+                </p>
+              </div> -->
+            </div>
+
 
             <!-- System Section -->
             <div *ngIf="activeSection === 'system'" class="animate-fade-in">
