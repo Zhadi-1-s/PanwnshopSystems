@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder,Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { Status } from '../../../../shared/enums/status.enum';
+import { LoanStatus, ProductStatus, Status } from '../../../../shared/enums/status.enum';
 import { TranslateModule } from '@ngx-translate/core';
 import { User } from '../../../../shared/interfaces/user.interface';
 
@@ -97,7 +97,7 @@ export class CreateSlotComponent implements OnInit {
         category: this.form.value.category,
         photos: this.form.value.photos || [],
         price: 0,
-        status: Status.CLOSED,
+        status: ProductStatus.INACTIVE,
         type:'loan',
         loanTerm: Math.ceil((new Date(this.form.value.endDate).getTime() - new Date(this.form.value.startDate).getTime()) / (1000 * 60 * 60 * 24))
       }
@@ -112,7 +112,7 @@ export class CreateSlotComponent implements OnInit {
         interestRate: this.form.value.interestRate,
         startDate: this.form.value.startDate,
         endDate: this.form.value.endDate,
-        status: Status.ACTIVE
+        status: LoanStatus.ACTIVE
       };
 
       const createdSlot = await this.slotService.createSlot(slotPayload).toPromise();

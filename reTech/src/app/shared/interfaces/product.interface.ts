@@ -1,5 +1,5 @@
 import { Category } from "../enums/category.enum";
-import { Status } from "../enums/status.enum";
+import { ProductStatus, Status } from "../enums/status.enum";
 export interface Product {
   _id?: string; // id из MongoDB
   ownerId: string; // ObjectId → string
@@ -7,7 +7,7 @@ export interface Product {
   description?: string;
   category: Category;
   photos: { url: string; publicId: string }[];
-  status: Status;
+  status: ProductStatus;
   price: number;
   createdAt?: Date;
   updatedAt?: Date;

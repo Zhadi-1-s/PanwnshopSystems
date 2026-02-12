@@ -47,6 +47,8 @@ export class ProfileComponent implements OnInit {
 
   user:User;
 
+  hasActiveLoan:false;
+
   products$:Observable<Product[]>;
   activeProducts$!: Observable<Product[]>;
   inactiveProducts$!: Observable<Product[]>;
@@ -387,5 +389,25 @@ export class ProfileComponent implements OnInit {
       })
     }
   }
+
+  // In your component class:
+    getDaysLeft(slot: any): number {
+      const now = new Date();
+      const end = new Date(slot.endDate);
+      return Math.ceil((end.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+    }
+
+    getAbsDaysLeft(slot: any): number {
+      return Math.abs(this.getDaysLeft(slot));
+    }
+
+    isOverdue(slot: any): boolean {
+      return slot.status === 'active' && this.getDaysLeft(slot) <= 0;
+    }
+
+    isExpiringSoon(slot: any): boolean {
+      const days = this.getDaysLeft(slot);
+      return slot.status === 'active' && days > 0 && days <= 3;
+    }
 
 }
