@@ -327,6 +327,10 @@
     "Client did not bring the item":"Клиент не принес товар",
     "You will not be able to submit a product for evaluation.":"Вы не сможете отправить товар на оценку.",
     "Loans":"Займы",
-    "No loan notifications":"Нет активных займов"
+    "No loan notifications":"Нет активных займов",
+    "Item value":"Стоимость товара",
+    "Loan Amount":"Сумма займа",
+    "Interest":"Процент",
+    "remaining":"осталось"
 
 }

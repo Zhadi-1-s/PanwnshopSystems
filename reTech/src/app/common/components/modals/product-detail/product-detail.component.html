@@ -1,5 +1,5 @@
 <!-- Modernized modal header with gradient and better typography -->
-<div class="sticky top-0 z-10 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200 px-6 py-4">
+<div class="sticky top-0 z-10 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200 px-6 py-4" *ngIf="product">
   <div class="flex items-center justify-between">
     <h5 class="text-2xl font-bold text-gray-800 flex items-center gap-3">
       <span class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
@@ -19,13 +19,13 @@
 </div>
 
 <!-- Redesigned modal body with modern card-based layout -->
-<div class="p-6 bg-gradient-to-br from-gray-50 to-blue-50 max-h-[70vh] overflow-y-auto">
+<div class="p-6 bg-gradient-to-br from-gray-50 to-blue-50 max-h-[70vh] overflow-y-auto" *ngIf="product">
   <!-- Product Image Section -->
   <div class="flex justify-center mb-6">
     <div class="relative group">
       <div class="absolute inset-0 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-2xl blur-xl opacity-30 group-hover:opacity-50 transition-opacity duration-300"></div>
       <img
-        [src]="product.photos[0].url"
+        [src]="product?.photos[0]?.url"
         alt="{{ product.title }}"
         class="relative rounded-2xl shadow-2xl object-cover w-64 h-64 border-4 border-white transform group-hover:scale-105 transition-transform duration-300"
       />

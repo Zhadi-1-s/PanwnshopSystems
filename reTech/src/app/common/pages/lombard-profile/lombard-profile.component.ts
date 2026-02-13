@@ -76,7 +76,8 @@ export class LombardProfileComponent implements OnInit{
   slotsWithProducts$ = this.slotsSubject.asObservable();
   products$!: Observable<Product[]>;
   notifications$!: Observable<AppNotification[]>;
-  fromUserNotifications$:Observable<AppNotification>
+  fromUserNotifications$:Observable<AppNotification>;
+  pawnShopSlots$:Observable<Slot[]>;
 
   offerFilter: 'all' | 'sent' | 'received' = 'all';
 
@@ -143,6 +144,11 @@ export class LombardProfileComponent implements OnInit{
       .subscribe(profile => {
         this.productService.loadProductsByOwner(profile._id);
     });
+
+    this.pawnShopSlots$ = this.profile$.pipe(
+      filter(profile => !!profile?._id),
+      switchMap(profile => this.slotService.getSlotsByPawnshopId(profile._id)),
+    )
 
     this.notifications$ = this.profile$.pipe(
       switchMap(profile =>

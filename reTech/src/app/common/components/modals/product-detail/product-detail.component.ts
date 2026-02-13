@@ -8,6 +8,7 @@ import { PawnshopProfile } from '../../../../shared/interfaces/shop-profile.inte
 import { User } from '../../../../shared/interfaces/user.interface';
 import { NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import { OfferModalComponent } from '../offer-modal/offer-modal.component';
+import { ProductService } from '../../../../shared/services/product.service';
 
 @Component({
   selector: 'app-product-detail',
@@ -16,34 +17,24 @@ import { OfferModalComponent } from '../offer-modal/offer-modal.component';
   templateUrl: './product-detail.component.html',
   styleUrl: './product-detail.component.scss'
 })
-export class ProductDetailComponent implements OnInit,OnChanges {
+export class ProductDetailComponent implements OnInit{
 
-  @Input() product: Product;
   @Input() pawnshop: PawnshopProfile;
   @Input() user: User;
   
+  @Input() productId:string;
+
   canEdit = false;
+
+  product:Product;
 
   constructor(
     public activeModal: NgbActiveModal,
-    private modalService:NgbModal
+    private modalService:NgbModal,
+    private productService:ProductService
   ) {
   }
-  
-  ngOnChanges(changes: SimpleChanges): void {
-      if(changes['product']) {
-        this.normalizePhotos();
-      }
-      if (changes['user']) {
-        console.log('USER ПРИШЁЛ В МОДАЛКУ:', this.user);
-      }
-      if (changes['pawnshop']) {
-        console.log('PAWNSHOP ПРИШЁЛ В МОДАЛКУ:', this.pawnshop);
-      }
-      if (changes['product']) {
-        console.log('PRODUCT ПРИШЁЛ В МОДАЛКУ:', this.product);
-      }
-  }
+
 
  ngOnInit() {
     // console.log('INIT DETAIL:', {
@@ -52,29 +43,37 @@ export class ProductDetailComponent implements OnInit,OnChanges {
     //   user: this.user
     // });
 
-    if (!this.product || !this.user) return;
-
-    if (this.product.ownerId === this.user._id) {
-
-      this.canEdit = true;
-      return;
-    }
-
-     console.log('ngOnInit PRODUCT:', this.product, 'type of ownerId:', typeof this.product.ownerId);
-      console.log('ngOnInit PAWNSHOP:', this.pawnshop, 'type of _id:', this.pawnshop?._id);
-
-    if (
-      this.pawnshop &&
-      this.product.ownerId === this.pawnshop._id &&
-       this.pawnshop.userId === this.user._id
-    ) {
-      console.log('pawnshop._id', this.pawnshop._id);
-      this.canEdit = true;
-      return;
+    if(this.productId && !this.product){
+      this.productService.getProductById(this.productId).subscribe({
+        next: (product) => {
+          this.product = product;
+          this.normalizePhotos();
+          console.log('Product loaded in modal:', this.product);
+        },
+        error: (err) => {
+          console.error('Error loading product in modal:', err);
+        }
+      })
     }
 
   }
 
+  private checkPermissions() {
+    if (!this.product || !this.user) return;
+
+    if (this.product.ownerId === this.user._id) {
+      this.canEdit = true;
+      return;
+    }
+
+    if (
+      this.pawnshop &&
+      this.product.ownerId === this.pawnshop._id &&
+      this.pawnshop.userId === this.user._id
+    ) {
+      this.canEdit = true;
+    }
+  }
 
   sendOffer(){
     const modalRef = this.modalService.open(OfferModalComponent, {
@@ -105,7 +104,7 @@ export class ProductDetailComponent implements OnInit,OnChanges {
   }
 
   private normalizePhotos(): void {
-    if (!Array.isArray(this.product.photos)) {
+    if (!Array.isArray(this.product?.photos)) {
       this.product.photos = [];
       return;
     }

@@ -325,6 +325,10 @@
     "Client did not bring the item":"Client did not bring the item",
     "You will not be able to submit a product for evaluation.":"You will not be able to submit a product for evaluation.",
     "loans":"Loans",
-    "No loan notifications":"No loan notifications"
+    "No loan notifications":"No loan notifications",
+    "Item value":"Item value",
+    "Loan Amount":"Loan Amount",
+    "Interest":"Interest",
+    "remaining":"remaining"
 
 }

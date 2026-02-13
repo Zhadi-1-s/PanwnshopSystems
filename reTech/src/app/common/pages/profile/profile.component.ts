@@ -233,13 +233,18 @@ export class ProfileComponent implements OnInit {
     modalRef.componentInstance.ownerId = user._id;
   }
 
-  async openProductDetails(item:Product){
+  async openProductDetails(productId:string){
     const user = await firstValueFrom(this.authService.currentUser$);
     const modalRef = this.modalService.open(ProductDetailComponent);
 
-    modalRef.componentInstance.product = item;
     modalRef.componentInstance.user = user;
+    modalRef.componentInstance.productId = productId;
    
+    console.log('Opening product details modal with:', {
+      product: productId,
+      user: user
+    });
+
   }
 
   async openOfferDetailModal(offer:Offer){
