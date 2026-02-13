@@ -38,7 +38,7 @@ export class Product {
     publicId: string;
   }[];
 
-  @Prop({ required: true, enum:Status, default: 'open' })
+  @Prop({ required: true, enum:Status })
   status: Status;
   
   @Prop({ required: true, type: Number, min: 0 })

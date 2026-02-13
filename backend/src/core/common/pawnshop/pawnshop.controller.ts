@@ -47,4 +47,10 @@ export class PawnshopController {
   ) {
     return this.pawnshopService.addReview(id, reviewDto);
   }
+
+  @Get(':id/summary')
+  calculateSummary(@Param('id') id: string) {
+    return this.pawnshopService.calculateSummary(id);
+  }
+  
 }

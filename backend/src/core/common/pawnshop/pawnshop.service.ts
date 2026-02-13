@@ -6,12 +6,20 @@ import { CreatePawnshopDto,UpdatePawnshopDto } from './pawnshop.dto';
 import { Review } from 'src/core/database/schemas/reviews.schema';
 
 import { CITIES } from 'src/core/database/cities.constants';
+import { Slot } from 'src/core/database/schemas/slot.schema';
+import { Product } from 'src/core/database/schemas/product.schema';
 
 @Injectable()
 export class PawnshopService {
   constructor(
     @InjectModel(PawnshopProfile.name)
     private pawnshopModel: Model<PawnshopProfile>,
+
+    @InjectModel(Slot.name)
+    private slotModel: Model<Slot>,
+
+    @InjectModel(Product.name)
+    private productModel: Model<Product>,
   ) {}
 
 
@@ -95,5 +103,50 @@ export class PawnshopService {
 
     return pawnshop;
   }
+
+
+  async calculateSummary(pawnshopId: string) {
+    const pawnshop = await this.pawnshopModel.findById(pawnshopId).lean();
+    if (!pawnshop) {
+      throw new NotFoundException('Pawnshop not found');
+    }
+
+    const [slotsTotal, activeSlots, overdueSlots, productsTotal, itemsForSale] =
+      await Promise.all([
+        this.slotModel.countDocuments({ pawnshopId }),
+        this.slotModel.countDocuments({
+          pawnshopId,
+          status: 'active',
+        }),
+        this.slotModel.countDocuments({
+          pawnshopId,
+          endDate: { $lt: new Date() },
+          status: 'active',
+        }),
+        this.productModel.countDocuments({
+          _id: { $in: pawnshop.products },
+        }),
+        this.productModel.countDocuments({
+          _id: { $in: pawnshop.products },
+          type: 'sale',
+          status: 'active',
+        }),
+      ]);
+
+    const slotUsagePercent = pawnshop.slotLimit
+      ? Math.round((slotsTotal / pawnshop.slotLimit) * 100)
+      : 0;
+
+    return {
+      slotsTotal,
+      activeSlots,
+      overdueSlots,
+      productsTotal,
+      itemsForSale,
+      slotLimit: pawnshop.slotLimit,
+      slotUsagePercent,
+    };
+  }
+
 
 }

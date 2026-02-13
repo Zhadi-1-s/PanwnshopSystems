@@ -69,16 +69,16 @@ export class CreatePawnshopDto {
   @IsArray()
   photos?: PhotoDto[];
 
-  @ApiProperty({
-    example: ['66fb0aa2a50a9d75bc3d33f2', '66fb0aa2a50a9d75bc3d33f3'],
-    required: false,
-    description: 'IDs of active slots (references to Slot documents)',
-  })
-  @IsOptional()
-  @IsArray()
-  @ArrayUnique()
-  @IsMongoId({ each: true })
-  activeSlots?: string[];
+  // @ApiProperty({
+  //   example: ['66fb0aa2a50a9d75bc3d33f2', '66fb0aa2a50a9d75bc3d33f3'],
+  //   required: false,
+  //   description: 'IDs of active slots (references to Slot documents)',
+  // })
+  // @IsOptional()
+  // @IsArray()
+  // @ArrayUnique()
+  // @IsMongoId({ each: true })
+  // activeSlots?: string[];
 
   @ApiProperty({
     example: 10,

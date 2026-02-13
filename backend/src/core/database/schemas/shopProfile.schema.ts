@@ -51,8 +51,8 @@ export class PawnshopProfile {
   })
   photos?: { url: string; publicId: string }[];
 
-  @Prop({ type: [{ type: Types.ObjectId, ref: 'Slot' }], default: [] })
-  activeSlots: Types.ObjectId[];
+  // @Prop({ type: [{ type: Types.ObjectId, ref: 'Slot' }], default: [] })
+  // activeSlots: Types.ObjectId[];
 
   @Prop({type:Number,required:true})
   slotLimit:number
