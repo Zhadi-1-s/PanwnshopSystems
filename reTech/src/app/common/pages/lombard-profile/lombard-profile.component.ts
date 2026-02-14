@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit,ViewChild,ElementRef, ChangeDetectorRef } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { User } from '../../../shared/interfaces/user.interface';
-import { PawnshopProfile } from '../../../shared/interfaces/shop-profile.interface';
+import { PawnshopProfile, PawnshopSummary } from '../../../shared/interfaces/shop-profile.interface';
 import { LombardService } from '../../../shared/services/lombard.service';
 import { AuthService } from '../../../shared/services/auth.service';
 import { NgbModal, NgbModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
@@ -34,6 +34,7 @@ import { UserService } from '../../../shared/services/user.service';
 import { SlotDetailComponent } from '../../components/modals/slot-detail/slot-detail.component';
 import { Offer } from '../../../shared/interfaces/offer.interface';
 import { OfferDetailComponent } from '../../components/modals/offer-detail/offer-detail.component';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-lombard-profile',
@@ -45,7 +46,8 @@ import { OfferDetailComponent } from '../../components/modals/offer-detail/offer
     NgbTooltipModule,
     NgbDropdownModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    RouterModule
   ],
   templateUrl: './lombard-profile.component.html',
   styleUrl: './lombard-profile.component.scss'
@@ -78,6 +80,7 @@ export class LombardProfileComponent implements OnInit{
   notifications$!: Observable<AppNotification[]>;
   fromUserNotifications$:Observable<AppNotification>;
   pawnShopSlots$:Observable<Slot[]>;
+  summary$!: Observable<PawnshopSummary>;
 
   offerFilter: 'all' | 'sent' | 'received' = 'all';
 
@@ -144,6 +147,11 @@ export class LombardProfileComponent implements OnInit{
       .subscribe(profile => {
         this.productService.loadProductsByOwner(profile._id);
     });
+
+    this.summary$ = this.profile$.pipe(
+      filter(profile => !!profile?._id),
+      switchMap(profile => this.lombardService.getSummary(profile._id))
+    )
 
     this.pawnShopSlots$ = this.profile$.pipe(
       filter(profile => !!profile?._id),

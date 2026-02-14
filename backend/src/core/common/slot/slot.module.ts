@@ -10,6 +10,6 @@ import { NotificationModule } from '../notification/notification.module';
   imports: [MongooseModule.forFeature([{ name: Slot.name, schema: SlotSchema }]),NotificationModule],
   providers: [SlotService],
   controllers: [SlotController],
-  exports: [SlotService],
+  exports: [SlotService,MongooseModule],
 })
 export class SlotModule {}

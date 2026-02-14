@@ -121,6 +121,7 @@ export class PawnshopDetailComponent implements OnInit, OnDestroy {
     this.pawnShop$.pipe(
       tap(profile => {
         this.pawnShop = profile;
+         console.log(this.pawnShop, 'pawnshop profile');
 
         if (profile?.openTime && profile?.closeTime) {
           const now = new Date();
@@ -137,7 +138,7 @@ export class PawnshopDetailComponent implements OnInit, OnDestroy {
         }
       }),
       take(1)
-    )
+    ).subscribe();
    // продукты — только из store
     this.products$ = this.productService.getProducts().pipe(
       tap(products => {
@@ -163,11 +164,13 @@ export class PawnshopDetailComponent implements OnInit, OnDestroy {
 
   showTerms = false;
   openTermsModal() {
+    if (!this.pawnShop?.terms) return;
+
     const modalRef = this.modalService.open(TermModalComponent, {
       centered: true,
       size: 'md'
     });
-    console.log(this.pawnShop.terms)
+
     modalRef.componentInstance.terms = this.pawnShop.terms;
   }
 

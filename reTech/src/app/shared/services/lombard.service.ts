@@ -4,6 +4,7 @@ import { PawnshopProfile } from '../interfaces/shop-profile.interface';
 import { HttpClient } from '@angular/common/http';
 import { Review } from '../interfaces/reviews.interface';
 import { environment } from '../../../environments/environment';
+import { PawnshopSummary } from '../interfaces/shop-profile.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -43,4 +44,10 @@ export class LombardService {
     return this.http.put<PawnshopProfile>(`${this.apiUrl}/${pawnshopId}/review`, review);
   }
   
+  getSummary(pawnshopId: string): Observable<PawnshopSummary> {
+    return this.http.get<PawnshopSummary>(
+      `${this.apiUrl}/${pawnshopId}/summary`
+    );
+  }
+
 }

@@ -27,3 +27,13 @@ export interface PawnshopProfile {
     name:string;
   }
 }
+
+export interface PawnshopSummary {
+  slotsTotal: number;
+  activeSlots: number;
+  overdueSlots: number;
+  productsTotal: number;
+  itemsForSale: number;
+  slotLimit: number;
+  slotUsagePercent: number;
+}
