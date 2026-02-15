@@ -5,6 +5,9 @@ import { Slot,SlotDocument } from 'src/core/database/schemas/slot.schema';
 import { CreateSlotDto } from './create-slot.dto';
 import { NotificationService } from '../notification/notification.service';
 
+import { Cron, CronExpression } from '@nestjs/schedule';
+
+
 @Injectable()
 export class SlotService {
   constructor(
@@ -102,4 +105,31 @@ export class SlotService {
     if (!slot) throw new NotFoundException('Slot not found');
     return slot;
   }
+
+  // private async updateIfExpired(slot: SlotDocument) {
+  //   if (slot.status === 'active' && slot.endDate < new Date()) {
+  //     slot.status = 'expired'; // или closed
+  //     await slot.save();
+  //   }
+  // }
+
+  @Cron(CronExpression.EVERY_HOUR)
+  async handleExpiredSlots() {
+    const now = new Date();
+
+    const res = await this.slotModel.updateMany(
+      {
+        status: 'active',
+        endDate: { $lt: now }
+      },
+      {
+        status: 'expired' // или closed если решил так
+      }
+    );
+
+    console.log('Expired slots checked');
+    console.log('Modified:', res.modifiedCount);
+    console.log('NOW:', new Date());
+  }
+
 }

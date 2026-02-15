@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { Status } from 'src/core/common/enums/status.enum';
+import { LoanStatus, Status } from 'src/core/common/enums/status.enum';
 import { Product } from './product.schema';
 export type SlotDocument = Slot & Document;
 
@@ -29,9 +29,9 @@ export class Slot {
 
   @Prop({
     type: String,
-    enum: Status,
-    default: Status.ACTIVE,
+    enum: LoanStatus,
+    default: LoanStatus.ACTIVE,
   })
-  status: Status;
+  status: LoanStatus;
 }
 export const SlotSchema = SchemaFactory.createForClass(Slot);

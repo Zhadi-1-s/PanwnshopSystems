@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString, IsNumber, IsDateString, IsEnum,ValidateNested } from 'class-validator';
-import { Status } from '../enums/status.enum';
+import { LoanStatus, Status } from '../enums/status.enum';
 import { Type } from 'class-transformer';
 import { Transform } from 'class-transformer';
 import { Product } from 'src/core/database/schemas/product.schema';
@@ -63,11 +63,11 @@ export class CreateSlotDto {
 
   @ApiProperty({
     example: 'active',
-    enum: ['active', 'closed', 'expired'],
+    enum: ['active', 'closed', 'expired','sold'],
     description: 'Статус слота',
     default: 'active',
   })
   @IsNotEmpty()
-  @IsEnum(Status)
-  status: Status;
+  @IsEnum(LoanStatus)
+  status: LoanStatus;
 }

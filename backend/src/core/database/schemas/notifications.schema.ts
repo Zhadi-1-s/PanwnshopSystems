@@ -11,7 +11,8 @@ export type NotificationType =
   | 'system'
   | 'chat-opened'
   | 'product-sold'
-  | 'price-changed';
+  | 'price-changed'
+  | 'the product has expired';
 
 @Schema({ timestamps: true })
 export class Notification {

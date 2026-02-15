@@ -8,7 +8,7 @@ import { PawnshopService } from '../pawnshop/pawnshop.service';
 import { NotificationDocument ,Notification} from 'src/core/database/schemas/notifications.schema';
 import { ProductService } from '../product/product.service';
 import { SlotService } from '../slot/slot.service';
-import { Status } from '../enums/status.enum';
+import { LoanStatus, Status } from '../enums/status.enum';
 
 
 
@@ -118,7 +118,7 @@ export class OfferService {
             startDate,
             endDate,
             interestRate,
-            status:Status.ACTIVE
+            status:LoanStatus.ACTIVE
           });
 
            await this.productService.updateStatus(

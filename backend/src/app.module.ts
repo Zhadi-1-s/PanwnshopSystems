@@ -13,6 +13,7 @@ import { SlotModule } from './core/common/slot/slot.module';
 import { NotificationModule } from './core/common/notification/notification.module';
 import { OfferModule } from './core/common/offer/offer.module';
 import { EvaluationModule } from './core/common/evaluation/evalutaion.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -32,7 +33,8 @@ import { EvaluationModule } from './core/common/evaluation/evalutaion.module';
     SlotModule,
     NotificationModule,
     OfferModule,
-    EvaluationModule
+    EvaluationModule,
+    ScheduleModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -10,8 +10,9 @@ import { User, UserDocument } from 'src/core/database/schemas/user.schema';
 import { Mode } from 'fs';
 import { NotificationService } from '../notification/notification.service';
 import cloudinary from 'src/core/config/cloudinary.config';
-import { Status } from '../enums/status.enum';
-
+import { ProductStatus, Status } from '../enums/status.enum';
+import { Cron,CronExpression } from '@nestjs/schedule';
+import { NotificationDocument } from 'src/core/database/schemas/notifications.schema';
 
 @Injectable()
 export class ProductService {
@@ -20,6 +21,9 @@ export class ProductService {
     private readonly productModel: Model<ProductDocument>,
     @InjectModel(User.name)                     // <-- обязательно!
     private readonly userModel: Model<UserDocument>,
+
+    @InjectModel(Notification.name) // <-- вот здесь подключаем модель уведомлений
+    private readonly notificationModel: Model<NotificationDocument>,
 
     private notificationsService:NotificationService
 
@@ -165,4 +169,46 @@ export class ProductService {
       ),
     }));
   }
+
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  async archiveOldProducts() {
+    const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+    // Найдём все товары, которые нужно архивировать
+    const productsToArchive = await this.productModel.find({
+      type: 'sale',
+      status: ProductStatus.ACTIVE,
+      createdAt: { $lt: weekAgo },
+    });
+
+    if (productsToArchive.length === 0) {
+      console.log('No products to archive today');
+      return;
+    }
+
+    // Обновляем статус товаров
+    const res = await this.productModel.updateMany(
+      {
+        _id: { $in: productsToArchive.map(p => p._id) }
+      },
+      { status: ProductStatus.INACTIVE }
+    );
+
+    console.log('Archived products:', res.modifiedCount);
+
+    // Создаём уведомления владельцам
+    const notifications = productsToArchive.map(product => ({
+      userId: product.ownerId.toString(),
+      type: 'system', // системное уведомление
+      title: 'Срок товара истёк',
+      message: `Товар "${product.title}" был снят с продажи через неделю.`,
+      refId: (product._id as Types.ObjectId).toString(),
+      isRead: false,
+    }));
+
+    await this.notificationModel.insertMany(notifications);
+
+    console.log('Notifications sent:', notifications.length);
+  }
+
 }

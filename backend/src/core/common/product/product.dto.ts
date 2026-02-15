@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsOptional, IsArray, IsEnum, IsMongoId, isString, IsNumber,ValidateNested, Min,ValidateIf } from 'class-validator';
 import { Category } from '../enums/category.enum';
-import { Status } from '../enums/status.enum';
+import { ProductStatus, Status } from '../enums/status.enum';
 import { Type } from 'class-transformer';
 import { ProductType } from '../enums/produtc.type.enum';
 
@@ -44,9 +44,9 @@ export class CreateProductDto {
   @Type(() => ProductPhotoDto)
   photos?: ProductPhotoDto[];
 
-  @ApiProperty({enum:Status,default:Status.ACTIVE})
+  @ApiProperty({enum:ProductStatus,default:ProductStatus.ACTIVE})
   @IsOptional()
-  status?: Status;
+  status?: ProductStatus;
 
   @ApiProperty({example:'1000 тг',required:true})
   @IsNumber()
