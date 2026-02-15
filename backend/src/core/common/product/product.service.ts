@@ -12,7 +12,7 @@ import { NotificationService } from '../notification/notification.service';
 import cloudinary from 'src/core/config/cloudinary.config';
 import { ProductStatus, Status } from '../enums/status.enum';
 import { Cron,CronExpression } from '@nestjs/schedule';
-import { NotificationDocument } from 'src/core/database/schemas/notifications.schema';
+import {Notification, NotificationDocument } from 'src/core/database/schemas/notifications.schema';
 
 @Injectable()
 export class ProductService {

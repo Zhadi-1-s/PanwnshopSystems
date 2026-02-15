@@ -405,6 +405,12 @@
                         {{ slot.loanAmount | number }}
                         <span class="text-base font-medium text-gray-400 dark:text-gray-500">&#8376;</span>
                       </p>
+                      <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        {{ 'Total to return' | translate }}:
+                        <span class="font-semibold">
+                          {{ getTotalToReturn(slot) | number }} &#8376;
+                        </span>
+                      </p>
                     </div>
 
                     <!-- Info Grid -->

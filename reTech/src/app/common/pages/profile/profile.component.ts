@@ -415,4 +415,12 @@ export class ProfileComponent implements OnInit {
       return slot.status === 'active' && days > 0 && days <= 3;
     }
 
+    getTotalToReturn(slot: Slot) {
+      const start = new Date(slot.startDate);
+      const end = new Date(slot.endDate);
+      const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+
+      return slot.loanAmount * (1 + slot.interestRate * days);
+    }
+
 }
