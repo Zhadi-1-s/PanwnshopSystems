@@ -15,6 +15,7 @@ export interface AppNotification {
     | 'price-changed'
     | 'offer-in-loan'
     | 'slot-created'
+    | 'product-expired'
 
   title: string;
   message: string;

@@ -262,8 +262,6 @@ export class ProfileComponent implements OnInit {
 
   onNotificationClick(n: AppNotification) {
 
-    console.log(this.offersById,'loaded offers for modal')
-
     if (!n.isRead) {
       this.markAsRead(n);
     }
@@ -278,6 +276,11 @@ export class ProfileComponent implements OnInit {
 
       this.openOfferDetailModal(offer);
     }
+
+    if(n.type === 'product-expired'){
+      this.openProductDetails(n.refId);
+    }
+
   }
 
   openPawnshopDetail(id:string){
@@ -352,7 +355,7 @@ export class ProfileComponent implements OnInit {
   }
 
   get systemNotifications() {
-    return (this.notificationsList || []).filter(n => n.type === 'system');
+    return (this.notificationsList || []).filter(n => n.type === 'system' || n.type === 'product-expired');
   }
   
   get loanNotifications(){

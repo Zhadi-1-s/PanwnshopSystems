@@ -4,15 +4,19 @@ import { Document } from 'mongoose';
 export type NotificationDocument = Notification & Document;
 
 export type NotificationType =
-  | 'new-offer'
-  | 'offer-accepted'
-  | 'offer-rejected'
-  | 'new-message'
-  | 'system'
-  | 'chat-opened'
-  | 'product-sold'
-  | 'price-changed'
-  | 'the product has expired';
+    | 'new-offer'
+    | 'offer-accepted'
+    | 'offer-rejected'
+    | 'offer-updated'
+    | 'offer-canceled'
+    | 'new-message'
+    | 'system'
+    | 'chat-opened'
+    | 'product-sold'
+    | 'price-changed'
+    | 'offer-in-loan'
+    | 'slot-created'
+    | 'product-expired'
 
 @Schema({ timestamps: true })
 export class Notification {

@@ -199,7 +199,7 @@ export class ProductService {
     // Создаём уведомления владельцам
     const notifications = productsToArchive.map(product => ({
       userId: product.ownerId.toString(),
-      type: 'system', // системное уведомление
+      type: 'product-expired', // системное уведомление
       title: 'Срок товара истёк',
       message: `Товар "${product.title}" был снят с продажи через неделю.`,
       refId: (product._id as Types.ObjectId).toString(),

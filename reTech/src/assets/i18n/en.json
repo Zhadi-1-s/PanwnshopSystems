@@ -332,6 +332,10 @@
     "remaining":"remaining",
     "Photos of the pawnshop":"Photos of the pawnshop",
     "View public profile":"View public profile",
-    "Total to return":"Total to return"
+    "Total to return":"Total to return",
+    "Remove":"Remove",
+    "inactive": "Inactive",
+    "sold": "Sold",
+    "expired":"Expired"
 
 }

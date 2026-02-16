@@ -334,6 +334,10 @@
     "remaining":"осталось",
     "Photos of the pawnshop":"Фотографии ломбарда",
     "View public profile":"Посмотреть публичный профиль",
-    "Total to return":"Итоговая сумма к оплате"
+    "Total to return":"Итоговая сумма к оплате",
+    "Remove":"Убрать",
+    "inactive":"Неактивный",
+    "sold":"Продано",
+    "expired":"Срок истек"
 
 }

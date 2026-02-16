@@ -25,7 +25,7 @@ export class CreateNotificationDto {
       'evaluation-updated',
       'evauluation-accepted',
       'slot-created',
-      'he product has expired'
+      'product-expired'
   ])
   type: string;
 

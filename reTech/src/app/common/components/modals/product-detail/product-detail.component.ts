@@ -128,5 +128,6 @@ export class ProductDetailComponent implements OnInit{
     }).filter(Boolean);
   }
 
+  extendSale(){}
 
 }

@@ -193,6 +193,19 @@
       {{ 'Send Offer' | translate }}
     </button>
 
+    <button 
+      *ngIf="user?.role === 'user'"
+      class="px-6 py-3 bg-gradient-to-r from-emerald-600 to-green-600 
+            text-white font-semibold rounded-xl shadow-lg
+            hover:shadow-xl hover:from-emerald-700 hover:to-green-700
+            transform hover:scale-105 transition-all duration-300
+            flex items-center justify-center gap-2"
+      (click)="extendSale()"
+    >
+      <i class="fa-solid fa-clock-rotate-left"></i>
+      {{ 'Extend Sale' | translate }}
+    </button>
+
     <!-- <button 
       class="px-6 py-3 bg-white text-gray-700 font-semibold rounded-xl border-2 border-gray-300 hover:bg-gray-50 hover:border-gray-400 transition-all duration-300 flex items-center justify-center gap-2"
       (click)="activeModal.dismiss()"

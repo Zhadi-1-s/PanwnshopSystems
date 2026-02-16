@@ -522,16 +522,54 @@
                 <span class="text-sm text-gray-500 dark:text-gray-400 font-medium">
                   {{systemNotifications.length}} {{'notifications'|translate}}
                 </span>
-              </div>
 
-              <div class="empty-state flex flex-col items-center justify-center py-16 text-center">
+              </div>
+               <ng-container *ngIf="systemNotifications.length > 0; else emptySystem">
+                  <div *ngFor="let n of systemNotifications"
+                        (click)="onNotificationClick(n)"
+                        [class.notification-unread]="!n.isRead"
+                        class="p-4 mb-3 rounded-lg border border-gray-200 dark:border-gray-700
+                          bg-gray-50 dark:bg-gray-800/40
+                          cursor-pointer transition
+                          hover:bg-gray-100 dark:hover:bg-gray-700/60
+                          hover:shadow-md hover:scale-[1.01]">
+
+                    <h6 class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-1">
+                      {{ n.title }}
+                    </h6>
+
+                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                      {{ n.message }}
+                    </p>
+
+                    <span class="text-xs text-gray-400 mt-1 block">
+                      {{ n.createdAt | date:'short' }}
+                    </span>
+                  </div>
+                </ng-container>
+
+                <ng-template #emptySystem>
+                  <div class="empty-state flex flex-col items-center justify-center py-16 text-center">
+                    <svg class="w-12 h-12 text-gray-300 dark:text-gray-700 mb-4 opacity-50"
+                        fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                      <line x1="8" y1="21" x2="16" y2="21"></line>
+                      <line x1="12" y1="17" x2="12" y2="21"></line>
+                    </svg>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
+                      {{ 'Daily notifications will appear here' | translate }}
+                    </p>
+                  </div>
+                </ng-template>
+
+              <!-- <div class="empty-state flex flex-col items-center justify-center py-16 text-center">
                 <svg class="w-12 h-12 text-gray-300 dark:text-gray-700 mb-4 opacity-50" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                   <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
                   <line x1="8" y1="21" x2="16" y2="21"></line>
                   <line x1="12" y1="17" x2="12" y2="21"></line>
                 </svg>
                 <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">{{'Daily notifications will appear here'|translate}}</p>
-              </div>
+              </div> -->
             </div>
 
             <!-- Chats Section -->
@@ -809,6 +847,19 @@
                 <div class="flex-1 min-w-0">
                   <h6 class="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
                     {{ product.title }}
+
+                     <span
+                        class="px-2 py-0.5 text-xs rounded-full font-medium"
+                        [ngClass]="{
+                          'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300': product.status === 'active',
+                          'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300': product.status === 'in_loan',
+                          'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300': product.status === 'inactive',
+                          'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300': product.status === 'sold'
+                        }"
+                      >
+                        {{ product.status | translate }}
+                      </span>
+
                   </h6>
                   <p class="text-xs text-gray-500 dark:text-gray-400 mb-0.5">
                     {{ product.category }}
