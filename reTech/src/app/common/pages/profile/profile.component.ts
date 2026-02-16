@@ -357,7 +357,11 @@ export class ProfileComponent implements OnInit {
   get systemNotifications() {
     return (this.notificationsList || []).filter(n => n.type === 'system' || n.type === 'product-expired');
   }
-  
+
+  get unreadSystemNotificationsCount() {
+    return this.systemNotifications.filter(n => !n.isRead).length;
+  }
+
   get loanNotifications(){
     return (this.notificationsList || []).filter(n => n.type === 'slot-created')
   }

@@ -123,7 +123,7 @@ export class ProductService {
     return updated;
   }
 
-  async updateStatus(id: string, status: Status): Promise<Product> {
+  async updateStatus(id: string, status: ProductStatus): Promise<Product> {
     const product = await this.productModel
       .findByIdAndUpdate(
         id,
@@ -136,6 +136,13 @@ export class ProductService {
       throw new NotFoundException('Product not found');
     }
 
+    if (status === ProductStatus.ACTIVE) {
+      await this.notificationModel.deleteMany({
+        refId: id,
+        type: 'product-expired'
+      });
+    }
+    console.log('Deleting notifications for product:', id);
     return product;
   }
 

@@ -9,6 +9,7 @@ import { User } from '../../../../shared/interfaces/user.interface';
 import { NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import { OfferModalComponent } from '../offer-modal/offer-modal.component';
 import { ProductService } from '../../../../shared/services/product.service';
+import { ProductStatus } from '../../../../shared/enums/status.enum';
 
 @Component({
   selector: 'app-product-detail',
@@ -23,6 +24,8 @@ export class ProductDetailComponent implements OnInit{
   @Input() user: User;
   
   @Input() productId:string;
+
+  isExtending = false;
 
   canEdit = false;
 
@@ -48,7 +51,9 @@ export class ProductDetailComponent implements OnInit{
         next: (product) => {
           this.product = product;
           this.normalizePhotos();
+          this.checkPermissions(); 
           console.log('Product loaded in modal:', this.product);
+
         },
         error: (err) => {
           console.error('Error loading product in modal:', err);
@@ -61,7 +66,9 @@ export class ProductDetailComponent implements OnInit{
   private checkPermissions() {
     if (!this.product || !this.user) return;
 
-    if (this.product.ownerId === this.user._id) {
+    
+    if ((this.product.ownerId as any)._id === this.user._id) {
+      
       this.canEdit = true;
       return;
     }
@@ -128,6 +135,21 @@ export class ProductDetailComponent implements OnInit{
     }).filter(Boolean);
   }
 
-  extendSale(){}
+  extendSale() {
+    if (!this.product?._id && this.isExtending) return;
+
+    this.isExtending = true;
+
+    this.productService
+      .updateProduct(this.product._id, { status: ProductStatus.ACTIVE })
+      .subscribe({
+        next: updated => {
+          this.product = updated; // обновим локально
+          this.isExtending = false;
+          this.activeModal.close(updated);
+        },
+        error: err => {console.error(err),this.isExtending = false;}
+      });
+  }
 
 }

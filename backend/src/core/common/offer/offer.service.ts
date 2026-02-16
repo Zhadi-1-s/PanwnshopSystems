@@ -8,7 +8,7 @@ import { PawnshopService } from '../pawnshop/pawnshop.service';
 import { NotificationDocument ,Notification} from 'src/core/database/schemas/notifications.schema';
 import { ProductService } from '../product/product.service';
 import { SlotService } from '../slot/slot.service';
-import { LoanStatus, Status } from '../enums/status.enum';
+import { LoanStatus, ProductStatus, Status } from '../enums/status.enum';
 
 
 
@@ -123,7 +123,7 @@ export class OfferService {
 
            await this.productService.updateStatus(
               offer.productId.toString(),
-              Status.CLOSED
+              ProductStatus.INACTIVE
             );
 
           offer.status = 'in_loan';
