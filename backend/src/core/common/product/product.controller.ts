@@ -26,6 +26,13 @@ export class ProductController {
     return this.productService.create(dto);
   }
 
+  @Get('for-pawnshops')
+  @ApiOperation({summary:'получить товары только для ломбардов'})
+  @ApiResponse({status:200,description:'Список продуктов пользователей',type:[Product]})
+  getForPawnshops() {
+    return this.productService.getProductsForPawnshops();
+  }
+
   @Get()
   @ApiOperation({ summary: 'Получить список всех продуктов' })
   @ApiResponse({ status: 200, description: 'Список продуктов', type: [Product] })

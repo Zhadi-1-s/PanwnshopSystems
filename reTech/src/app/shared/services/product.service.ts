@@ -21,6 +21,10 @@ export class ProductService{
     return this.products$.asObservable();
   }
 
+  getProductsForPawnshop():Observable<Product[]>{
+    return this.http.get<Product[]>(`${this.apiUrl}/for-pawnshops`)
+  }
+
   getProcutsList():Observable<Product[]>{
       return this.http.get<Product[]>(this.apiUrl);
   }

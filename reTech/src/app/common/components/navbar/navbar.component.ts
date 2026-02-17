@@ -51,7 +51,7 @@ export class NavbarComponent implements OnInit {
   navItemsUser: NavItem[] = [
     { label: 'Dashboard', icon: 'fa-regular fa-house', route: '/dashboard' },
     { label: 'Lombards', icon: 'fa-regular fa-building', route: '/pawnshop-list' },
-    {label: 'Products', icon: 'fa-solid fa-boxes-stacked', route: '/product-list'},
+    // {label: 'Products', icon: 'fa-solid fa-boxes-stacked', route: '/product-list'},
     { label: 'Help', icon: 'fa-solid fa-circle-question', route: '/calendar' }
   ];
 

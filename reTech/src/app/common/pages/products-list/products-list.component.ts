@@ -139,7 +139,7 @@ export class ProductsListComponent implements OnInit, OnDestroy {
       });
     // 1. Базовые продукты с учетом пользователя
     this.products$ = combineLatest([
-      this.productService.getActiveProducts(),
+      this.productService.getProductsForPawnshop(),
       this.authService.currentUser$.pipe(startWith(null))
     ]).pipe(
       switchMap(([items, user]) => {

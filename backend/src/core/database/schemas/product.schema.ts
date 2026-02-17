@@ -63,5 +63,11 @@ export class Product {
   })
   loanTerm?: number;
 
+  @Prop({ type: Date })
+  activatedAt?: Date;
+
+  @Prop({required:false})
+  ownerType:'user'|'pawnshop'
+
 }
 export const ProductSchema = SchemaFactory.createForClass(Product);

@@ -56,6 +56,13 @@ export class ProductService {
     }))
   }
 
+  async getProductsForPawnshops(): Promise<Product[]> {
+    return this.productModel.find({
+      status: ProductStatus.ACTIVE,
+      ownerType: 'user'
+    }).lean().exec();
+  }
+
   async findById(id: string): Promise<Product> {
     const product = await this.productModel.findById(id).populate('ownerId', 'name email').lean().exec();
     if (!product) throw new NotFoundException('Product not found');
@@ -120,6 +127,16 @@ export class ProductService {
       }
     }
 
+    if (dto.status === ProductStatus.ACTIVE) {
+      dto.activatedAt = new Date();
+      await this.notificationModel.deleteMany({
+        refId: id,
+        type: 'product-expired'
+      });
+
+      console.log('Deleting expired notifications:', id);
+    }
+
     return updated;
   }
 
@@ -137,6 +154,7 @@ export class ProductService {
     }
 
     if (status === ProductStatus.ACTIVE) {
+      // dto.activatedAt = new Date();
       await this.notificationModel.deleteMany({
         refId: id,
         type: 'product-expired'
@@ -185,7 +203,7 @@ export class ProductService {
     const productsToArchive = await this.productModel.find({
       type: 'sale',
       status: ProductStatus.ACTIVE,
-      createdAt: { $lt: weekAgo },
+      updatedAt: { $lt: weekAgo },
     });
 
     if (productsToArchive.length === 0) {

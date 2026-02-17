@@ -68,4 +68,12 @@ export class CreateProductDto {
   @IsNumber()
   @Min(1)
   loanTerm?: number;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  activatedAt?: Date;
+
+  @ApiProperty({required:false})
+  @IsOptional()
+  ownerType:'user' | 'pawnshop'
 }

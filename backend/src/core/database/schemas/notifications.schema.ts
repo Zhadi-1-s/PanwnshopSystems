@@ -44,7 +44,8 @@ export class Notification {
       'offer-in-loan',
       'evaluation-updated',
       'evaluation-accepted',
-      'slot-created'
+      'slot-created',
+      'product-expired'
     ],
   })
   type: NotificationType;

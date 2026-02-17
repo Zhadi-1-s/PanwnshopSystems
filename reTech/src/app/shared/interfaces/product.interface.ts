@@ -13,4 +13,6 @@ export interface Product {
   updatedAt?: Date;
   type:'sale' | 'loan';
   loanTerm?:number;
+  activatedAt?:Date;
+  ownerType?:'user' | 'pawnshop'
 }
