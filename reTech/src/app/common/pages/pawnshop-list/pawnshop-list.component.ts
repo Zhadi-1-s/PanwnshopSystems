@@ -15,6 +15,7 @@ import { RouterModule } from '@angular/router';
 import { cities } from '../../components/modals/create-lombard/create-lombard.component';
 
 import { NgSelectModule } from '@ng-select/ng-select';
+import { PRODUCT_MODELS } from '../../../shared/models/product.models';
 
 @Component({
   selector: 'app-pawnshop-list',
@@ -54,10 +55,18 @@ export class PawnshopListComponent implements OnInit{
     'Tablet'
   ]
 
+  isAdvancedFilterOpen = false;
+  searchTitle = '';
+  filteredModels: string[] = [];
+  models = Object.values(PRODUCT_MODELS).flat();
+
   isTooltipOpen = false;
   sortOrder: 'asc' | 'desc' | null = 'desc';
 
   selectedCityCodes: string[] = []; // массив выбранных кодов городов
+
+  priceTo:number;
+  priceFrom:number;
 
   constructor(
     private lombardService:LombardService,
@@ -103,6 +112,15 @@ export class PawnshopListComponent implements OnInit{
             l.name.toLowerCase().includes(search.toLowerCase())
           );
         }
+
+        if (this.searchTitle.trim()) {
+          filtered = filtered.filter(lombard =>
+            lombard.products?.some(product =>
+              product.title.toLowerCase().includes(this.searchTitle.toLowerCase())
+            )
+          );
+        }
+
         if (appliedFilters.length > 0) {
           filtered = filtered.filter(lombard =>
             lombard.products?.some(product =>
@@ -209,6 +227,33 @@ export class PawnshopListComponent implements OnInit{
         console.error('Ошибка при добавлении в избранное:', err);
       }
     });
+  }
+
+  onTitleInput() {
+    if (!this.searchTitle) {
+      this.filteredModels = [];
+      return;
+    }
+    const v = this.searchTitle.toLowerCase();
+    this.filteredModels = this.models.filter(m => m.toLowerCase().includes(v)).slice(0, 10);
+  }
+
+  selectModel(model: string) {
+    this.searchTitle = model;
+    this.filteredModels = [];
+
+    const filters = this.appliedFilters$.value;
+
+    if (!filters.includes(model)) {
+      this.appliedFilters$.next([...filters, model]);
+    }
+  }
+
+  // очистка автокомплита при blur
+  clearFilteredModels() {
+    setTimeout(() => {
+      this.filteredModels = [];
+    }, 100);
   }
 
 }

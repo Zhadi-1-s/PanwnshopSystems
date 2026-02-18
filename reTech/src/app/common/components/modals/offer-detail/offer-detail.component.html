@@ -102,17 +102,12 @@
         <p>
           <strong>{{ 'Loan Term' | translate }}:</strong>
           {{ offer.loanDetails.loanTerm }}
-          {{ offer.loanDetails.period === 'day'
-              ? ('days' | translate)
-              : ('months' | translate) }}
         </p>
 
         <p>
           <strong>{{ 'Interest Rate' | translate }}:</strong>
           {{ offer.loanDetails.rate }}%
-          / {{ offer.loanDetails.period === 'day'
-              ? ('day' | translate)
-              : ('month' | translate) }}
+
         </p>
 
         <p class="text-base font-semibold mt-2">

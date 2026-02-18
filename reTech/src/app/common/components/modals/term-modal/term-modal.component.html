@@ -5,18 +5,15 @@
     <span class="font-semibold text-gray-700">Процентная ставка:</span>
     <span class="text-gray-900">
       {{ terms.interest.rate }}%
-      {{ terms.interest.period === 'day' ? 'в день' : 'в месяц' }}
-      <span *ngIf="terms.interest.startsAfterDays > 0" class="text-gray-400 text-sm">
-        (начисляется с {{ terms.interest.startsAfterDays }} дня)
-      </span>
+
     </span>
   </li>
 
   <!-- Минимальные дни начисления -->
-  <li *ngIf="terms?.interest?.minChargeDays" class="flex justify-between items-center">
+  <!-- <li *ngIf="terms?.interest?.minChargeDays" class="flex justify-between items-center">
     <span class="font-semibold text-gray-700">Минимальный срок начисления:</span>
     <span class="text-gray-900">{{ terms.interest.minChargeDays }} дней</span>
-  </li>
+  </li> -->
 
   <!-- Лимиты займа -->
   <li *ngIf="terms?.limits?.minAmount" class="flex justify-between items-center">

@@ -25,8 +25,20 @@
         formControlName="title"
         class="form-control"
         [class.is-invalid]="title.invalid && (title.dirty || title.touched)"
+        (blur)="filteredModels = []"
         placeholder="{{ 'Enter product title' | translate }}"
       />
+      <div *ngIf="filteredModels.length"
+          class="autocomplete-dropdown">
+
+        <div
+          *ngFor="let model of filteredModels"
+          class="autocomplete-item"
+          (click)="selectModel(model)">
+
+          {{ model }}
+        </div>
+      </div>
       <div class="invalid-feedback" *ngIf="title.errors?.['required']">
         {{ 'Title is required' | translate }}
       </div>

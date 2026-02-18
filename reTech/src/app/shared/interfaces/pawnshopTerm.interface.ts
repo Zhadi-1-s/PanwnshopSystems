@@ -1,9 +1,7 @@
 export interface PawnshopTerms {
   interest: {
     rate: number;
-    period: 'day' | 'month';
-    startsAfterDays: number;
-    minChargeDays?: number;
+    
   };
 
   limits: {
@@ -17,6 +15,10 @@ export interface PawnshopTerms {
   };
 
   priceAdjustmentLimitPercent: number; // ±10
+
+  minLoanTermDays?: number;
+  prolongationAllowed?: boolean;
+  lateFeePercent?: number;
 
   
 }

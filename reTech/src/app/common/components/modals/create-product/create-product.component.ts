@@ -7,6 +7,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Product } from '../../../../shared/interfaces/product.interface';
 import { Category } from '../../../../shared/enums/category.enum';
 import { CloudinaryService } from '../../../../shared/services/cloudinary.service';
+import { PRODUCT_MODELS } from '../../../../shared/models/product.models';
 
 @Component({
   selector: 'app-create-product',
@@ -27,6 +28,9 @@ export class CreateProductComponent {
   selectedFiles: File[] = [];
   previewUrls: string[] = [];
 
+  filteredModels: string[] = [];
+  models = Object.values(PRODUCT_MODELS).flat();
+
   constructor(
     private fb:FormBuilder,
     private productService:ProductService,
@@ -42,6 +46,17 @@ export class CreateProductComponent {
       price: [null, [Validators.required, Validators.min(1)]],
       type: ['sale', Validators.required],
       loanTerm: [null]
+    });
+    this.title.valueChanges.subscribe(value => {
+      if (!value) {
+        this.filteredModels = [];
+        return;
+      }
+
+      const v = value.toLowerCase();
+      this.filteredModels = this.models.filter(m =>
+        m.toLowerCase().includes(v)
+      );
     });
     this.productForm.get('type')!.valueChanges.subscribe(type => {
       const loanTermCtrl = this.productForm.get('loanTerm');
@@ -70,6 +85,11 @@ export class CreateProductComponent {
 
   get price() {
     return this.productForm.get('price');
+  }
+
+  selectModel(model: string) {
+    this.title.setValue(model);
+    this.filteredModels = [];
   }
 
   async saveProduct() {

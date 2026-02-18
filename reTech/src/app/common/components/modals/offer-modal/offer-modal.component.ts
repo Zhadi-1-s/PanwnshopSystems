@@ -32,7 +32,6 @@ export class OfferModalComponent implements OnInit {
 
   loanDetails?: {
     rate: number;
-    period: 'day' | 'month';
     loanTerm: number;
     estimatedRepayment: number;
   };
@@ -109,8 +108,7 @@ export class OfferModalComponent implements OnInit {
   calculateLoanOffer() {
     if (!this.product || !this.pawnshopTerm) return;
 
-    const priceControl = this.offerForm.get('price');
-    const loanAmount = Number(priceControl?.value);
+    const loanAmount = Number(this.offerForm.get('price')?.value);
 
     if (!loanAmount) {
       this.loanDetails = undefined;
@@ -120,32 +118,19 @@ export class OfferModalComponent implements OnInit {
     const terms = this.pawnshopTerm;
     const loanTerm = this.product.loanTerm || 0;
 
-    // --- проценты ---
-    const { rate, period, startsAfterDays, minChargeDays } = terms.interest;
-
-    let chargeDays = Math.max(loanTerm - startsAfterDays, 0);
-
-    if (minChargeDays) {
-      chargeDays = Math.max(chargeDays, minChargeDays);
-    }
-
-    let interestAmount = 0;
-
-    if (period === 'day') {
-      interestAmount = loanAmount * (rate / 100) * chargeDays;
-    } else {
-      interestAmount = loanAmount * (rate / 100) * (chargeDays / 30);
-    }
+    // --- проценты (только по дням) ---
+    const rate = terms.interest.rate;
+    const interestAmount =
+      loanAmount * (rate / 100) * loanTerm;
 
     // --- комиссии ---
     let feeAmount = 0;
 
     if (terms.fees) {
-      if (terms.fees.type === 'fixed') {
-        feeAmount = terms.fees.value;
-      } else {
-        feeAmount = loanAmount * (terms.fees.value / 100);
-      }
+      feeAmount =
+        terms.fees.type === 'fixed'
+          ? terms.fees.value
+          : loanAmount * (terms.fees.value / 100);
     }
 
     // --- итог ---
@@ -155,12 +140,10 @@ export class OfferModalComponent implements OnInit {
 
     this.loanDetails = {
       rate,
-      period: 'day',
       loanTerm,
       estimatedRepayment
     };
   }
-
 
 
 

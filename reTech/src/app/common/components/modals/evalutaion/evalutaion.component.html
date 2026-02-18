@@ -17,10 +17,33 @@
       <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-5">
 
   <!-- Название товара -->
-        <div>
-          <label class="block text-sm font-semibold mb-1 text-gray-700">{{ 'Название товара' | translate }}</label>
-          <input type="text" formControlName="title" class="w-full px-4 py-2.5 rounded-lg border border-gray-300" />
+        <div class="mb-3 relative">
+          <label class="form-label fw-semibold">{{ 'Title' | translate }}</label>
+          <input
+            type="text"
+            formControlName="title"
+            class="form-control"
+            [class.is-invalid]="form.get('title')?.invalid && (form.get('title')?.dirty || form.get('title')?.touched)"
+            (blur)="clearFilteredModels()"
+            (input)="onTitleInput()"
+            placeholder="{{ 'Enter product title' | translate }}"
+          />
+
+          <div *ngIf="filteredModels.length" class="autocomplete-dropdown">
+            <div
+              *ngFor="let model of filteredModels"
+              class="autocomplete-item"
+              (mousedown)="selectModel(model)"  
+            >
+              {{ model }}
+            </div>
+          </div>
+
+          <div class="invalid-feedback" *ngIf="form.get('title')?.errors?.['required']">
+            {{ 'Title is required' | translate }}
+          </div>
         </div>
+
 
         <!-- Описание -->
         <div>
@@ -75,20 +98,20 @@
         <!-- Срок займа -->
         <div>
           <label class="block text-sm font-semibold mb-1 text-gray-700"
-                [class.text-red-600]="form.get('termDays')?.value < (term?.interest?.minChargeDays || 1)">
+                [class.text-red-600]="form.get('termDays')?.value < (term?.minLoanTermDays || 1)">
             {{ 'На сколько дней хотите оставить товар?' | translate }}
           </label>
 
           <input type="number"
                 formControlName="termDays"
                 class="w-full px-4 py-2.5 rounded-lg border"
-                [class.border-red-500]="form.get('termDays')?.value < (term?.interest?.minChargeDays || 1)"
-                [class.bg-red-50]="form.get('termDays')?.value < (term?.interest?.minChargeDays || 1)"
-                [min]="term?.interest?.minChargeDays || 1" />
+                [class.border-red-500]="form.get('termDays')?.value < (term?.minLoanTermDays || 1)"
+                [class.bg-red-50]="form.get('termDays')?.value < (term?.minLoanTermDays || 1)"
+                [min]="term?.minLoanTermDays || 1" />
 
           <p class="text-xs mt-1"
-            [class.text-red-600]="form.get('termDays')?.value < (term?.interest?.minChargeDays || 1)">
-            {{ 'Минимум' | translate }}: {{ term?.interest?.minChargeDays || 1 }} {{ 'дней' | translate }}
+            [class.text-red-600]="form.get('termDays')?.value < (term?.minLoanTermDays|| 1)">
+            {{ 'Минимум' | translate }}: {{ term?.minLoanTermDays || 1 }} {{ 'дней' | translate }}
           </p>
         </div>
 
@@ -99,15 +122,7 @@
           <div>
             {{ 'Процент:' | translate }} 
             {{ term?.interest?.rate || 0 }}%
-            {{ term?.interest?.period === 'day' ? 'в день' : 'в месяц' }}
-            <span *ngIf="term?.interest?.startsAfterDays > 0" class="text-gray-500 text-xs">
-              (начисляется с {{ term.interest.startsAfterDays }} дня)
-            </span>
-          </div>
 
-          <!-- Минимальные дни -->
-          <div>
-            {{ 'Минимальный срок начисления:' | translate }} {{ term?.interest?.minChargeDays || 1 }} {{ 'дней' | translate }}
           </div>
 
           <!-- Комиссия -->

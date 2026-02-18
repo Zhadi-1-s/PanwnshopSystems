@@ -34,3 +34,21 @@
 .object-fit-cover {
   object-fit: cover;
 }
+.autocomplete-dropdown {
+  position: absolute;
+  width: 100%;
+  background: #fff;
+  border: 1px solid #ddd;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.autocomplete-item {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.autocomplete-item:hover {
+  background: #f3f4f6;
+}

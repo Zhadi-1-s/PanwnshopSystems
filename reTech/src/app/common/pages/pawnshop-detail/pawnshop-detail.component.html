@@ -120,15 +120,15 @@
                             <p class="text-xs text-gray-500 font-medium">{{'Interest rate' | translate}}</p>
                             <p class="text-sm font-bold text-gray-800">
                             {{ profile.terms.interest.rate }}%
-                            <span class="text-xs text-gray-500">
+                            <!-- <span class="text-xs text-gray-500">
                                 / {{ profile.terms.interest.period === 'day' ? 'день' : 'месяц' }}
-                            </span>
+                            </span> -->
                             </p>
                         </div>
                         </div>
 
                         <!-- Минимальный срок начисления -->
-                        <div *ngIf="profile.terms.interest?.minChargeDays"
+                        <!-- <div *ngIf="profile.terms.interest?.minChargeDays"
                             class="flex items-center gap-3 p-3 bg-white rounded-lg">
                         <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center">
                             <i class="fa-solid fa-calendar-days text-indigo-600"></i>
@@ -139,7 +139,7 @@
                             {{ profile.terms.interest.minChargeDays }} {{'days' | translate }}
                             </p>
                         </div>
-                        </div>
+                        </div> -->
 
                         <!-- Максимальная сумма -->
                         <div *ngIf="profile.terms.limits?.maxAmount"

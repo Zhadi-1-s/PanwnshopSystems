@@ -337,6 +337,7 @@
     "inactive": "Inactive",
     "sold": "Sold",
     "expired":"Expired",
-    "Extend Sale":"Extend sale"
+    "Extend Sale":"Extend sale",
+    "Advanced Filter":"Advanced Filter"
 
 }

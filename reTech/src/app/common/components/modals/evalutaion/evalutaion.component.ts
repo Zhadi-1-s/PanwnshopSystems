@@ -14,6 +14,8 @@ import { Options} from '@angular-slider/ngx-slider';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { CloudinaryService } from '../../../../shared/services/cloudinary.service';
 import { finalize,distinctUntilChanged } from 'rxjs';
+import { PRODUCT_MODELS } from '../../../../shared/models/product.models';
+
 @Component({
   selector: 'app-evalutaion',
   standalone: true,
@@ -44,6 +46,9 @@ export class EvalutaionComponent implements OnInit {
 
   form: FormGroup;
 
+  filteredModels: string[] = [];
+  models = Object.values(PRODUCT_MODELS).flat();
+
   constructor(
     private fb: FormBuilder,
     private service: EvaluationService,
@@ -64,6 +69,7 @@ export class EvalutaionComponent implements OnInit {
         Validators.pattern(/^(\+7|7|8)\d{10}$/)
       ]]
     });
+    
   }
 
   get expectedPriceControl() {
@@ -78,7 +84,7 @@ export class EvalutaionComponent implements OnInit {
     this.isBrowser = isPlatformBrowser(this.platformId);
 
     // Устанавливаем минимальное количество дней
-    this.form.get('termDays')?.setValue(this.term?.interest?.minChargeDays || 1);
+    this.form.get('termDays')?.setValue(this.term?.minLoanTermDays || 1);
 
     // Подписка на изменения цены и дней для перерасчета
     this.expectedPriceControl.valueChanges
@@ -89,6 +95,31 @@ export class EvalutaionComponent implements OnInit {
       .subscribe(() => this.updateInterest());
 
     this.updateInterest();
+  }
+
+  onTitleInput() {
+    const value = this.form.get('title')?.value;
+    if (!value) {
+      this.filteredModels = [];
+      return;
+    }
+
+    const v = value.toLowerCase();
+    this.filteredModels = this.models.filter(m =>
+      m.toLowerCase().includes(v)
+    ).slice(0, 10); // максимум 10 подсказок
+  }
+
+  selectModel(model: string) {
+    this.form.get('title')?.setValue(model);
+    this.filteredModels = [];
+  }
+
+  clearFilteredModels() {
+    // небольшая задержка, чтобы mousedown успел сработать
+    setTimeout(() => {
+      this.filteredModels = [];
+    }, 100);
   }
 
   updateInterest() {
@@ -105,31 +136,17 @@ export class EvalutaionComponent implements OnInit {
   calculateInterest(price: number, days: number): number {
     if (!this.term) return price;
 
-    // Процент
     const rate = this.term.interest?.rate || 0;
-    const period = this.term.interest?.period || 'day';
-    const startsAfterDays = this.term.interest?.startsAfterDays || 0;
-    const minChargeDays = this.term.interest?.minChargeDays || 0;
 
-    // Кол-во дней для начисления
-    const chargeDays = Math.max(days - startsAfterDays, minChargeDays);
-
-    // Рассчитываем процент
-    let interest = 0;
-    if (chargeDays > 0) {
-      interest = price * (rate / 100) * chargeDays;
-      // Если процент за месяц, пересчитываем в дни (пример: 30 дней в месяце)
-      if (period === 'month') {
-        interest = interest * (chargeDays / 30);
-      }
-    }
+    // Проценты (только дневные)
+    const interest = price * (rate / 100) * days;
 
     // Комиссия
     let fee = 0;
     if (this.term.fees) {
       if (this.term.fees.type === 'fixed') {
         fee = this.term.fees.value;
-      } else if (this.term.fees.type === 'percent') {
+      } else {
         fee = price * (this.term.fees.value / 100);
       }
     }

@@ -12,7 +12,7 @@ export interface Offer{
     cancelReason?: string;
     loanDetails?: {
         rate: number;
-        period: 'day' | 'month';
+
         loanTerm: number; // срок в днях из продукта
         estimatedRepayment: number; // сколько клиент должен будет вернуть
     };
