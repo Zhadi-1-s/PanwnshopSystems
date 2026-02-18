@@ -230,7 +230,14 @@ export class ProfileComponent implements OnInit {
     const user = await firstValueFrom(this.authService.currentUser$);
     const modalRef = this.modalService.open(CreateProductComponent);
 
+
     modalRef.componentInstance.ownerId = user._id;
+    if(user.role === 'user'){
+      modalRef.componentInstance.ownerType = 'user'
+    }
+    else{
+      modalRef.componentInstance.ownerType = 'pawnshop'
+    }
   }
 
   async openProductDetails(productId:string){

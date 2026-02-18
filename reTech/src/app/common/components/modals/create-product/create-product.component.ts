@@ -18,7 +18,7 @@ import { CloudinaryService } from '../../../../shared/services/cloudinary.servic
 export class CreateProductComponent {
 
   @Input() ownerId!: string;
-
+  @Input() ownerType : 'user' | 'pawnshop'
   productForm : FormGroup;
   uploading = false;
 
@@ -91,6 +91,7 @@ export class CreateProductComponent {
     const product: Product = {
       ...this.productForm.value,
       ownerId: this.ownerId,
+      ownerType:this.ownerType,
       photos: uploadedPhotos,
       status:'active'
     };

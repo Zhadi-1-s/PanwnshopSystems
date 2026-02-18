@@ -57,10 +57,17 @@ export class ProductService {
   }
 
   async getProductsForPawnshops(): Promise<Product[]> {
-    return this.productModel.find({
+    const products = await this.productModel.find({
       status: ProductStatus.ACTIVE,
       ownerType: 'user'
     }).lean().exec();
+
+    return products.map(product => ({
+      ...product,
+      photos: product.photos?.map(p =>
+        typeof p === 'string' ? { url: p, publicId: '' } : p
+      ) || [],
+    }));
   }
 
   async findById(id: string): Promise<Product> {
