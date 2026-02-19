@@ -17,7 +17,7 @@ import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { CreateSlotComponent } from '../../components/modals/create-slot/create-slot.component';
 import { Slot } from '../../../shared/interfaces/slot.interface';
 import { SlotService } from '../../../shared/services/slot.service';
-import { switchMap,Observable,tap,filter,of,forkJoin,map, take, catchError } from 'rxjs';
+import { switchMap,Observable,tap,filter,of,forkJoin,map, take, catchError,combineLatest } from 'rxjs';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppNotification } from '../../../shared/interfaces/notification.interface';
@@ -74,6 +74,8 @@ export class LombardProfileComponent implements OnInit{
 
   profile$!: Observable<PawnshopProfile>;
  
+  showHistory$ = new BehaviorSubject(false);
+
   private slotsSubject = new BehaviorSubject<{ slot: Slot; product: Product }[]>([]);
   slotsWithProducts$ = this.slotsSubject.asObservable();
   products$!: Observable<Product[]>;
@@ -306,20 +308,35 @@ export class LombardProfileComponent implements OnInit{
    }
 
   loadSlots() {
-    this.authService.currentUser$.pipe(
-      filter((user): user is User => !!user?._id),
-      take(1),
-      switchMap(user => this.lombardService.getLombardByUserId(user._id)),
-      switchMap(pawnshop => this.slotService.getSlotsByPawnshopId(pawnshop._id)),
-      map(slots => slots.filter(slot => slot.status === 'active')),
-      switchMap(activeSlots => {
-        if (activeSlots.length === 0) return of([]);
-        const requests = activeSlots.map(slot =>
-          this.productService.getProductById(slot.product).pipe(map(product => ({ slot, product })))
+    combineLatest([
+      this.authService.currentUser$.pipe(
+        filter((user): user is User => !!user?._id),
+        take(1),
+        switchMap(user => this.lombardService.getLombardByUserId(user._id)),
+        switchMap(pawnshop => this.slotService.getSlotsByPawnshopId(pawnshop._id))
+      ),
+      this.showHistory$
+    ]).pipe(
+      map(([slots, history]) =>
+        slots.filter(slot =>
+          history
+            ? ['closed', 'sold'].includes(slot.status)
+            : ['active', 'expired'].includes(slot.status)
+        )
+      ),
+      switchMap(filteredSlots => {
+        if (!filteredSlots.length) return of([]);
+
+        return forkJoin(
+          filteredSlots.map(slot =>
+            this.productService
+              .getProductById(slot.product)
+              .pipe(map(product => ({ slot, product })))
+          )
         );
-        return forkJoin(requests);
       })
-    ).subscribe(data => this.slotsSubject.next(data));
+    )
+    .subscribe(data => this.slotsSubject.next(data));
   }
 
    get hasActiveDeal(): boolean {
@@ -667,6 +684,10 @@ export class LombardProfileComponent implements OnInit{
   hover = false;
   changeProfilePhoto() {
     // Logic to change profile photo
+  }
+
+  toggleHistory() {
+    this.showHistory$.next(!this.showHistory$.value);
   }
 
 }

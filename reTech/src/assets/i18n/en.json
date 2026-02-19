@@ -338,6 +338,15 @@
     "sold": "Sold",
     "expired":"Expired",
     "Extend Sale":"Extend sale",
-    "Advanced Filter":"Advanced Filter"
+    "Advanced Filter":"Advanced Filter",
+    "History of slots":"History of slots",
+    "History":"History",
+    "Expired":"Expired",
+    "Slot details":"Slot details",
+    "Pawnshop ID":"Pawnshop ID",
+    "User ID":"User ID",
+    "Interest rate":"Interest rate",
+    "Finish":"Finish",
+    "Extend":"Extend"
 
 }

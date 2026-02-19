@@ -917,16 +917,28 @@
                       flex items-center justify-center text-white">
               <i class="fa-solid fa-hand-holding-dollar text-lg"></i>
             </div>
-            <h4 class="text-xl font-bold text-gray-900">{{ 'Active slots' | translate }}</h4>
+            <h4 class="text-xl font-bold text-gray-900">{{ (showHistory$|async) ? ('History of slots' | translate) : ('Active slots' | translate) }}</h4>
           </div>
 
-          <button class="px-5 py-2.5 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 
-                       hover:to-yellow-600 text-white rounded-lg transition-all duration-200 
-                       shadow-md hover:shadow-lg font-medium flex items-center justify-center gap-2"
-                  (click)="openCreateSlotModal()">
-            <i class="fa-solid fa-vault"></i>
-            <span>{{ 'Create slot' | translate }}</span>
-          </button>
+          <div class="flex gap-2">
+            <button
+              class="px-4 py-2 rounded-lg border font-medium transition"
+              [class.bg-gray-900]="showHistory$ | async"
+              [class.text-white]="showHistory$ | async"
+              (click)="toggleHistory()"
+            >
+              {{ (showHistory$ | async) ? ('Active slots' | translate) : ('History' | translate) }}
+            </button>
+  
+            <button class="px-5 py-2.5 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 
+                         hover:to-yellow-600 text-white rounded-lg transition-all duration-200 
+                         shadow-md hover:shadow-lg font-medium flex items-center justify-center gap-2"
+                    (click)="openCreateSlotModal()">
+              <i class="fa-solid fa-vault"></i>
+              <span>{{ 'Create slot' | translate }}</span>
+            </button>
+          </div>
+
         </div>
 
         <ng-container *ngIf="slotsWithProducts$ | async as slots; else noActiveSlots">
@@ -945,7 +957,7 @@
                   <div>
                     <h6 class="font-bold text-gray-900 mb-1">{{ item.product?.title }}</h6>
                     <span class="px-3 py-1 bg-green-600 text-white text-xs font-semibold rounded-full">
-                      {{ item.slot.status | titlecase }}
+                      {{ item.slot.status | titlecase  | translate}}
                     </span>
                   </div>
                 </div>

@@ -340,6 +340,15 @@
     "sold":"Продано",
     "expired":"Срок истек",
     "Extend Sale":"Продлить продажу",
-    "Advanced Filter":"Расширенные фильтры"
+    "Advanced Filter":"Расширенные фильтры",
+    "History of slots":"История займов",
+    "History":"История",
+    "Expired":"Срок истек",
+    "Slot details":"Детали заима",
+    "Pawnshop ID":"ID ломбарда",
+    "User ID":"ID пользователя",
+    "Interest rate":"Процентная ставка",
+    "Finish":"Завершить",
+    "Extend":"Продлить срок"
 
 }
