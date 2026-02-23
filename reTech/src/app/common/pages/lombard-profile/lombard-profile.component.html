@@ -942,81 +942,88 @@
         </div>
 
         <ng-container *ngIf="slotsWithProducts$ | async as slots; else noActiveSlots">
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" *ngIf="slots.length > 0; else noActiveSlots">
-            <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border-2 border-green-200 
-                      hover:border-green-300 hover:shadow-lg transition-all duration-300 p-5" 
-                 *ngFor="let item of slots">
-              
-              <div class="flex justify-between items-start mb-4">
-                <div class="flex items-center gap-3">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" *ngIf="slots.length > 0; else noActiveSlots">
+          <div
+            class="group relative bg-white rounded-2xl border border-gray-200 
+                  hover:border-emerald-400 hover:shadow-xl hover:shadow-emerald-500/10 
+                  transition-all duration-300 overflow-hidden"
+            *ngFor="let item of slots"
+          >
+            <!-- Top accent bar -->
+            <div class="h-1 w-full bg-gradient-to-r from-emerald-500 to-teal-400"></div>
+
+            <div class="p-5">
+              <!-- Header -->
+              <div class="flex items-center gap-3 mb-5">
+                <div class="relative">
                   <img
                     [src]="item.product?.photos?.[0].url || 'assets/png/default-product.png'"
                     alt="{{ item.product?.title }}"
-                    class="w-16 h-16 rounded-lg object-cover shadow-md"
+                    class="w-14 h-14 rounded-xl object-cover ring-2 ring-gray-100 
+                          group-hover:ring-emerald-200 transition-all duration-300"
                   />
-                  <div>
-                    <h6 class="font-bold text-gray-900 mb-1">{{ item.product?.title }}</h6>
-                    <span class="px-3 py-1 bg-green-600 text-white text-xs font-semibold rounded-full">
-                      {{ item.slot.status | titlecase  | translate}}
-                    </span>
-                  </div>
                 </div>
-  
-                <div class="relative">
-                  <button
-                    class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/50 
-                           text-gray-600 transition-colors duration-200"
-                    type="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
+                <div class="min-w-0 flex-1">
+                  <h6 class="font-semibold text-gray-900 text-sm leading-tight mb-1.5 line-clamp-1">
+                    {{ item.product?.title }}
+                  </h6>
+                  <span
+                    class="inline-flex items-center px-2.5 py-0.5 bg-emerald-50 text-emerald-700 
+                          text-xs font-medium rounded-md border border-emerald-200"
                   >
-                    <i class="fa-solid fa-ellipsis-vertical"></i>
-                  </button>
-                  <ul class="dropdown-menu dropdown-menu-end">
-                    <li>
-                      <button class="dropdown-item" (click)="openSlotDetails(item.slot)">
-                        {{ 'Details' | translate }}
-                      </button>
-                    </li>
-                    <li>
-                      <button class="dropdown-item" (click)="editSlot(item.slot)">
-                        {{ 'Edit' | translate }}
-                      </button>
-                    </li>
-                    <li>
-                      <button class="dropdown-item text-danger" (click)="deleteSlot(item.slot._id)">
-                        {{ 'Delete' | translate }}
-                      </button>
-                    </li>
-                  </ul>
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span>
+                    {{ item.slot.status | titlecase | translate }}
+                  </span>
                 </div>
               </div>
-  
-              <div class="space-y-2 mb-4">
-                <div class="flex justify-between items-center text-sm">
-                  <span class="text-gray-600 font-medium">{{ 'Loan amount' | translate }}:</span>
-                  <span class="font-bold text-green-700">{{ item.slot.loanAmount }} тг</span>
+
+              <!-- Stats -->
+              <div class="grid grid-cols-3 gap-2 mb-4">
+                <div class="bg-gray-50 rounded-xl p-3 text-center">
+                  <p class="text-[11px] text-gray-500 font-medium mb-1">{{ 'Loan amount' | translate }}</p>
+                  <p class="text-sm font-bold text-gray-900">{{ item.slot.loanAmount }}<span class="text-xs font-normal text-gray-500 ml-0.5">тг</span></p>
                 </div>
-                <div class="flex justify-between items-center text-sm">
-                  <span class="text-gray-600 font-medium">{{ 'Interest Rate' | translate }}:</span>
-                  <span class="font-bold text-blue-700">{{ item.slot.interestRate }}%</span>
+                <div class="bg-gray-50 rounded-xl p-3 text-center">
+                  <p class="text-[11px] text-gray-500 font-medium mb-1">{{ 'Interest Rate' | translate }}</p>
+                  <p class="text-sm font-bold text-gray-900"> {{ item.slot.interestRate | number:'1.2-2' }}<span class="text-xs font-normal text-gray-500">%</span></p>
                 </div>
-                <div class="flex justify-between items-center text-sm">
-                  <span class="text-gray-600 font-medium">{{ 'End date' | translate }}:</span>
-                  <span class="font-bold text-purple-700">{{ item.slot.endDate | date:'shortDate' }}</span>
+                <div class="bg-gray-50 rounded-xl p-3 text-center">
+                  <p class="text-[11px] text-gray-500 font-medium mb-1">{{ 'End date' | translate }}</p>
+                  <p class="text-sm font-bold text-gray-900">{{ item.slot.endDate | date:'dd.MM' }}</p>
                 </div>
               </div>
-  
-              <div class="pt-3 border-t border-green-200">
-                <div class="text-xs text-gray-500 flex items-center gap-1">
-                  <i class="fa-regular fa-clock"></i>
+
+              <!-- Footer with action buttons -->
+              <div class="flex items-center justify-between pt-3 border-t border-gray-100">
+                <div class="text-xs text-gray-400 flex items-center gap-1.5">
+                  <i class="fa-regular fa-clock text-[10px]"></i>
                   <span>{{ item.slot.createdAt | date:'short' }}</span>
                 </div>
+                <div class="flex items-center gap-2">
+                  <button
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium 
+                          text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 
+                          rounded-lg transition-colors duration-200"
+                    (click)="deleteSlot(item.slot._id)"
+                  >
+                    <i class="fa-regular fa-trash-can text-[10px]"></i>
+                    {{ 'Delete' | translate }}
+                  </button>
+                  <button
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium 
+                          text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 
+                          rounded-lg transition-colors duration-200"
+                    (click)="openSlotDetails(item.slot)"
+                  >
+                    <i class="fa-regular fa-eye text-[10px]"></i>
+                    {{ 'Details' | translate }}
+                  </button>
+                </div>
               </div>
-  
             </div>
           </div>
-        </ng-container>
+        </div>
+      </ng-container>
       </div>
 
       <ng-template #noActiveSlots>

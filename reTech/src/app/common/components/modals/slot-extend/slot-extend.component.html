@@ -1,0 +1,29 @@
+<!-- slot-extend-modal.component.html -->
+<div class="modal-body">
+  <p>{{ 'Loan amount:' | translate }} {{ slot.loanAmount }}</p>
+  <p>{{ 'Days used:' | translate }} {{ getDaysUsed(slot) }}</p>
+
+  <ng-container *ngIf="getOverdueDays(slot) > 0">
+    <p class="text-red-500">
+      {{ 'Overdue days:' | translate }} {{ getOverdueDays(slot) }}
+    </p>
+    <p class="text-red-500">
+      {{ 'Interest to pay for overdue days:' | translate }}
+      {{ slot.loanAmount * slot.interestRate/100 * getOverdueDays(slot) | number:'1.0-0' }}
+    </p>
+  </ng-container>
+
+  <p>
+    {{ 'Total accrued interest:' | translate }}
+    {{ getAccruedInterest(slot) | number:'1.0-0' }}
+  </p>
+</div>
+
+<div class="modal-footer">
+  <button (click)="confirmExtend()" class="btn btn-primary">
+    {{ 'Extend' | translate }}
+  </button>
+  <button (click)="close()" class="btn btn-secondary">
+    {{ 'Cancel' | translate }}
+  </button>
+</div>

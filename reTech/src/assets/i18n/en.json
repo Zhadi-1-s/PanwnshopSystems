@@ -347,6 +347,13 @@
     "User ID":"User ID",
     "Interest rate":"Interest rate",
     "Finish":"Finish",
-    "Extend":"Extend"
+    "Extend":"Extend",
+    "Loan Period":"Loan Period",
+    "elapsed":"elapsed",
+    "Start":"Start",
+    "End":"End",
+    "Reference IDs":"Reference IDs",
+    "rate":"rate",
+    "days left":"days left"
 
 }
