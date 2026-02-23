@@ -356,6 +356,12 @@
     "End":"Конец",
     "Reference IDs":"Идентификаионные номера",
     "rate":"ставка",
-    "days left":"осталось дней"
+    "days left":"осталось дней",
+    "Extend Loan":"Продлить займ",
+    "Review the details before confirming extension":"Ознакомьтесь с подробностями, прежде чем подтверждать продление",
+    "Days used":"Дней в займе",
+    "Overdue days":"Просроченные дни",
+    "Interest for overdue":"Проценты за просроченную задолженность",
+    "Total accrued interest":"Общая сумма начисленных процентов"
 
 }

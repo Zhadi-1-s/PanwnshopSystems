@@ -23,6 +23,7 @@ import { OfferDetailComponent } from '../../components/modals/offer-detail/offer
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { Slot } from '../../../shared/interfaces/slot.interface';
 import { SlotService } from '../../../shared/services/slot.service';
+import { SlotExtendComponent } from '../../components/modals/slot-extend/slot-extend.component';
 
 @Component({
   selector: 'app-profile',
@@ -251,6 +252,13 @@ export class ProfileComponent implements OnInit {
       product: productId,
       user: user
     });
+
+  }
+
+  openExtendSlotModal(slot:Slot){
+    const modalRef = this.modalService.open(SlotExtendComponent,{size:'medium',centered:true});
+
+    modalRef.componentInstance.slot = slot;
 
   }
 

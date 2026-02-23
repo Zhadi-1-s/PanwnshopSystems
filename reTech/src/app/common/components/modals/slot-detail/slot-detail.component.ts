@@ -42,7 +42,9 @@ export class SlotDetailComponent {
     const progress = ((now - start) / (end - start)) * 100;
     return Math.min(Math.max(progress, 0), 100);
   }
-  closeModal(){}
+  closeModal(){
+    this.activeModal.close();
+  }
 
   getDaysDiff(endDate: any): number {
     if (!endDate) return 0;

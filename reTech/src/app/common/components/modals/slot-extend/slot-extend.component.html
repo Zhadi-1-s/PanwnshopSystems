@@ -1,29 +1,87 @@
 <!-- slot-extend-modal.component.html -->
-<div class="modal-body">
-  <p>{{ 'Loan amount:' | translate }} {{ slot.loanAmount }}</p>
-  <p>{{ 'Days used:' | translate }} {{ getDaysUsed(slot) }}</p>
+<div class="p-6 bg-white dark:bg-gray-900 rounded-2xl">
 
-  <ng-container *ngIf="getOverdueDays(slot) > 0">
-    <p class="text-red-500">
-      {{ 'Overdue days:' | translate }} {{ getOverdueDays(slot) }}
+  <!-- Header -->
+  <div class="mb-6">
+    <h2 class="text-xl font-bold text-gray-900 dark:text-white">
+      {{ 'Extend Loan' | translate }}
+    </h2>
+    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+      {{ 'Review the details before confirming extension' | translate }}
     </p>
-    <p class="text-red-500">
-      {{ 'Interest to pay for overdue days:' | translate }}
-      {{ slot.loanAmount * slot.interestRate/100 * getOverdueDays(slot) | number:'1.0-0' }}
-    </p>
-  </ng-container>
+  </div>
 
-  <p>
-    {{ 'Total accrued interest:' | translate }}
-    {{ getAccruedInterest(slot) | number:'1.0-0' }}
-  </p>
-</div>
+  <!-- Content Card -->
+  <div class="rounded-xl border border-gray-200 dark:border-gray-700 divide-y divide-gray-200 dark:divide-gray-700 overflow-hidden">
 
-<div class="modal-footer">
-  <button (click)="confirmExtend()" class="btn btn-primary">
-    {{ 'Extend' | translate }}
-  </button>
-  <button (click)="close()" class="btn btn-secondary">
-    {{ 'Cancel' | translate }}
-  </button>
+    <!-- Loan amount -->
+    <div class="flex justify-between items-center px-4 py-3">
+      <span class="text-sm text-gray-500 dark:text-gray-400">
+        {{ 'Loan amount' | translate }}:
+      </span>
+      <span class="text-base font-semibold text-gray-900 dark:text-white">
+        {{ slot.loanAmount | number:'1.0-0' }}
+      </span>
+    </div>
+
+    <!-- Days used -->
+    <div class="flex justify-between items-center px-4 py-3 bg-gray-50 dark:bg-gray-800/40">
+      <span class="text-sm text-gray-500 dark:text-gray-400">
+        {{ 'Days used' | translate }}:
+      </span>
+      <span class="text-base font-semibold text-gray-900 dark:text-white">
+        {{ getDaysUsed(slot) }}
+      </span>
+    </div>
+
+    <!-- Overdue block -->
+    <ng-container *ngIf="getOverdueDays(slot) > 0">
+      <div class="flex justify-between items-center px-4 py-3 bg-red-50 dark:bg-red-900/20">
+        <span class="text-sm text-red-600 dark:text-red-400 font-medium">
+          {{ 'Overdue days' | translate }}:
+        </span>
+        <span class="text-base font-bold text-red-600 dark:text-red-400">
+          {{ getOverdueDays(slot) }}
+        </span>
+      </div>
+
+      <div class="flex justify-between items-center px-4 py-3 bg-red-50 dark:bg-red-900/20">
+        <span class="text-sm text-red-600 dark:text-red-400 font-medium">
+          {{ 'Interest for overdue' | translate }}:
+        </span>
+        <span class="text-base font-bold text-red-600 dark:text-red-400">
+          {{ slot.loanAmount * slot.interestRate / 100 * getOverdueDays(slot) | number:'1.0-0' }}
+        </span>
+      </div>
+    </ng-container>
+
+    <!-- Total interest -->
+    <div class="flex justify-between items-center px-4 py-4 bg-indigo-50 dark:bg-indigo-900/20">
+      <span class="text-sm font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide">
+        {{ 'Total accrued interest' | translate }}:
+      </span>
+      <span class="text-lg font-black text-indigo-700 dark:text-indigo-300">
+        {{ getAccruedInterest(slot) | number:'1.0-0' }}
+      </span>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="mt-6 flex justify-end gap-3">
+    <button
+      (click)="close()"
+      class="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+    >
+      {{ 'Cancel' | translate }}
+    </button>
+
+    <button
+      (click)="confirmExtend()"
+      class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold shadow-md hover:shadow-lg transition"
+    >
+      {{ 'Extend' | translate }}
+    </button>
+  </div>
+
 </div>

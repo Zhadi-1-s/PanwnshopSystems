@@ -492,6 +492,25 @@
                         </span>
                       </div>
                     </div>
+                    <div
+                      *ngIf="slot.status === 'expired'"
+                      class="px-5 pb-5 pt-3 border-t border-gray-200 dark:border-gray-800 flex justify-end"
+                    >
+                      <button
+                        (click)="openExtendSlotModal(slot)"
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold
+                              bg-indigo-600 text-white
+                              hover:bg-indigo-700 active:scale-[0.98]
+                              transition-all duration-150
+                              shadow-sm hover:shadow-md"
+                      >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M16.023 9.348h4.992v4.992M20.015 9.355l-6.36 6.36a6 6 0 1 1-8.486-8.486l1.91-1.91" />
+                        </svg>
+                        {{ 'Extend' | translate }}
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

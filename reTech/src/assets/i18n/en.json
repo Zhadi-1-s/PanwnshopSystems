@@ -354,6 +354,12 @@
     "End":"End",
     "Reference IDs":"Reference IDs",
     "rate":"rate",
-    "days left":"days left"
+    "days left":"days left",
+    "Extend Loan":"Extend Loan",
+    "Review the details before confirming extension":"Review the details before confirming extension",
+    "Days used":"Days used",
+    "Overdue days":"Overdue days",
+    "Interest for overdue":"Interest for overdue",
+    "Total accrued interest":"Total accrued interest"
 
 }
