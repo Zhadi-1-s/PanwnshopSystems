@@ -24,6 +24,11 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { Slot } from '../../../shared/interfaces/slot.interface';
 import { SlotService } from '../../../shared/services/slot.service';
 import { SlotExtendComponent } from '../../components/modals/slot-extend/slot-extend.component';
+import { LombardService } from '../../../shared/services/lombard.service';
+
+interface SlotView extends Slot {
+  prolongationAllowed: boolean;
+}
 
 @Component({
   selector: 'app-profile',
@@ -58,12 +63,14 @@ export class ProfileComponent implements OnInit {
   notifications$:Observable<AppNotification[]>;
   product$:Observable<Product>;
 
-  slots$:Observable<Slot[]>;
+  slots$:Observable<SlotView[]>;
 
   notificationsList:AppNotification[];
   product:Product;
   
   productsById: Record<string, Product> = {};
+
+  pawnshopFromSlot:PawnshopProfile;
 
   openedMenuIndex: number | null = null;
 
@@ -87,7 +94,8 @@ export class ProfileComponent implements OnInit {
               private notificationService:NotificationService,
               private offerService:OfferService,
               private router: Router,
-              private slotService:SlotService
+              private slotService:SlotService,
+              private pawnshopService:LombardService
   ) {
 
   }
@@ -158,10 +166,23 @@ export class ProfileComponent implements OnInit {
     )
 
     this.slots$ = this.authService.currentUser$.pipe(
-      filter((user):user is User => !!user?._id),
+      filter((user): user is User => !!user?._id),
       switchMap(user => this.slotService.getSlotsByUserId(user._id)),
-      tap(loan => console.log(loan,'loaded slots of user'))
-    )
+      switchMap((slots: Slot[]) => {
+        if (!slots.length) return of([] as SlotView[]);
+
+        return forkJoin(
+          slots.map(slot =>
+            this.pawnshopService.getLombardById(slot.pawnshopId).pipe(
+              map(lombard => ({
+                ...slot,
+                prolongationAllowed: !!lombard?.terms?.prolongationAllowed
+              }))
+            )
+          )
+        );
+      })
+    );
 
     this.favoriteProducts$ = this.authService.currentUser$.pipe(
       filter((user):user is User => !!user?._id),
@@ -255,11 +276,25 @@ export class ProfileComponent implements OnInit {
 
   }
 
-  openExtendSlotModal(slot:Slot){
-    const modalRef = this.modalService.open(SlotExtendComponent,{size:'medium',centered:true});
+  openExtendSlotModal(slot: Slot) {
+    this.pawnshopService.getLombardById(slot.pawnshopId)
+      .pipe(take(1))
+      .subscribe({
+        next: (data) => {
+          if (!data?.terms?.prolongationAllowed) return;
 
-    modalRef.componentInstance.slot = slot;
+          const modalRef = this.modalService.open(
+            SlotExtendComponent,
+            { size: 'medium', centered: true }
+          );
 
+          modalRef.componentInstance.slot = slot;
+          modalRef.componentInstance.user = this.user;
+        },
+        error: (err) => {
+          console.error('Failed to load pawnshop', err);
+        }
+      });
   }
 
   async openOfferDetailModal(offer:Offer){

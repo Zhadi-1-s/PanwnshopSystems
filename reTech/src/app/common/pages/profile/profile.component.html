@@ -493,8 +493,9 @@
                       </div>
                     </div>
                     <div
-                      *ngIf="slot.status === 'expired'"
+                      *ngIf="slot.status === 'expired'"                      
                       class="px-5 pb-5 pt-3 border-t border-gray-200 dark:border-gray-800 flex justify-end"
+
                     >
                       <button
                         (click)="openExtendSlotModal(slot)"
@@ -503,6 +504,8 @@
                               hover:bg-indigo-700 active:scale-[0.98]
                               transition-all duration-150
                               shadow-sm hover:shadow-md"
+                        [ngbTooltip]="slot.prolongationAllowed ? 'Продлить' : 'Продление запрещено'"
+                        [disabled]="!slot.prolongationAllowed"
                       >
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round"

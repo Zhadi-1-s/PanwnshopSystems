@@ -3,6 +3,7 @@ import { Slot } from '../../../../shared/interfaces/slot.interface';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
+import { User } from '../../../../shared/interfaces/user.interface';
 
 @Component({
   selector: 'app-slot-extend',
@@ -14,7 +15,7 @@ import { CommonModule, DecimalPipe } from '@angular/common';
 export class SlotExtendComponent {
 
   @Input() slot:Slot;
-
+  @Input() user:User;
   constructor(
     public activeModal:NgbActiveModal
   ){}
