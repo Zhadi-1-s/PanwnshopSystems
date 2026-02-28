@@ -6,6 +6,8 @@ import { CreateSlotDto } from './create-slot.dto';
 import { NotificationService } from '../notification/notification.service';
 
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { LoanStatus } from '../enums/status.enum';
+import { UpdateSlotStatusDto } from './update-status.dto';
 
 
 @Injectable()
@@ -22,7 +24,6 @@ export class SlotService {
       createdAt: new Date(),
       updatedAt: new Date(),
     });
-
 
     const slot = await newSlot.save();
 
@@ -112,6 +113,43 @@ export class SlotService {
   //     await slot.save();
   //   }
   // }
+
+  async updateStatus(id: string, dto:UpdateSlotStatusDto): Promise<Slot> {
+    if (!Types.ObjectId.isValid(id)) {
+      throw new NotFoundException('Invalid slot ID');
+    }
+
+    const slot = await this.slotModel.findById(id);
+    if (!slot) {
+      throw new NotFoundException('Slot not found');
+    }
+
+    // если статус уже такой же — просто возвращаем
+    if (slot.status === dto.status) {
+      return slot;
+    }
+
+    slot.status = dto.status;
+    slot.updatedAt = new Date();
+
+    await slot.save();
+
+    if (dto.status === LoanStatus.EXTEND_REQUESTED) {
+      await this.notificationService.create({
+        userId: slot.pawnshopId.toString(),
+        senderId: dto.userId,
+        type: 'extension-request',
+        title: 'Extension request',
+        message: 'Пользователь запросил продление займа',
+        refId: slot._id.toString(),
+        isRead: false,
+        data: { slotId: slot._id.toString() }
+      });
+    }
+
+
+    return slot;
+  }
 
   @Cron(CronExpression.EVERY_HOUR)
   async handleExpiredSlots() {

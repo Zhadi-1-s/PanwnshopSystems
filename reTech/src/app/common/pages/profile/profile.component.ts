@@ -172,14 +172,18 @@ export class ProfileComponent implements OnInit {
         if (!slots.length) return of([] as SlotView[]);
 
         return forkJoin(
-          slots.map(slot =>
-            this.pawnshopService.getLombardById(slot.pawnshopId).pipe(
+          slots.map(slot => {
+            const pawnshopId = typeof slot.pawnshopId === 'string'
+              ? slot.pawnshopId
+              : slot.pawnshopId._id?.toString(); // <-- безопасно извлекаем ID
+
+            return this.pawnshopService.getLombardById(pawnshopId).pipe(
               map(lombard => ({
                 ...slot,
                 prolongationAllowed: !!lombard?.terms?.prolongationAllowed
               }))
-            )
-          )
+            );
+          })
         );
       })
     );

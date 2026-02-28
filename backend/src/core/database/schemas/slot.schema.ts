@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import { Document, HydratedDocument, Types } from 'mongoose';
 import { LoanStatus, Status } from 'src/core/common/enums/status.enum';
 import { Product } from './product.schema';
-export type SlotDocument = Slot & Document;
+export type SlotDocument = HydratedDocument<Slot>;
 
 @Schema({ timestamps: true })
 export class Slot {
@@ -33,5 +33,9 @@ export class Slot {
     default: LoanStatus.ACTIVE,
   })
   status: LoanStatus;
+
+  createdAt?: Date;
+  updatedAt?: Date;
+  
 }
 export const SlotSchema = SchemaFactory.createForClass(Slot);

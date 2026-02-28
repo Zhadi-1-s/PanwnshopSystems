@@ -14,5 +14,6 @@ export enum LoanStatus {
   ACTIVE = 'active',     // займ открыт
   CLOSED = 'closed',     // погашен
   EXPIRED = 'expired',   // просрочен
-  SOLD = 'sold'          // товар продали из-за просрочки
+  SOLD = 'sold',       // товар продали из-за просрочки
+  EXTEND_REQUESTED = 'extend_requested'
 }

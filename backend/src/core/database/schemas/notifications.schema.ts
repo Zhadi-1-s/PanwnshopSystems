@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { IsOptional } from 'class-validator';
 import { Document } from 'mongoose';
 
 export type NotificationDocument = Notification & Document;
@@ -45,7 +46,10 @@ export class Notification {
       'evaluation-updated',
       'evaluation-accepted',
       'slot-created',
-      'product-expired'
+      'product-expired',
+      'extend-requested',
+      'extend-approved',
+      'extend-rejected'
     ],
   })
   type: NotificationType;
@@ -61,6 +65,9 @@ export class Notification {
 
   @Prop({ default: false })
   isRead: boolean;
+
+  @IsOptional()
+  data?: any;
 }
 
 export const NotificationSchema = SchemaFactory.createForClass(Notification);

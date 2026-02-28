@@ -16,6 +16,9 @@ export interface AppNotification {
     | 'offer-in-loan'
     | 'slot-created'
     | 'product-expired'
+    | 'extend-requested'
+    | 'extend-approved'
+    | 'extend-rejected';
 
   title: string;
   message: string;

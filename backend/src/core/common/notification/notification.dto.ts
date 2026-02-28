@@ -25,7 +25,10 @@ export class CreateNotificationDto {
       'evaluation-updated',
       'evauluation-accepted',
       'slot-created',
-      'product-expired'
+      'product-expired',
+      'extend-requested',
+      'extend-approved',
+      'extend-rejected'
   ])
   type: string;
 
@@ -44,5 +47,8 @@ export class CreateNotificationDto {
   @IsBoolean()
   @IsOptional()
   isRead:boolean;
+
+  @IsOptional()
+  data?: any;
 
 }

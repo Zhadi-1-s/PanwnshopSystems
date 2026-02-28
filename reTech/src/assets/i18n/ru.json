@@ -362,6 +362,7 @@
     "Days used":"Дней в займе",
     "Overdue days":"Просроченные дни",
     "Interest for overdue":"Проценты за просроченную задолженность",
-    "Total accrued interest":"Общая сумма начисленных процентов"
+    "Total accrued interest":"Общая сумма начисленных процентов",
+    "days ago":"дней назад"
 
 }
