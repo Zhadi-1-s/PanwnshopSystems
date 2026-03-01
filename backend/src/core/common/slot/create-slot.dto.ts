@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsNumber, IsDateString, IsEnum,ValidateNested } from 'class-validator';
+import { IsNotEmpty, IsString, IsNumber, IsDateString, IsEnum,ValidateNested, IsOptional } from 'class-validator';
 import { LoanStatus, Status } from '../enums/status.enum';
 import { Type } from 'class-transformer';
 import { Transform } from 'class-transformer';
@@ -71,11 +71,12 @@ export class CreateSlotDto {
   @IsEnum(LoanStatus)
   status: LoanStatus;
 
-  @ApiProperty({
+ @ApiProperty({
     example: false,
     description: 'Разрешена ли пролонгация',
+    required: false
   })
-  @IsNotEmpty()
+  @IsOptional()
   @Transform(({ value }) => value === 'true' || value === true)
-  prolongationAllowed: boolean;
+  prolongationAllowed?: boolean;
 }

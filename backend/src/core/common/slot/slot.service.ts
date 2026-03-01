@@ -146,6 +146,18 @@ export class SlotService {
         data: { slotId: slot._id.toString() }
       });
     }
+    if(dto.status === LoanStatus.ACTIVE){
+      await this.notificationService.create({
+        userId: slot.userId.toString(),
+        senderId: dto.userId,
+        type: 'extension-approved',
+        title: 'Extension approved',
+        message: 'Продление займа одобрено',
+        refId: slot._id.toString(),
+        isRead: false,
+        data: { slotId: slot._id.toString() }
+      });
+    }
 
 
     return slot;

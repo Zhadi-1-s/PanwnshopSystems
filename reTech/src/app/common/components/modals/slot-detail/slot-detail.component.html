@@ -113,19 +113,19 @@
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <span class="text-sm font-medium text-gray-300">
-              <ng-container *ngIf="getDaysDiff(slot.endDate) > 0; else expiredBlock">
-                {{ getDaysDiff(slot.endDate) }} {{ 'days left' | translate }}
+              <ng-container *ngIf="daysDiff > 0; else expiredBlock">
+                {{ daysDiff }} {{ 'days left' | translate }}
               </ng-container>
 
               <ng-template #expiredBlock>
-                <ng-container *ngIf="getDaysDiff(slot.endDate) === 0; else expiredAgo">
+                <ng-container *ngIf="daysDiff === 0; else expiredAgo">
                   {{ 'Last day' | translate }}
                 </ng-container>
               </ng-template>
 
               <ng-template #expiredAgo>
                 {{ 'Expired' | translate }}
-               {{ getAbsoluteDays(slot.endDate) }}
+               {{ absoluteDays }}
                 {{ 'days ago' | translate }}
               </ng-template>
             </span>
@@ -140,7 +140,7 @@
             {{ 'Loan Period' | translate }}
           </span>
           <span class="text-xs font-medium text-gray-500 dark:text-gray-400">
-            {{ getProgress(slot.startDate, slot.endDate) | number:'1.0-0' }}% {{ 'elapsed' | translate }}
+            {{ progress | number:'1.0-0' }}% {{ 'elapsed' | translate }}
           </span>
         </div>
 
@@ -154,7 +154,7 @@
               'bg-amber-500': slot.status === Status.EXPIRED,
               'bg-sky-500': slot.status === Status.SOLD
             }"
-            [style.width.%]="getProgress(slot.startDate, slot.endDate)"
+            [style.width.%]="progress"
           ></div>
         </div>
 

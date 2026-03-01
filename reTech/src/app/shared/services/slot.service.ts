@@ -42,8 +42,8 @@ export class SlotService {
     return this.http.get<Slot>(`${this.apiUrl}/${id}`);
   }
 
-  updateSlotStatus(id:string,status:LoanStatus):Observable<Slot>{
-    return this.http.patch<Slot>(`${this.apiUrl}/${id}/status`,{status});
-  }
+ updateSlotStatus(id: string, dto: { status: LoanStatus; userId: string }): Observable<Slot> {
+  return this.http.patch<Slot>(`${this.apiUrl}/${id}/status`, dto);
+}
 
 }

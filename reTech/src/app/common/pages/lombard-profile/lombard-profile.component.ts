@@ -663,6 +663,7 @@ export class LombardProfileComponent implements OnInit{
       const modalRef = this.modalService.open(SlotDetailComponent,{size:'lg',centered:true});
 
       modalRef.componentInstance.slot = item;
+      modalRef.componentInstance.user = this.user;
   }
   editSlot(item: Slot) {}
   

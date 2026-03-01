@@ -30,18 +30,18 @@
         {{ 'Days used' | translate }}:
       </span>
       <span class="text-base font-semibold text-gray-900 dark:text-white">
-        {{ getDaysUsed(slot) }}
+        {{ daysUsed }}
       </span>
     </div>
 
     <!-- Overdue block -->
-    <ng-container *ngIf="getOverdueDays(slot) > 0">
+    <ng-container *ngIf="overdueDays > 0">
       <div class="flex justify-between items-center px-4 py-3 bg-red-50 dark:bg-red-900/20">
         <span class="text-sm text-red-600 dark:text-red-400 font-medium">
           {{ 'Overdue days' | translate }}:
         </span>
         <span class="text-base font-bold text-red-600 dark:text-red-400">
-          {{ getOverdueDays(slot) }}
+          {{ overdueDays }}
         </span>
       </div>
 
@@ -50,7 +50,7 @@
           {{ 'Interest for overdue' | translate }}:
         </span>
         <span class="text-base font-bold text-red-600 dark:text-red-400">
-          {{ slot.loanAmount * slot.interestRate / 100 * getOverdueDays(slot) | number:'1.0-0' }}
+          {{ slot.loanAmount * slot.interestRate / 100 * overdueDays | number:'1.0-0' }}
         </span>
       </div>
     </ng-container>
@@ -61,7 +61,7 @@
         {{ 'Total accrued interest' | translate }}:
       </span>
       <span class="text-lg font-black text-indigo-700 dark:text-indigo-300">
-        {{ getAccruedInterest(slot) | number:'1.0-0' }}
+        {{ accruedInterest | number:'1.0-0' }}
       </span>
     </div>
 
