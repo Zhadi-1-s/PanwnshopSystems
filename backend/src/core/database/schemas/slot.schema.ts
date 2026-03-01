@@ -34,6 +34,9 @@ export class Slot {
   })
   status: LoanStatus;
 
+  @Prop({ type: Boolean, default: false })
+  prolongationAllowed?: boolean;
+
   createdAt?: Date;
   updatedAt?: Date;
   

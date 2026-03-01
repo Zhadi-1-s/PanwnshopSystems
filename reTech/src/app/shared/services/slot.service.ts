@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Slot } from '../interfaces/slot.interface';
 import { environment } from '../../../environments/environment';
+import { LoanStatus } from '../enums/status.enum';
 
 @Injectable({
   providedIn: 'root'
@@ -40,4 +41,9 @@ export class SlotService {
   getSlotById(id: string): Observable<Slot> {
     return this.http.get<Slot>(`${this.apiUrl}/${id}`);
   }
+
+  updateSlotStatus(id:string,status:LoanStatus):Observable<Slot>{
+    return this.http.patch<Slot>(`${this.apiUrl}/${id}/status`,{status});
+  }
+
 }

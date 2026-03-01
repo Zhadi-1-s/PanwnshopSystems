@@ -1,6 +1,7 @@
-import { Controller, Get, Param ,Post,Body, Delete} from '@nestjs/common';
+import { Controller, Get, Param ,Post,Body, Delete,Patch} from '@nestjs/common';
 import { SlotService } from './slot.service';
 import { CreateSlotDto } from './create-slot.dto';
+import { UpdateSlotStatusDto } from './update-status.dto';
 import { Slot } from 'src/core/database/schemas/slot.schema';
 @Controller('slots')
 export class SlotController {
@@ -35,4 +36,13 @@ export class SlotController {
   deleteSlot(@Param('id') id: string) {
     return this.slotService.deleteSlot(id);
   }
+
+  @Patch(':id/status')
+  async updateStatus(
+    @Param('id') id: string,
+    @Body() dto: UpdateSlotStatusDto,
+  ): Promise<Slot> {
+    return this.slotService.updateStatus(id, dto);
+  }
+  
 }

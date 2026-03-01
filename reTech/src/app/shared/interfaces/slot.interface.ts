@@ -12,6 +12,9 @@ export interface Slot {
   endDate: Date;               
   interestRate: number;         // процент, например 0.5 (0.5% в день)
   status: LoanStatus
+
+  prolongationAllowed?: boolean;
+
   createdAt?: Date;
   updatedAt?: Date;
 }

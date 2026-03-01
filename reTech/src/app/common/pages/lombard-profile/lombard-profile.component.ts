@@ -455,7 +455,8 @@ export class LombardProfileComponent implements OnInit{
 
 
   get systemNotifications() {
-    return (this.notificationsList || []).filter(n => n.type === 'system');
+    return (this.notificationsList || [])
+      .filter(n => n.type === 'system' || n.type === 'extend-requested');
   }
 
   get chatNotifications() {

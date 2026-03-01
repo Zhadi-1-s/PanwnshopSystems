@@ -39,6 +39,19 @@
             placeholder="{{'Add short product description' | translate}}"
           ></textarea>
         </div>
+        <div class="col-12">
+          <div class="form-check mt-2">
+            <input
+              type="checkbox"
+              class="form-check-input"
+              formControlName="prolongationAllowed"
+              id="prolongationAllowed"
+            />
+            <label class="form-check-label" for="prolongationAllowed">
+              {{ 'Allow prolongation' | translate }}
+            </label>
+          </div>
+        </div>
       </div>
     </div>
 

@@ -4,6 +4,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { User } from '../../../../shared/interfaces/user.interface';
+import { SlotService } from '../../../../shared/services/slot.service';
 
 @Component({
   selector: 'app-slot-extend',
@@ -17,7 +18,8 @@ export class SlotExtendComponent {
   @Input() slot:Slot;
   @Input() user:User;
   constructor(
-    public activeModal:NgbActiveModal
+    public activeModal:NgbActiveModal,
+    private slotService:SlotService,
   ){}
 
   confirmExtend() {
@@ -29,6 +31,8 @@ export class SlotExtendComponent {
 
     this.slot.startDate = today;
     this.slot.endDate = newEnd;
+
+    
 
     // Закрываем модалку и возвращаем обновлённый слот
     this.activeModal.close(this.slot);

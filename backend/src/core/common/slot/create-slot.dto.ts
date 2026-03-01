@@ -70,4 +70,12 @@ export class CreateSlotDto {
   @IsNotEmpty()
   @IsEnum(LoanStatus)
   status: LoanStatus;
+
+  @ApiProperty({
+    example: false,
+    description: 'Разрешена ли пролонгация',
+  })
+  @IsNotEmpty()
+  @Transform(({ value }) => value === 'true' || value === true)
+  prolongationAllowed: boolean;
 }

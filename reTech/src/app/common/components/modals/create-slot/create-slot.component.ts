@@ -60,6 +60,7 @@ export class CreateSlotComponent implements OnInit {
       interestRate: [null, [Validators.required, Validators.min(0.1)]],
       startDate: [null, Validators.required],
       endDate: [null, Validators.required],
+      prolongationAllowed: [false] 
     });
   }
 
