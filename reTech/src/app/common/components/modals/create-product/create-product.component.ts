@@ -8,6 +8,7 @@ import { Product } from '../../../../shared/interfaces/product.interface';
 import { Category } from '../../../../shared/enums/category.enum';
 import { CloudinaryService } from '../../../../shared/services/cloudinary.service';
 import { PRODUCT_MODELS } from '../../../../shared/models/product.models';
+import { User } from '../../../../shared/interfaces/user.interface';
 
 @Component({
   selector: 'app-create-product',
@@ -20,6 +21,9 @@ export class CreateProductComponent {
 
   @Input() ownerId!: string;
   @Input() ownerType : 'user' | 'pawnshop'
+
+  @Input() user:User;
+
   productForm : FormGroup;
   uploading = false;
 
@@ -73,6 +77,7 @@ export class CreateProductComponent {
 
       loanTermCtrl?.updateValueAndValidity();
     });
+    console.log(this.user);
   }
 
   get title() {

@@ -364,6 +364,7 @@
     "Interest for overdue":"Проценты за просроченную задолженность",
     "Total accrued interest":"Общая сумма начисленных процентов",
     "days ago":"дней назад",
-    "Allow prolongation":"Разрешить продление"
+    "Allow prolongation":"Разрешить продление",
+    "overdue":"просроченный"
 
 }

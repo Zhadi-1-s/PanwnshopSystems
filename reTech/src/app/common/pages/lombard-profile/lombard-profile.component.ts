@@ -536,6 +536,7 @@ export class LombardProfileComponent implements OnInit{
     const modalRef = this.modalService.open(CreateProductComponent, {size:'lg'});
 
     modalRef.componentInstance.ownerId = this.profile._id;
+    modalRef.componentInstance.user = this.profile;
     // modalRef.result.then((result) => {
     //   if (result) this.loadProducts();
     // });

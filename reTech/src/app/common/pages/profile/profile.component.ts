@@ -409,7 +409,7 @@ export class ProfileComponent implements OnInit {
   }
 
   get systemNotifications() {
-    return (this.notificationsList || []).filter(n => n.type === 'system' || n.type === 'product-expired');
+    return (this.notificationsList || []).filter(n => n.type === 'system' || n.type === 'product-expired' || n.type === 'extend-approved');
   }
 
   get unreadSystemNotificationsCount() {

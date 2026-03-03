@@ -25,7 +25,7 @@
         formControlName="title"
         class="form-control"
         [class.is-invalid]="title.invalid && (title.dirty || title.touched)"
-        (blur)="filteredModels = []"
+        
         placeholder="{{ 'Enter product title' | translate }}"
       />
       <div *ngIf="filteredModels.length"
@@ -44,7 +44,7 @@
       </div>
     </div>
 
-    <div class="col-md-6 mb-3">
+    <div class="col-md-6 mb-3" *ngIf="user?.role === 'pawnshop'">
       <label class="form-label">{{ 'Type' | translate }}</label>
       <select class="form-select" formControlName="type">
         <option value="sale">{{ 'Sale' | translate }}</option>

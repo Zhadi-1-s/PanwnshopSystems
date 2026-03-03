@@ -138,7 +138,7 @@ export class SlotService {
       await this.notificationService.create({
         userId: slot.pawnshopId.toString(),
         senderId: dto.userId,
-        type: 'extension-request',
+        type: 'extend-request',
         title: 'Extension request',
         message: 'Пользователь запросил продление займа',
         refId: slot._id.toString(),
@@ -147,10 +147,22 @@ export class SlotService {
       });
     }
     if(dto.status === LoanStatus.ACTIVE){
+      const now = new Date();
+      const currentEnd = new Date(slot.endDate);
+
+      // если срок ещё не истёк — продлеваем от текущего endDate
+      // если уже истёк — продлеваем от сегодняшнего дня
+      const baseDate = currentEnd > now ? currentEnd : now;
+
+      baseDate.setDate(baseDate.getDate() + 7); // только 1 неделя
+      slot.endDate = baseDate;
+
+      await slot.save();
+
       await this.notificationService.create({
         userId: slot.userId.toString(),
         senderId: dto.userId,
-        type: 'extension-approved',
+        type: 'extend-approved',
         title: 'Extension approved',
         message: 'Продление займа одобрено',
         refId: slot._id.toString(),
