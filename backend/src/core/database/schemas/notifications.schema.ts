@@ -18,6 +18,12 @@ export type NotificationType =
     | 'offer-in-loan'
     | 'slot-created'
     | 'product-expired'
+    | 'evaluation-created'
+    | 'evaluation-updated'
+    | 'evaluation-accepted'
+    | 'extend-requested'
+    | 'extend-approved'
+    | 'extend-rejected';
 
 @Schema({ timestamps: true })
 export class Notification {
@@ -45,6 +51,7 @@ export class Notification {
       'offer-in-loan',
       'evaluation-updated',
       'evaluation-accepted',
+      'evaluation-created',
       'slot-created',
       'product-expired',
       'extend-requested',

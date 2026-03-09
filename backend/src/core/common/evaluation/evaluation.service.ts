@@ -82,32 +82,44 @@ export class EvaluationService {
   }
 
 
-  private async createEvaluationNotifications(
+ private async createEvaluationNotifications(
     evaluation: Evaluation,
     dto: CreateEvaluationDto
   ) {
-    const refId = evaluation._id?.toString();
+    try {
+      const refId = evaluation._id?.toString();
 
-    await this.notificationService.createMany([
-      {
-        userId: dto.pawnshopId,
-        senderId: dto.userId,
-        type: 'new-offer',
-        title: 'New evaluation request',
-        message: `You have a new evaluation request for product ${dto.title} (${dto.expectedPrice})`,
-        refId,
-        isRead: false
-      },
-      {
-        userId: dto.userId,
-        senderId: dto.pawnshopId,
-        type: 'evaluation-created',
-        title: 'Evaluation sent',
-        message: `You sent an evaluation request for ${dto.title}`,
-        refId,
-        isRead: false
-      }
-    ]);
+      console.log('Creating notifications', {
+        pawnshopId: dto.pawnshopId,
+        userId: dto.userId
+      });
+
+      const result = await this.notificationService.createMany([
+        {
+          userId: dto.pawnshopId,
+          senderId: dto.userId,
+          type: 'new-offer',
+          title: 'New evaluation request',
+          message: `You have a new evaluation request for product ${dto.title} (${dto.expectedPrice})`,
+          refId,
+          isRead: false
+        },
+        {
+          userId: dto.userId,
+          senderId: dto.pawnshopId,
+          type: 'evaluation-created',
+          title: 'Evaluation sent',
+          message: `You sent an evaluation request for ${dto.title}`,
+          refId,
+          isRead: false
+        }
+      ]);
+
+      console.log('Notifications created:', result);
+
+    } catch (error) {
+      console.error('Notification error:', error);
+    }
   }
 
 

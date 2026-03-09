@@ -24,6 +24,7 @@ export class CreateNotificationDto {
       'offer-in-loan',
       'evaluation-updated',
       'evauluation-accepted',
+      'evaluation-created',
       'slot-created',
       'product-expired',
       'extend-requested',

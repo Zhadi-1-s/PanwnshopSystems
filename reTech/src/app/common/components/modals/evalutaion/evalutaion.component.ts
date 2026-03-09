@@ -191,7 +191,7 @@ export class EvalutaionComponent implements OnInit {
           this.closed.emit();
         },
         error: (err) => {
-          console.error('Ошибка отправки:', err);
+          window.alert('Ошибка при создании оценки: ' + (err.error?.message || err.message || 'Unknown error'));
         }
       });
     }

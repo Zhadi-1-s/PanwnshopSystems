@@ -571,6 +571,10 @@ export class LombardProfileComponent implements OnInit{
 
   }
 
+  openAnalytics(){
+    
+  }
+
   openViewAllModal(){
     const modalRef = this.modalService.open(ViewallComponent, {
     size: 'lg',
