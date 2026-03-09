@@ -74,7 +74,7 @@ export class ProfileComponent implements OnInit {
 
   openedMenuIndex: number | null = null;
 
-  offerSection: 'active' | 'completed' = 'active';
+  offerSection: 'active' | 'completed' | 'sent' = 'active';
 
   pawnshopIdFromOffer:string;
 
@@ -118,7 +118,7 @@ export class ProfileComponent implements OnInit {
       switchMap(notifications => {
         // Фильтруем только уведомления напрямую на продукты
         const productNotifications = notifications.filter(n =>
-          !['new-offer', 'offer-accepted', 'offer-rejected'].includes(n.type)
+          !['new-offer', 'offer-accepted', 'offer-rejected','offer-cancelled','evaluation-updated','evaluation-accepted','evaluation-created'].includes(n.type)
         );
 
         const productIds = productNotifications.map(n => n.refId).filter(Boolean);
@@ -387,25 +387,48 @@ export class ProfileComponent implements OnInit {
 
 
   get offerNotifications() {
+
+    const offerTypes = [
+      'new-offer',
+      'offer-accepted',
+      'offer-rejected',
+      'offer-cancelled',
+      'evaluation-created',
+      'evaluation-accepted',
+      'evaluation-updated'
+    ];
+
     return (this.notificationsList || []).filter(n => {
-      // только offer-уведомления
-      if (!['new-offer', 'offer-accepted', 'offer-rejected'].includes(n.type)) {
+
+      if (!offerTypes.includes(n.type)) {
         return false;
+      }
+
+      // SENT (evaluation попадает сюда)
+      if (this.offerSection === 'sent') {
+        return n.type === 'evaluation-created';
       }
 
       const offer = this.offersById?.[n.refId];
-      if (!offer) {
-        return false;
-      }
+      if (!offer) return false;
 
-      // ACTIVE
       if (this.offerSection === 'active') {
         return offer.status === 'pending' || offer.status === 'in_inspection';
       }
 
-      // COMPLETED
-      return offer.status === 'rejected' || offer.status === 'completed' || offer.status === 'no_show' || offer.status === 'rejected_by_pawnshop';
+      return ['rejected','completed','no_show','rejected_by_pawnshop'].includes(offer.status);
+
     });
+  }
+
+  get evaluationNotifications() {
+    return (this.notificationsList || []).filter(n =>
+      [
+        'evaluation-created',
+        'evaluation-accepted',
+        'evaluation-updated'
+      ].includes(n.type)
+    );
   }
 
   get systemNotifications() {
@@ -438,7 +461,7 @@ export class ProfileComponent implements OnInit {
 
   get unreadOfferNotifications() {
     return (this.notificationsList || []).filter(n =>
-      ['new-offer','offer-accepted','offer-rejected'].includes(n.type) && !n.isRead
+      ['new-offer','offer-accepted','offer-rejected','offer-cancelled','evaluation-updated','evaluation-accepted','evaluation-created'].includes(n.type) && !n.isRead
     );
   }
 

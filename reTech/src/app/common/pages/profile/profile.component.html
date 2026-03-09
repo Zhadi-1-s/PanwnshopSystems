@@ -239,6 +239,16 @@
                 >
                   {{ 'Completed offers' | translate }}
                 </button>
+                <button
+                  (click)="offerSection = 'sent'"
+                  class="px-4 py-2 text-sm font-semibold rounded-lg transition"
+                  [ngClass]="{
+                    'bg-blue-600 text-white': offerSection === 'sent',
+                    'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300': offerSection !== 'sent'
+                  }"
+                >
+                  {{ 'Sent offers' | translate }}
+                </button>
               </div>
 
 

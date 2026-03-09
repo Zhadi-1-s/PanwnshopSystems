@@ -18,7 +18,10 @@ export interface AppNotification {
     | 'product-expired'
     | 'extend-requested'
     | 'extend-approved'
-    | 'extend-rejected';
+    | 'extend-rejected'
+    | 'evaluation-created'
+    | 'evaluation-updated'
+    | 'evaluation-accepted';
 
   title: string;
   message: string;
