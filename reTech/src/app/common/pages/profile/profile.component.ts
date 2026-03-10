@@ -416,6 +416,12 @@ export class ProfileComponent implements OnInit {
         return offer.status === 'pending' || offer.status === 'in_inspection';
       }
 
+     const completedOffers = Object.values(this.offersById || {}).filter(o =>
+        ['rejected','completed','no_show','rejected_by_pawnshop'].includes(o.status)
+      );
+
+    console.log('COMPLETED OFFERS:', completedOffers);
+
       return ['rejected','completed','no_show','rejected_by_pawnshop'].includes(offer.status);
 
     });
