@@ -30,7 +30,7 @@ export class EvaluationService {
 
     const evaluation = await this.evaluationModel.create(dto);
 
-    await this.createEvaluationNotifications(evaluation, dto);
+    await this.createEvaluationNotification('pending', evaluation);
 
     return evaluation;
   }
@@ -49,78 +49,99 @@ export class EvaluationService {
     return evalFound;
   }
 
-  async updateStatus(
-    id: string,
-    dto: UpdateEvaluationStatusDto
-  ): Promise<Evaluation> {
-    // Находим документ
-    const evaluation = await this.evaluationModel.findById(id);
-    if (!evaluation) throw new NotFoundException('Evaluation not found');
+ async updateStatus(
+  id: string,
+  dto: UpdateEvaluationStatusDto
+): Promise<Evaluation> {
 
-    // Если статус in_inspection — ставим дату окончания
-    if (dto.status === 'in_inspection') {
-      evaluation.expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
-    }
+  const evaluation = await this.evaluationModel.findById(id);
+  if (!evaluation) throw new NotFoundException('Evaluation not found');
 
-    // Обновляем статус и дату изменения
-    evaluation.status = dto.status;
-    evaluation.updatedAt = new Date();
-
-    // Сохраняем в БД
-    await evaluation.save();
-
-    await this.notificationService.create({
-      userId: evaluation.pawnshopId.toString(),
-      senderId: evaluation.userId.toString(),
-      type: dto.status === 'pending' ? 'evaluation-accepted' : 'evaluation-updated',
-      title: `Evaluation ${dto.status}`,
-      refId: (evaluation._id as string).toString(),
-      isRead: false,
-    });
-
-    return evaluation;
+  if (dto.status === 'in_inspection') {
+    evaluation.expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
   }
 
+  evaluation.status = dto.status;
+  evaluation.updatedAt = new Date();
 
- private async createEvaluationNotifications(
-    evaluation: Evaluation,
-    dto: CreateEvaluationDto
-  ) {
-    try {
-      const refId = evaluation._id?.toString();
+  await evaluation.save();
 
-      console.log('Creating notifications', {
-        pawnshopId: dto.pawnshopId,
-        userId: dto.userId
-      });
+  let type: 'evaluation-accepted' | 'evaluation-updated';
 
-      const result = await this.notificationService.createMany([
-        {
-          userId: dto.pawnshopId,
-          senderId: dto.userId,
-          type: 'new-offer',
-          title: 'New evaluation request',
-          message: `You have a new evaluation request for product ${dto.title} (${dto.expectedPrice})`,
-          refId,
-          isRead: false
-        },
-        {
-          userId: dto.userId,
-          senderId: dto.pawnshopId,
-          type: 'evaluation-created',
-          title: 'Evaluation sent',
-          message: `You sent an evaluation request for ${dto.title}`,
-          refId,
-          isRead: false
-        }
-      ]);
-
-      console.log('Notifications created:', result);
-
-    } catch (error) {
-      console.error('Notification error:', error);
-    }
+  if (dto.status === 'in_inspection') {
+    type = 'evaluation-accepted';
+  } else {
+    type = 'evaluation-updated';
   }
 
+  await this.createEvaluationNotification(dto.status, evaluation);
+
+  return evaluation;
+}
+
+
+ private async createEvaluationNotification(
+  status: 'pending' | 'in_inspection' | 'rejected' | 'no_show' | 'completed',
+  evaluation: Evaluation
+) {
+
+  const messages = {
+    pending: {
+      type: 'evaluation-created',
+      title: 'New evaluation request',
+      message: `New evaluation request for ${evaluation.title}`,
+      userId: evaluation.pawnshopId,
+      senderId: evaluation.userId
+    },
+
+    in_inspection: {
+      type: 'evaluation-accepted',
+      title: 'Evaluation accepted',
+      message: `Pawnshop agreed to inspect ${evaluation.title}`,
+      userId: evaluation.userId,
+      senderId: evaluation.pawnshopId
+    },
+
+    rejected: {
+      type: 'evaluation-updated',
+      title: 'Evaluation rejected',
+      message: `Pawnshop rejected ${evaluation.title}`,
+      userId: evaluation.userId,
+      senderId: evaluation.pawnshopId
+    },
+
+    no_show: {
+      type: 'evaluation-updated',
+      title: 'Inspection cancelled',
+      message: `Inspection cancelled because you did not arrive`,
+      userId: evaluation.userId,
+      senderId: evaluation.pawnshopId
+    },
+
+    completed: {
+      type: 'evaluation-updated',
+      title: 'Deal completed',
+      message: `Deal for ${evaluation.title} has been completed`,
+      userId: evaluation.userId,
+      senderId: evaluation.pawnshopId
+    }
+  };
+
+  const data = messages[status];
+
+  await this.notificationService.create({
+    userId: data.userId,
+    senderId: data.senderId,
+    type: data.type,
+    title: data.title,
+    message: data.message,
+    refId: (evaluation._id as string).toString(),
+    isRead: false,
+    data: {
+      evaluationId: evaluation._id,
+      status
+    }
+  });
+}
 
 }

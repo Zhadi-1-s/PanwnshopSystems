@@ -366,6 +366,15 @@
     "days ago":"дней назад",
     "Allow prolongation":"Разрешить продление",
     "overdue":"просроченный",
-    "Sent offers":"Отправленные предложения"
+    "Sent offers":"Отправленные предложения",
+    "Evaluation sent":"Оценка отправлена",
+    "Evaluation accepted":"Оценка принята",
+    "Inspection cancelled because you did not arrive":"Проверка отменена, так как вы не явились",
+    "Pawnshop rejected":"Ломбард отклонил",
+    "You sent an evaluation request for iPhone 15 Pro":"Вы отправили запрос на оценку iPhone 15 Pro",
+    "new":"Новый",
+    "used":"Бывший в употреблении",
+    "good":"Хороший",
+    "broken":"Сломанный"
 
 }

@@ -34,6 +34,6 @@ export class CreateEvaluationDto {
 }
 
 export class UpdateEvaluationStatusDto {
-  @IsEnum(['pending', 'in_inspection', 'rejected','no_show'])
-  status: 'pending' | 'in_inspection' | 'rejected'|'no_show';
+  @IsEnum(['pending', 'in_inspection', 'rejected','no_show','completed'])
+  status: 'pending' | 'in_inspection' | 'rejected'|'no_show'|'completed';
 }

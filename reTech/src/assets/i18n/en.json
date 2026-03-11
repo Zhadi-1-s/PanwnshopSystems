@@ -364,6 +364,15 @@
     "days ago":"days ago",
     "Allow prolongation":"Allow prolongation",
     "overdue":"overdue",
-    "Sent offers":"Sent offers"
+    "Sent offers":"Sent offers",
+    "Evaluation sent":"Evaluation sent",
+    "Evaluation accepted":"Evaluation accepted",
+    "Inspection cancelled because you did not arrive":"Inspection cancelled because you did not arrive",
+    "Pawnshop rejected":"Pawnshop rejected",
+    "You sent an evaluation request for iPhone 15 Pro":"You sent an evaluation request for iPhone 15 Pro",
+    "new":"New",
+    "used":"Used",
+    "good":"Good",
+    "broken":"Broken"
 
 }

@@ -18,13 +18,14 @@ import { UserService } from '../../../shared/services/user.service';
 import { NotificationService } from '../../../shared/services/notification.service';
 import { AppNotification } from '../../../shared/interfaces/notification.interface';
 import { OfferService } from '../../../shared/services/offer.service';
-import { Offer } from '../../../shared/interfaces/offer.interface';
+import { Evaluation, Offer } from '../../../shared/interfaces/offer.interface';
 import { OfferDetailComponent } from '../../components/modals/offer-detail/offer-detail.component';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { Slot } from '../../../shared/interfaces/slot.interface';
 import { SlotService } from '../../../shared/services/slot.service';
 import { SlotExtendComponent } from '../../components/modals/slot-extend/slot-extend.component';
 import { LombardService } from '../../../shared/services/lombard.service';
+import { EvaluationDetailComponent } from '../../components/modals/evaluation-detail/evaluation-detail.component';
 
 interface SlotView extends Slot {
   prolongationAllowed: boolean;
@@ -335,10 +336,23 @@ export class ProfileComponent implements OnInit {
       this.openProductDetails(n.refId);
     }
 
+    if(n.type === 'evaluation-created'){
+      this.openEvaluationDetailModal(n.refId);
+    }
+
   }
 
   openPawnshopDetail(id:string){
     this.router.navigate(['/pawnshop-detail',id])
+  }
+
+  openEvaluationDetailModal(evaluationId:string){
+    const modalRef = this.modalService.open(EvaluationDetailComponent,{
+      size:'lg',
+      centered:true
+    });
+
+    modalRef.componentInstance.evaluationId = evaluationId;
   }
 
   markAsRead(notification: AppNotification) {
@@ -420,7 +434,7 @@ export class ProfileComponent implements OnInit {
         ['rejected','completed','no_show','rejected_by_pawnshop'].includes(o.status)
       );
 
-    console.log('COMPLETED OFFERS:', completedOffers);
+      console.log('COMPLETED OFFERS:', completedOffers);
 
       return ['rejected','completed','no_show','rejected_by_pawnshop'].includes(offer.status);
 
