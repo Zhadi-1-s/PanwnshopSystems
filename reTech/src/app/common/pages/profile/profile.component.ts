@@ -446,6 +446,23 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  get sentEvaluationNotifications() {
+    const evalNotifications = (this.notificationsList || [])
+      .filter(n => ['evaluation-created','evaluation-accepted','evaluation-rejected'].includes(n.type));
+
+    // группируем по refId, чтобы оставить только одно уведомление на evaluation
+    const latestByEvaluation = Object.values(
+      evalNotifications.reduce((acc, n) => {
+        if (!acc[n.refId] || new Date(acc[n.refId].createdAt) < new Date(n.createdAt)) {
+          acc[n.refId] = n;
+        }
+        return acc;
+      }, {} as Record<string, AppNotification>)
+    );
+
+    return latestByEvaluation;
+  }
+
   get offerNotifications() {
 
     const offerTypes = [
