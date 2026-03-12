@@ -471,7 +471,7 @@ export class LombardProfileComponent implements OnInit{
 
   get unreadOfferNotifications() {
     return (this.notificationsList || []).filter(
-      n => ['new-offer','offer-accepted','offer-rejected'].includes(n.type) && !n.isRead
+      n => ['new-offer','offer-accepted','offer-rejected','evaluation-accepted'].includes(n.type) && !n.isRead
     );
   }
 

@@ -26,6 +26,7 @@ import { SlotService } from '../../../shared/services/slot.service';
 import { SlotExtendComponent } from '../../components/modals/slot-extend/slot-extend.component';
 import { LombardService } from '../../../shared/services/lombard.service';
 import { EvaluationDetailComponent } from '../../components/modals/evaluation-detail/evaluation-detail.component';
+import { EvaluationService } from '../../../shared/services/evaluation.service';
 
 interface SlotView extends Slot {
   prolongationAllowed: boolean;
@@ -44,6 +45,8 @@ export class ProfileComponent implements OnInit {
   error: string | null = null;
 
   offersById: Record<string, Offer> = {};
+
+  evaluationsById: Record<string, Evaluation> = {};
 
   myProducts:string[];
 
@@ -96,7 +99,8 @@ export class ProfileComponent implements OnInit {
               private offerService:OfferService,
               private router: Router,
               private slotService:SlotService,
-              private pawnshopService:LombardService
+              private pawnshopService:LombardService,
+              private evaluationService:EvaluationService
   ) {
 
   }
@@ -195,6 +199,7 @@ export class ProfileComponent implements OnInit {
       tap(products => console.log(products, 'loaded favorite products'))
     )
     this.loadOffers();
+    this.loadEvaluations();
     
   }
 
@@ -226,6 +231,39 @@ export class ProfileComponent implements OnInit {
 
         console.log('Offers by id loaded', this.offersById);
         console.log('pawnshopId',this.offersById[Object.keys(this.offersById)[0]]?.pawnshopId);
+      })
+    ).subscribe();
+  }
+
+  loadEvaluations() {
+    this.authService.currentUser$.pipe(
+      filter((user): user is User => !!user?._id),
+      take(1),
+      switchMap(user => this.notificationService.getUserNotifications(user._id)),
+      map(notifications =>
+        notifications.filter(n =>
+          ['evaluation-created','evaluation-accepted','evaluation-rejected'].includes(n.type) && !!n.refId
+        )
+      ),
+      switchMap(evaluationNotifications => {
+        if (!evaluationNotifications.length) return of([]);
+
+        return forkJoin(
+          evaluationNotifications.map(n =>
+            this.evaluationService.getEvaluationById(n.refId!).pipe(
+              catchError(() => of(null))
+            )
+          )
+        );
+      }),
+      tap(evaluations => {
+        this.evaluationsById = Object.fromEntries(
+          evaluations
+            .filter((e): e is Evaluation => !!e && !!e._id)
+            .map(e => [e._id!, e])
+        );
+
+        console.log('Evaluations by id loaded', this.evaluationsById);
       })
     ).subscribe();
   }
@@ -336,7 +374,7 @@ export class ProfileComponent implements OnInit {
       this.openProductDetails(n.refId);
     }
 
-    if(n.type === 'evaluation-created'){
+    if(n.type === 'evaluation-created' || n.type === 'evaluation-accepted' || n.type === 'evaluation-updated'){
       this.openEvaluationDetailModal(n.refId);
     }
 
@@ -379,12 +417,21 @@ export class ProfileComponent implements OnInit {
 
   get activeOfferNotifications() {
     return (this.notificationsList || []).filter(n => {
-      if (!['new-offer','offer-accepted','offer-rejected'].includes(n.type)) {
+
+      if (![
+        'new-offer',
+        'offer-accepted',
+        'offer-rejected',
+        'evaluation-accepted'
+      ].includes(n.type)) {
         return false;
       }
 
-      const offer = this.getOfferByNotification(n);
-      return offer && ['pending', 'in_inspection'].includes(offer.status);
+      const entity = this.getEntityByNotification(n);
+      console.log('Checking notification', n.type, n.refId, 'entity', entity);
+      if (!entity) return false;
+
+      return ['pending','in_inspection'].includes(entity.status);
     });
   }
 
@@ -399,14 +446,13 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-
   get offerNotifications() {
 
     const offerTypes = [
       'new-offer',
       'offer-accepted',
       'offer-rejected',
-      'offer-cancelled',
+      'offer-canceled',
       'evaluation-created',
       'evaluation-accepted',
       'evaluation-updated'
@@ -419,9 +465,9 @@ export class ProfileComponent implements OnInit {
       }
 
       // SENT (evaluation попадает сюда)
-      if (this.offerSection === 'sent') {
-        return n.type === 'evaluation-created';
-      }
+       if (this.offerSection === 'sent') {
+          return ['evaluation-created', 'evaluation-accepted', 'evaluation-rejected', 'evaluation-updated'].includes(n.type);
+        }
 
       const offer = this.offersById?.[n.refId];
       if (!offer) return false;
@@ -429,12 +475,6 @@ export class ProfileComponent implements OnInit {
       if (this.offerSection === 'active') {
         return offer.status === 'pending' || offer.status === 'in_inspection';
       }
-
-     const completedOffers = Object.values(this.offersById || {}).filter(o =>
-        ['rejected','completed','no_show','rejected_by_pawnshop'].includes(o.status)
-      );
-
-      console.log('COMPLETED OFFERS:', completedOffers);
 
       return ['rejected','completed','no_show','rejected_by_pawnshop'].includes(offer.status);
 
@@ -449,6 +489,22 @@ export class ProfileComponent implements OnInit {
         'evaluation-updated'
       ].includes(n.type)
     );
+  }
+
+  getEntityByNotification(n: AppNotification): Offer | Evaluation | null {
+
+    const evaluationTypes = [
+      'evaluation-created',
+      'evaluation-accepted',
+      'evaluation-rejected',
+      'evaluation-updated'
+    ];
+
+    if (evaluationTypes.includes(n.type)) {
+      return this.evaluationsById?.[n.refId] ?? null;
+    }
+
+    return this.offersById?.[n.refId] ?? null;
   }
 
   get systemNotifications() {

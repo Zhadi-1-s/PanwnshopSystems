@@ -79,7 +79,6 @@ export class EvaluationService {
   return evaluation;
 }
 
-
  private async createEvaluationNotification(
   status: 'pending' | 'in_inspection' | 'rejected' | 'no_show' | 'completed',
   evaluation: Evaluation
