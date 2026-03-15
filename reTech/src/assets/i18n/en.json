@@ -373,6 +373,11 @@
     "new":"New",
     "used":"Used",
     "good":"Good",
-    "broken":"Broken"
+    "broken":"Broken",
+    "Pawnshop agreed to inspect": "Pawnshop agreed to inspect",
+    "Bring the item for inspection. The price may vary up to 10% depending on condition": "Bring the item for inspection. The price may vary up to 10% depending on condition",
+    "Total to repay":"Total to repay",
+    "Bring the item for inspection. The price may vary up to {{priceAdjustmentLimitPercent}}% depending on condition":"Bring the item for inspection. The price may vary up to {{priceAdjustmentLimitPercent}}% depending on condition",
+    "Client will bring the item for inspection":"Client will bring the item for inspection"
 
 }

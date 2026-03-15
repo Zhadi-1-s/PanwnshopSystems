@@ -375,6 +375,11 @@
     "new":"Новый",
     "used":"Бывший в употреблении",
     "good":"Хороший",
-    "broken":"Сломанный"
+    "broken":"Сломанный",
+    "Pawnshop agreed to inspect": "Ломбард согласен на осмотр",
+    "Bring the item for inspection. The price may vary up to 10% depending on condition": "Принесите товар для осмотра. Цена может варьироваться до 10% в зависимости от состояния",
+    "Total to repay":"Итоговая сумма к возврату",
+    "Bring the item for inspection. The price may vary up to {{priceAdjustmentLimitPercent}}% depending on condition":"Принесите товар для осмотра. Цена может варьироваться до {{priceAdjustmentLimitPercent}}% в зависимости от состояния",
+    "Client will bring the item for inspection":"Клиент принесет товар для осмотра"
 
 }

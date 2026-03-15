@@ -464,7 +464,6 @@ export class ProfileComponent implements OnInit {
   }
 
   get offerNotifications() {
-
     const offerTypes = [
       'new-offer',
       'offer-accepted',
@@ -475,16 +474,25 @@ export class ProfileComponent implements OnInit {
       'evaluation-updated'
     ];
 
-    return (this.notificationsList || []).filter(n => {
+    const notifications = (this.notificationsList || []).filter(n => offerTypes.includes(n.type));
 
-      if (!offerTypes.includes(n.type)) {
-        return false;
-      }
-
-      // SENT (evaluation попадает сюда)
-       if (this.offerSection === 'sent') {
-          return ['evaluation-created', 'evaluation-accepted', 'evaluation-rejected', 'evaluation-updated'].includes(n.type);
+    // группируем по refId
+    const latestByRefId = Object.values(
+      notifications.reduce((acc, n) => {
+        // если у нас уже есть уведомление для этого refId, оставляем только более свежее
+        if (!acc[n.refId] || new Date(acc[n.refId].createdAt) < new Date(n.createdAt)) {
+          acc[n.refId] = n;
         }
+        return acc;
+      }, {} as Record<string, AppNotification>)
+    );
+
+    // фильтруем по статусу/разделу
+    return latestByRefId.filter(n => {
+      // SENT: только evaluation
+      if (this.offerSection === 'sent') {
+        return ['evaluation-created', 'evaluation-accepted', 'evaluation-rejected', 'evaluation-updated'].includes(n.type);
+      }
 
       const offer = this.offersById?.[n.refId];
       if (!offer) return false;
@@ -494,7 +502,6 @@ export class ProfileComponent implements OnInit {
       }
 
       return ['rejected','completed','no_show','rejected_by_pawnshop'].includes(offer.status);
-
     });
   }
 

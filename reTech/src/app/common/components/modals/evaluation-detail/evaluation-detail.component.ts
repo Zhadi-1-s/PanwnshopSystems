@@ -34,8 +34,12 @@ export class EvaluationDetailComponent implements OnInit {
 
   loading = false;
 
+  loanInfo: any;
+
   pawnshop:PawnshopProfile;
   
+  priceAdjustmentLimitPercent: number;
+
   loanCalculation: {
     loanAmount: number;
     interestAmount: number;
@@ -56,58 +60,55 @@ export class EvaluationDetailComponent implements OnInit {
   ngOnInit() {
     this.loading = true;
 
-    // Поток для evaluation
     this.evaluation$ = this.evaluationService.getEvaluationById(this.evaluationId).pipe(
-      tap(evaluation => this.evaluation = evaluation)
+      tap(evaluation => {
+        this.evaluation = evaluation;
+
+        this.pawnShopService.getLombardById(evaluation.pawnshopId)
+          .subscribe(pawnshop => {
+            this.pawnshop = pawnshop;
+            this.priceAdjustmentLimitPercent = pawnshop.terms?.priceAdjustmentLimitPercent ?? 10;
+            if (evaluation?.expectedPrice && pawnshop?.terms) {
+              this.loanCalculation = this.calculateLoan(
+                evaluation.expectedPrice,
+                evaluation.termDays,
+                pawnshop.terms
+              );
+            }
+
+            this.loading = false;
+          });
+      })
     );
 
-    // Поток для pawnshop и расчёта займа
-    this.evaluation$.pipe(
-      switchMap(evaluation => this.pawnShopService.getLombardById(evaluation.pawnshopId)),
-      tap(pawnshop => {
-        this.pawnshop = pawnshop;
-        console.log(pawnshop, 'pawnshop for evaluation');
-
-        if (this.evaluation && this.pawnshop?.terms) {
-          this.loanCalculation = this.calculateLoan(
-            this.evaluation.expectedPrice,
-            this.evaluation.termDays,
-            this.pawnshop.terms
-          );
-          console.log(this.loanCalculation, 'loan calculation');
-        }
-
-        this.loading = false;
-      })
-    ).subscribe();
-
-    // Текущий пользователь
-    this.authService.currentUser$.pipe(
-      tap(user => this.userRole = user.role)
-    ).subscribe();
+    this.authService.currentUser$
+      .subscribe(user => this.userRole = user.role);
   }
 
   private calculateLoan(price: number, termDays: number, terms: PawnshopTerms) {
-    const interestRate = terms.interest?.rate ?? 0; // ставка %
+
+    const interestRate = terms.interest?.rate ?? 0;
     const maxAmount = terms.limits?.maxAmount ?? Infinity;
     const minAmount = terms.limits?.minAmount ?? 0;
-    const fee = terms.fees?.type === 'percent' ? price * (terms.fees.value / 100) :
-                terms.fees?.type === 'fixed' ? terms.fees.value : 0;
 
-    // Корректируем сумму займа с учётом max/min
+    const fee =
+      terms.fees?.type === 'percent'
+        ? price * (terms.fees.value / 100)
+        : terms.fees?.type === 'fixed'
+        ? terms.fees.value
+        : 0;
+
     let loanAmount = Math.min(Math.max(price, minAmount), maxAmount);
 
-    // Применяем проценты по ставке
-    const interestAmount = loanAmount * (interestRate / 100) * (termDays / 30); // примерно месячный расчёт
+    const interestAmount = loanAmount * (interestRate / 100) * (termDays / 30);
 
-    // Итоговая сумма к возврату
     const totalRepayable = loanAmount + interestAmount + fee;
 
     return {
-      loanAmount,
-      interestAmount,
-      fee,
-      totalRepayable,
+      loanAmount: Math.round(loanAmount),
+      interestAmount: Math.round(interestAmount),
+      fee: Math.round(fee),
+      totalRepayable: Math.round(totalRepayable),
       termDays,
       prolongationAllowed: terms.prolongationAllowed ?? false,
       lateFeePercent: terms.lateFeePercent ?? 0
