@@ -27,6 +27,7 @@ import { SlotExtendComponent } from '../../components/modals/slot-extend/slot-ex
 import { LombardService } from '../../../shared/services/lombard.service';
 import { EvaluationDetailComponent } from '../../components/modals/evaluation-detail/evaluation-detail.component';
 import { EvaluationService } from '../../../shared/services/evaluation.service';
+import { FormsModule } from '@angular/forms';
 
 interface SlotView extends Slot {
   prolongationAllowed: boolean;
@@ -35,7 +36,7 @@ interface SlotView extends Slot {
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslateModule, NgbTooltipModule],
+  imports: [CommonModule, RouterModule, TranslateModule, NgbTooltipModule,FormsModule],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'] 
 })
@@ -78,9 +79,23 @@ export class ProfileComponent implements OnInit {
 
   openedMenuIndex: number | null = null;
 
-  offerSection: 'active' | 'completed' | 'sent' = 'active';
+  offerSection: 'received' | 'sent' = 'received';
 
   pawnshopIdFromOffer:string;
+
+  statusFilter = {
+    pending: false,
+    in_inspection: false,
+    completed: false,
+    rejected: false,
+    no_show: false,
+    in_loan: false,
+    rejected_by_pawnshop: false
+  };
+  sortByDate: 'newest' | 'oldest' = 'newest';
+
+  offerFilter: 'all' | 'active' | 'completed' = 'all';
+  isOfferFilterOpen = false;
 
   sections = [
     { id: 'offers', label: 'Offers' },
@@ -410,6 +425,78 @@ export class ProfileComponent implements OnInit {
     );
   }
 
+  get filteredOfferNotifications() {
+    let notifications = (this.notificationsList || []).filter(n =>
+      [
+        'new-offer',
+        'offer-accepted',
+        'offer-rejected',
+        'offer-canceled',
+        'evaluation-created',
+        'evaluation-accepted',
+        'evaluation-updated'
+      ].includes(n.type)
+    );
+
+    // 🔹 группировка по refId (оставляем последнее)
+    const latestByRefId = Object.values(
+      notifications.reduce((acc, n) => {
+        if (!acc[n.refId] || new Date(acc[n.refId].createdAt) < new Date(n.createdAt)) {
+          acc[n.refId] = n;
+        }
+        return acc;
+      }, {} as Record<string, AppNotification>)
+    );
+
+    // 🔹 SENT / RECEIVED
+    if (this.offerSection === 'sent') {
+      notifications = latestByRefId.filter(n =>
+        ['evaluation-created','evaluation-accepted','evaluation-updated'].includes(n.type)
+      );
+    } else {
+      notifications = latestByRefId.filter(n =>
+        ['new-offer','offer-accepted','offer-rejected','offer-canceled'].includes(n.type)
+      );
+    }
+
+    // 🔹 статус фильтр (checkbox)
+    const activeStatuses = Object.entries(this.statusFilter)
+      .filter(([_, v]) => v)
+      .map(([k]) => k);
+
+    if (activeStatuses.length > 0) {
+      notifications = notifications.filter(n => {
+        const item = this.offersById[n.refId] || this.evaluationsById[n.refId];
+        if (!item) return false;
+
+        return activeStatuses.includes(item.status);
+      });
+    }
+
+    // 🔹 сортировка
+    notifications.sort((a, b) => {
+      if (this.sortByDate === 'newest') {
+        return +new Date(a.createdAt) - +new Date(b.createdAt);
+      }
+      return +new Date(b.createdAt) - +new Date(a.createdAt);
+    });
+
+    return notifications;
+  }
+
+  getActiveFilterCount(): number {
+    return Object.values(this.statusFilter).filter(v => v).length;
+  }
+  clearAllFilters() {
+    // сброс чекбоксов
+    Object.keys(this.statusFilter).forEach(key => {
+      this.statusFilter[key] = false;
+    });
+
+    // сброс сортировки (по умолчанию)
+    this.sortByDate = 'newest';
+  }
+
   private getOfferByNotification(n: AppNotification): Offer | null {
     this.pawnshopIdFromOffer = this.offersById[Object.keys(this.offersById)[0]]?.pawnshopId;
     return this.offersById?.[n.refId] ?? null;
@@ -497,9 +584,9 @@ export class ProfileComponent implements OnInit {
       const offer = this.offersById?.[n.refId];
       if (!offer) return false;
 
-      if (this.offerSection === 'active') {
-        return offer.status === 'pending' || offer.status === 'in_inspection';
-      }
+      // if (this.offerSection === 'active') {
+      //   return offer.status === 'pending' || offer.status === 'in_inspection';
+      // }
 
       return ['rejected','completed','no_show','rejected_by_pawnshop'].includes(offer.status);
     });

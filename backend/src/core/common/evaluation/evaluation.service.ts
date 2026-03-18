@@ -7,6 +7,7 @@ import { UpdateEvaluationStatusDto } from './evaluation.dto';
 import { NotificationService } from '../notification/notification.service';
 import { send } from 'process';
 import { EvaluationDocument } from 'src/core/database/schemas/evaluation.schema';
+import { Cron,CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class EvaluationService {
@@ -142,5 +143,24 @@ export class EvaluationService {
     }
   });
 }
+
+  @Cron(CronExpression.EVERY_HOUR) // можно реже, например EVERY_5_MINUTES
+  async handleExpiredEvaluations() {
+    const now = new Date();
+
+    const expired = await this.evaluationModel.find({
+      status: 'in_inspection',
+      expiresAt: { $lte: now }
+    });
+
+    for (const evaluation of expired) {
+      evaluation.status = 'no_show';
+      evaluation.updatedAt = new Date();
+
+      await evaluation.save();
+
+      await this.createEvaluationNotification('no_show', evaluation);
+    }
+  }
 
 }

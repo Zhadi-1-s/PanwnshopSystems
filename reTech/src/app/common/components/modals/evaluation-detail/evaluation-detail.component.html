@@ -191,6 +191,9 @@
                 {{ 'Bring the item for inspection. The price may vary up to {{priceAdjustmentLimitPercent}}% depending on condition'
                     | translate:{ priceAdjustmentLimitPercent } }}
               </p>
+              <p class="text-sm">
+                {{ 'You must bring the item within 24 hours' | translate }}
+              </p>
             </div>
 
             <div *ngIf="evaluation.status === 'rejected'" 
