@@ -31,6 +31,10 @@ export class CreateEvaluationDto {
   @IsNumber()
   termDays:number
 
+  @IsOptional()
+  @IsEnum(['pending', 'in_inspection', 'rejected','no_show','completed'])
+  status?: 'pending' | 'in_inspection' | 'rejected'|'no_show'|'completed' = 'pending';
+
 }
 
 export class UpdateEvaluationStatusDto {

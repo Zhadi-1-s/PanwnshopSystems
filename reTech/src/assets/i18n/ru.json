@@ -382,6 +382,15 @@
     "Bring the item for inspection. The price may vary up to {{priceAdjustmentLimitPercent}}% depending on condition":"Принесите товар для осмотра. Цена может варьироваться до {{priceAdjustmentLimitPercent}}% в зависимости от состояния",
     "Client will bring the item for inspection":"Клиент принесет товар для осмотра",
     "You must bring the item within 24 hours":"Вы должны принести товар в течение 24 часов",
-    "Received offers":"Полученные предложения"
+    "Received offers":"Полученные предложения",
+    "Refine your results":"Уточните результаты",
+    "Reset":"Сбросить",
+    "No filters applied":"Фильтры не применены",
+    "No offers received yet":"Пока нет полученных предложений",
+    "Rejected by Pawnshop":"Отклонено ломбардом",
+    "Pending":"В ожидании",
+    "Accepted":"Принято",
+    "In Inspection":"На проверке",
+    "In Loan":"В займе"
 
 }

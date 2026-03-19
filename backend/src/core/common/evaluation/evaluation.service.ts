@@ -141,7 +141,17 @@ export class EvaluationService {
       evaluationId: evaluation._id,
       status
     }
-  });
+  })
+    await this.notificationService.create({
+    userId: evaluation.userId,   // теперь для пользователя
+    senderId: evaluation.userId, // кто создал
+    type: 'evaluation-created',
+    title: `Your evaluation request for ${evaluation.title}`,
+    message: `You sent a new evaluation request`,
+    refId: (evaluation._id as string).toString(),
+    isRead: true, // можно сразу отметить как прочитанное для себя
+    data: { evaluationId: evaluation._id, status: 'pending' }
+  });;
 }
 
   @Cron(CronExpression.EVERY_HOUR) // можно реже, например EVERY_5_MINUTES

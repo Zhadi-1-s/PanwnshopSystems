@@ -56,6 +56,17 @@ export class ProfileComponent implements OnInit {
   selectedTab: 'active' | 'inactive' = 'active';
   activeSection: 'offers' | 'system' | 'chats' | 'others' | 'loans'= 'offers';
 
+  // Add to your component
+  statusOptions = [
+    { key: 'rejected', label: 'Rejected', color: '#ef4444' },
+    { key: 'completed', label: 'Completed', color: '#10b981' },
+    { key: 'pending', label: 'Pending', color: '#f59e0b' },
+    { key: 'in_inspection', label: 'In Inspection', color: '#3b82f6' },
+    { key: 'in_loan', label: 'In Loan', color: '#8b5cf6' },
+    { key: 'no_show', label: 'No Show', color: '#64748b' },
+    { key: 'rejected_by_pawnshop', label: 'Rejected by Pawnshop', color: '#f97316' }
+  ];
+
   user:User;
 
   hasActiveLoan:false;
@@ -133,9 +144,11 @@ export class ProfileComponent implements OnInit {
       tap(notifications => {
         // Сохраняем все уведомления
         this.notificationsList = notifications;
+        console.log(notifications, 'loaded notifications');
         // console.log(notifications, 'loaded notifications');
       }),
       switchMap(notifications => {
+        
         // Фильтруем только уведомления напрямую на продукты
         const productNotifications = notifications.filter(n =>
           !['new-offer', 'offer-accepted', 'offer-rejected','offer-cancelled','evaluation-updated','evaluation-accepted','evaluation-created'].includes(n.type)
