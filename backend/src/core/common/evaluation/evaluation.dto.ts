@@ -32,12 +32,12 @@ export class CreateEvaluationDto {
   termDays:number
 
   @IsOptional()
-  @IsEnum(['pending', 'in_inspection', 'rejected','no_show','completed'])
-  status?: 'pending' | 'in_inspection' | 'rejected'|'no_show'|'completed' = 'pending';
+  @IsEnum(['pending', 'in_inspection', 'rejected','no_show','completed','expired'])
+  status?: 'pending' | 'in_inspection' | 'rejected'|'no_show'|'completed' | 'expired' = 'pending';
 
 }
 
 export class UpdateEvaluationStatusDto {
-  @IsEnum(['pending', 'in_inspection', 'rejected','no_show','completed'])
-  status: 'pending' | 'in_inspection' | 'rejected'|'no_show'|'completed';
+  @IsEnum(['pending', 'in_inspection', 'rejected','no_show','completed','expired'])
+  status: 'pending' | 'in_inspection' | 'rejected'|'no_show'|'completed' | 'expired';
 }

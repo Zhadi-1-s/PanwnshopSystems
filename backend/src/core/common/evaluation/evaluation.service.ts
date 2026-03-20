@@ -22,7 +22,8 @@ export class EvaluationService {
       userId: dto.userId,
       pawnshopId: dto.pawnshopId,
       title: dto.title,
-      expectedPrice: dto.expectedPrice
+      expectedPrice: dto.expectedPrice,
+      expiresAt: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000) 
     });
 
     if (duplicate) {
@@ -81,7 +82,7 @@ export class EvaluationService {
 }
 
  private async createEvaluationNotification(
-  status: 'pending' | 'in_inspection' | 'rejected' | 'no_show' | 'completed',
+  status: 'pending' | 'in_inspection' | 'rejected' | 'no_show' | 'completed' | 'expired',
   evaluation: Evaluation
 ) {
 
@@ -154,22 +155,32 @@ export class EvaluationService {
   });;
 }
 
-  @Cron(CronExpression.EVERY_HOUR) // можно реже, например EVERY_5_MINUTES
+  @Cron(CronExpression.EVERY_HOUR)
   async handleExpiredEvaluations() {
     const now = new Date();
 
     const expired = await this.evaluationModel.find({
-      status: 'in_inspection',
+      status: { $in: ['in_inspection', 'pending'] },
       expiresAt: { $lte: now }
     });
 
     for (const evaluation of expired) {
-      evaluation.status = 'no_show';
-      evaluation.updatedAt = new Date();
 
+      if (evaluation.status === 'in_inspection') {
+        evaluation.status = 'no_show';
+      }
+
+      if (evaluation.status === 'pending') {
+        evaluation.status = 'expired';
+      }
+
+      evaluation.updatedAt = new Date();
       await evaluation.save();
 
-      await this.createEvaluationNotification('no_show', evaluation);
+      await this.createEvaluationNotification(
+        evaluation.status as any,
+        evaluation
+      );
     }
   }
 
