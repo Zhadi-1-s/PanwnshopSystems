@@ -32,7 +32,7 @@ import { EvaluationDetailComponent } from '../../components/modals/evaluation-de
 import { OfferService } from '../../../shared/services/offer.service';
 import { UserService } from '../../../shared/services/user.service';
 import { SlotDetailComponent } from '../../components/modals/slot-detail/slot-detail.component';
-import { Offer } from '../../../shared/interfaces/offer.interface';
+import { Evaluation, Offer } from '../../../shared/interfaces/offer.interface';
 import { OfferDetailComponent } from '../../components/modals/offer-detail/offer-detail.component';
 import { RouterModule } from '@angular/router';
 
@@ -113,6 +113,8 @@ export class LombardProfileComponent implements OnInit{
 
   products:Product[];
 
+  evaluationsById:Evaluation[];
+
   constructor(
     private lombardService:LombardService,
     private authService:AuthService,
@@ -166,10 +168,8 @@ export class LombardProfileComponent implements OnInit{
       ),
 
       tap(notifications => {
-        this.notificationsList = [
-          ...(this.notificationsList || []),
-          ...notifications
-        ];
+        this.notificationsList = notifications;
+        console.log('Initial notifications loaded:', this.notificationsList);
       }),
 
       switchMap(notifications => {
@@ -216,6 +216,12 @@ export class LombardProfileComponent implements OnInit{
                       catchError(() => of({ id: n.refId, data: null }))
                     );
 
+
+                  case 'evaluation-created':
+                    return this.evaluationService.getEvaluationById(n.refId).pipe(
+                      map(data => ({ id: n.refId, data })),
+                      catchError(() => of({ id: n.refId, data: null }))
+                    );
                   // ===== CHATS =====
                   case 'new-message':
 
@@ -413,7 +419,7 @@ export class LombardProfileComponent implements OnInit{
   
   get offerNotifications() {
     let offers = (this.notificationsList || []).filter(n =>
-      ['new-offer', 'sent-offer'].includes(n.type)
+      ['new-offer', 'sent-offer', 'evaluation-created'].includes(n.type)
     );
 
     // 1️⃣ sent / received
@@ -422,13 +428,13 @@ export class LombardProfileComponent implements OnInit{
     }
 
     if (this.offerFilter === 'received') {
-      offers = offers.filter(n => n.type === 'new-offer');
+      offers = offers.filter(n => n.type === 'new-offer' || n.type === 'evaluation-created');
     }
 
     // 2️⃣ status (rejected / sold)
     if (this.statusFilter.rejected || this.statusFilter.completed || this.statusFilter.in_inspection || this.statusFilter.pending) {
       offers = offers.filter(n => {
-        const status = n.data?.status; // <-- важно
+        const status = this.getNotificationStatus(n) // <-- важно
         return (
           (this.statusFilter.rejected && status === 'rejected') ||
           (this.statusFilter.completed && status === 'completed') || 
@@ -473,6 +479,22 @@ export class LombardProfileComponent implements OnInit{
     return (this.notificationsList || []).filter(
       n => ['new-offer','offer-accepted','offer-rejected','evaluation-accepted'].includes(n.type) && !n.isRead
     );
+  }
+
+  getNotificationStatus(n: any): string | null {
+    // 1️⃣ Если это оффер
+    if (['sent-offer','new-offer','offer-updated'].includes(n.type)) {
+      return n.data?.status || n.data?.offerStatus || null;
+    }
+
+    // 2️⃣ Если это evaluation-created
+    if (n.type === 'evaluation-created') {
+      const evalObj = this.evaluationsById?.[n.refId]; // предполагаем, что ты заранее загрузил все evaluations
+      return evalObj?.status || null;
+    }
+
+    // 3️⃣ Для обычных уведомлений
+    return null;
   }
 
   getStars(rating: number = 0): string {
@@ -634,7 +656,7 @@ export class LombardProfileComponent implements OnInit{
           this.openProductDetail(product);
         }
       }
-    } else if (n.type === 'new-offer') {
+    } else if (n.type === 'new-offer' || n.type === 'evaluation-created') {
       this.openEvaluationDetail(n.refId);
     }
   }

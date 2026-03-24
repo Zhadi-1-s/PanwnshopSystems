@@ -34,7 +34,7 @@ export interface Evaluation{
     expectedPrice?: number;
     termDays:number;
  
-    status: 'pending' | 'in_inspection' | 'rejected' | 'no_show' | 'completed';
+    status: 'pending' | 'in_inspection' | 'rejected' | 'no_show' | 'completed' | 'expired';
 
     createdAt?: Date;
 
