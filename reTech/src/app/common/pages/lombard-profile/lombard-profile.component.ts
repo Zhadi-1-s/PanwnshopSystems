@@ -113,7 +113,7 @@ export class LombardProfileComponent implements OnInit{
 
   products:Product[];
 
-  evaluationsById:Evaluation[];
+  evaluationsById: { [id: string]: Evaluation | null } = {};
 
   constructor(
     private lombardService:LombardService,
@@ -219,8 +219,23 @@ export class LombardProfileComponent implements OnInit{
 
                   case 'evaluation-created':
                     return this.evaluationService.getEvaluationById(n.refId).pipe(
-                      map(data => ({ id: n.refId, data })),
-                      catchError(() => of({ id: n.refId, data: null }))
+                      map(evaluation => {
+                        // создаём/дополняем объект evaluationsById
+                        this.evaluationsById = {
+                          ...(this.evaluationsById || {}),
+                          [n.refId]: evaluation
+                        };
+
+                        return { id: n.refId, data: evaluation }; // возвращаем для refs$
+                      }),
+                      catchError(() => {
+                        // если ошибка, всё равно создаём пустой объект
+                        this.evaluationsById = {
+                          ...(this.evaluationsById || {}),
+                          [n.refId]: null
+                        };
+                        return of({ id: n.refId, data: null });
+                      })
                     );
                   // ===== CHATS =====
                   case 'new-message':
@@ -481,19 +496,19 @@ export class LombardProfileComponent implements OnInit{
     );
   }
 
-  getNotificationStatus(n: any): string | null {
-    // 1️⃣ Если это оффер
-    if (['sent-offer','new-offer','offer-updated'].includes(n.type)) {
-      return n.data?.status || n.data?.offerStatus || null;
+  getNotificationStatus(n: AppNotification): string | null {
+    if (!n) return null;
+
+    // 1. Статус оффера
+    if (['new-offer','sent-offer','offer-updated'].includes(n.type)) {
+      return n.data?.status || null;
     }
 
-    // 2️⃣ Если это evaluation-created
-    if (n.type === 'evaluation-created') {
-      const evalObj = this.evaluationsById?.[n.refId]; // предполагаем, что ты заранее загрузил все evaluations
-      return evalObj?.status || null;
+    // 2. Статус оценки
+    if (['evaluation-created','evaluation-updated'].includes(n.type)) {
+      return this.evaluationsById?.[n.refId]?.status || null;
     }
 
-    // 3️⃣ Для обычных уведомлений
     return null;
   }
 
