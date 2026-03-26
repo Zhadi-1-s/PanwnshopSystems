@@ -383,6 +383,8 @@ export class ProfileComponent implements OnInit {
 
   onNotificationClick(n: AppNotification) {
 
+    console.log('CLICK', n);
+    
     if (!n.isRead) {
       this.markAsRead(n);
     }
@@ -422,10 +424,14 @@ export class ProfileComponent implements OnInit {
   }
 
   markAsRead(notification: AppNotification) {
+    console.log('Marking as read', notification._id);
     if (!notification.isRead) {
-      this.notificationService.markAsRead(notification._id!).subscribe(() => {
-        notification.isRead = true;
-      });
+      this.notificationService.markAsRead(notification._id).subscribe({
+        next: () => {
+          notification.isRead = true;
+        },
+        error: err => console.error('Failed to mark notification as read', err)
+      })
     }
   }
 
@@ -660,10 +666,12 @@ export class ProfileComponent implements OnInit {
   }
 
   get unreadOfferNotifications() {
-    return (this.notificationsList || []).filter(n =>
-      ['new-offer','offer-accepted','offer-rejected','offer-cancelled','evaluation-updated','evaluation-accepted','evaluation-created'].includes(n.type) && !n.isRead
+    const unreaded = (this.notificationsList || []).filter(n =>
+      ['new-offer','offer-accepted','offer-rejected','offer-canceled','evaluation-created','evaluation-accepted','evaluation-updated'].includes(n.type) && !n.isRead
     );
+    return unreaded;
   }
+
 
   removeFromFavorites(productId:string){
     if(this.user){

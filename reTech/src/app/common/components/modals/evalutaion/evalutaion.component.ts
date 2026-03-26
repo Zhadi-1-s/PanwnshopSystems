@@ -187,7 +187,6 @@ export class EvalutaionComponent implements OnInit {
       )
       .subscribe({
         next: () => {
-          this.activeModal.close(); // ← ЗАКРЫВАЕМ МОДАЛКУ
           this.closed.emit();
         },
         error: (err) => {

@@ -180,6 +180,21 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <p class="font-medium">{{ 'Client will bring the item for inspection' | translate }}</p>
+
+              <div class="flex gap-3 mt-2">
+                <button
+                  class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
+                  (click)="onActivateDeal(evaluation)">
+                  {{'Activate deal' | translate }}
+                </button>
+
+                <button
+                  class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
+                  (click)="onRejectDeal(evaluation)">
+                  {{'Reject deal' | translate }}
+                </button>
+              </div>
+
             </div>
 
             <div *ngIf="evaluation.status === 'in_inspection' && userRole === 'user'" 
@@ -193,6 +208,9 @@
               </p>
               <p class="text-sm">
                 {{ 'You must bring the item within 24 hours' | translate }}
+              </p>
+              <p class="text-sm text-red-600">
+                {{ 'Time left' | translate }}: {{ remainingTime }}
               </p>
             </div>
 

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { EvaluationService } from '../../../../shared/services/evaluation.service';
 import { Evaluation } from '../../../../shared/interfaces/offer.interface';
 import { Observable, switchMap, tap } from 'rxjs';
@@ -19,7 +19,7 @@ import { PawnshopProfile } from '../../../../shared/interfaces/shop-profile.inte
   templateUrl: './evaluation-detail.component.html',
   styleUrl: './evaluation-detail.component.scss'
 })
-export class EvaluationDetailComponent implements OnInit {
+export class EvaluationDetailComponent implements OnInit, OnDestroy {
 
   @Input() evaluationId:string;
 
@@ -39,6 +39,9 @@ export class EvaluationDetailComponent implements OnInit {
   pawnshop:PawnshopProfile;
   
   priceAdjustmentLimitPercent: number;
+
+  remainingTime: string = '';
+  interval: any;
 
   loanCalculation: {
     loanAmount: number;
@@ -83,6 +86,33 @@ export class EvaluationDetailComponent implements OnInit {
 
     this.authService.currentUser$
       .subscribe(user => this.userRole = user.role);
+
+      this.startTimer();
+  }
+
+  startTimer() {
+    this.interval = setInterval(() => {
+      const now = new Date().getTime();
+      const expires = new Date(this.evaluation.expiresAt).getTime();
+
+      const diff = expires - now;
+
+      if (diff <= 0) {
+        this.remainingTime = 'Expired';
+        clearInterval(this.interval);
+        return;
+      }
+
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      this.remainingTime = `${hours}h ${minutes}m ${seconds}s`;
+    }, 1000);
+  }
+
+  ngOnDestroy() {
+    clearInterval(this.interval);
   }
 
   private calculateLoan(price: number, termDays: number, terms: PawnshopTerms) {
@@ -140,6 +170,36 @@ export class EvaluationDetailComponent implements OnInit {
     this.loading = true;
 
     this.evaluationService.updateStatus(id, 'in_inspection').subscribe({
+      next: res => {
+        this.evaluation.status = res.status;
+        this.loading = false;
+        this.close();
+      },
+      error: err => {
+        console.error(err.message);
+        this.loading = false;
+      }
+    });
+  }
+
+  onActivateDeal(evaluation: any) {
+    // логика позже
+    this.evaluationService.updateStatus(evaluation._id, 'completed').subscribe({
+      next: res => {
+        this.evaluation.status = res.status;
+        this.loading = false;
+        this.close();
+      },
+      error: err => {
+        console.error(err.message);
+        this.loading = false;
+      }
+    });
+  }
+
+  onRejectDeal(evaluation: any) {
+    // логика позже
+    this.evaluationService.updateStatus(evaluation._id, 'rejected').subscribe({
       next: res => {
         this.evaluation.status = res.status;
         this.loading = false;

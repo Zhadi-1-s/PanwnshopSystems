@@ -391,6 +391,8 @@
     "Pending":"В ожидании",
     "Accepted":"Принято",
     "In Inspection":"На проверке",
-    "In Loan":"В займе"
+    "In Loan":"В займе",
+    "Activate deal":"Активировать сделку",
+    "Reject deal":"Отклонить сделку"
 
 }

@@ -389,6 +389,8 @@
     "Pending":"Pending",
     "Accepted":"Accepted",
     "In Inspection":"In inspection",
-    "In Loan":"In loan"
+    "In Loan":"In loan",
+    "Activate deal":"Activate deal",
+    "Reject deal":"Reject deal"
 
 }

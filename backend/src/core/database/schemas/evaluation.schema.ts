@@ -44,8 +44,8 @@ export class Evaluation extends Document {
   @Prop()
   termDays:number
 
-  @Prop({ required: true, enum: ['pending', 'in_inspection', 'rejected','no_show','completed','expired'] })
-  status: 'pending'|'in_inspection'|'rejected'|'no_show'|'completed' | 'expired';
+  @Prop({ required: true, enum: ['pending', 'in_inspection', 'rejected','no_show','completed','expired','canceled'] })
+  status: 'pending'|'in_inspection'|'rejected'|'no_show'|'completed' | 'expired'|'canceled';
 
   @Prop({ required: false })
   expiresAt: Date;
