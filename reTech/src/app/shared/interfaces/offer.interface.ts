@@ -1,3 +1,5 @@
+import { Category } from "../enums/category.enum";
+
 export interface Offer{
     _id?: string; // id оффера из MongoDB
     productId: string; // ObjectId → string
@@ -38,5 +40,8 @@ export interface Evaluation{
 
     createdAt?: Date;
     expiresAt?: Date;
+
+    approvedAmount?:number;
+    category?: Category;
 
 }

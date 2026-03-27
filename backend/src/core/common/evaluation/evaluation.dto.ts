@@ -35,9 +35,15 @@ export class CreateEvaluationDto {
   @IsEnum(['pending', 'in_inspection', 'rejected','no_show','completed','expired','canceled'])
   status?: 'pending' | 'in_inspection' | 'rejected'|'no_show'|'completed' | 'expired'|'canceled' = 'pending';
 
+  @IsOptional()
+  category?: string;
+
 }
 
 export class UpdateEvaluationStatusDto {
   @IsEnum(['pending', 'in_inspection', 'rejected','no_show','completed','expired','canceled'])
   status: 'pending' | 'in_inspection' | 'rejected'|'no_show'|'completed' | 'expired'|'canceled';
+
+  @IsOptional()
+  approvedAmount?: number;
 }

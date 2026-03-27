@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Evaluation } from 'src/core/database/schemas/evaluation.schema';
@@ -10,6 +10,13 @@ import { EvaluationDocument } from 'src/core/database/schemas/evaluation.schema'
 import { Cron,CronExpression } from '@nestjs/schedule';
 import { NotificationDocument, NotificationType } from 'src/core/database/schemas/notifications.schema';
 import { Notification } from 'src/core/database/schemas/notifications.schema';
+import { SlotService } from '../slot/slot.service';
+import { ProductService } from '../product/product.service';
+import { Category } from '../enums/category.enum';
+import { ProductType } from '../enums/produtc.type.enum';
+import { LoanStatus, ProductStatus } from '../enums/status.enum';
+import { PawnshopProfile } from 'src/core/database/schemas/shopProfile.schema';
+import { ProductDocument } from 'src/core/database/schemas/product.schema';
 @Injectable()
   export class EvaluationService {
     constructor(
@@ -17,7 +24,13 @@ import { Notification } from 'src/core/database/schemas/notifications.schema';
       private evaluationModel: Model<EvaluationDocument>,
       private notificationService: NotificationService,
       @InjectModel(Notification.name)
-      private notificationModel: Model<NotificationDocument>
+      private notificationModel: Model<NotificationDocument>,
+
+      private slotService: SlotService,
+      private productService: ProductService,
+
+      @InjectModel(PawnshopProfile.name)
+      private pawnshopModel: Model<PawnshopProfile>
     ) {}
 
   async create(dto: CreateEvaluationDto): Promise<Evaluation> {
@@ -57,28 +70,70 @@ import { Notification } from 'src/core/database/schemas/notifications.schema';
  async updateStatus(
   id: string,
   dto: UpdateEvaluationStatusDto
-): Promise<Evaluation> {
+  ): Promise<Evaluation> {
 
-  const evaluation = await this.evaluationModel.findById(id);
-  if (!evaluation) throw new NotFoundException('Evaluation not found');
+    const evaluation = await this.evaluationModel.findById(id);
+    if (!evaluation) throw new NotFoundException('Evaluation not found');
 
-  if (dto.status === 'in_inspection') {
-    evaluation.expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
-  }
+    if (dto.status === 'in_inspection') {
+      evaluation.expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    }
 
-  evaluation.status = dto.status;
-  evaluation.updatedAt = new Date();
+    evaluation.status = dto.status;
+    evaluation.updatedAt = new Date();
 
-  await evaluation.save();
+    await evaluation.save();
 
-  let type: 'evaluation-accepted' | 'evaluation-updated';
+    let type: 'evaluation-accepted' | 'evaluation-updated';
 
-  if (dto.status === 'in_inspection') {
-    type = 'evaluation-accepted';
-  } else {
-    type = 'evaluation-updated';
-  }
+    if (dto.status === 'in_inspection') {
+      type = 'evaluation-accepted';
+    } else {
+      type = 'evaluation-updated';
+    }
 
+    if(dto.status === 'completed'){
+
+      const pawnshop = await this.pawnshopModel.findById(evaluation.pawnshopId)
+
+      if (!pawnshop) {
+        throw new NotFoundException('Pawnshop not found');
+      }
+
+      
+      const terms = pawnshop.terms;
+      
+      const amount = dto.approvedAmount ?? 0;
+
+      if (amount > terms.limits.maxAmount) {
+        throw new BadRequestException('Amount exceeds pawnshop limit');
+      }
+      const product:ProductDocument = await this.productService.create({
+        ownerId: evaluation.userId,
+        ownerType:'user',
+        title: evaluation.title,
+        description: evaluation.description,
+        category:Category.OTHER,
+        photos: evaluation.photos,
+        price: evaluation.expectedPrice ?? 0,
+        type:ProductType.LOAN,
+        loanTerm:evaluation.termDays,
+        status:ProductStatus.IN_LOAN,
+        activatedAt: new Date()
+      })
+
+      await this.slotService.createSlot({
+        product:(product._id as any).toString(),
+        pawnshopId: evaluation.pawnshopId,
+        userId: evaluation.userId,
+        loanAmount: evaluation.expectedPrice ?? 0,
+        startDate: new Date(),
+        endDate: new Date(Date.now() + (evaluation.termDays || 0) * 24 * 60 * 60 * 1000),
+        interestRate: terms?.interest?.rate ?? 0,
+        status:LoanStatus.ACTIVE
+      })
+    }
+    
   await this.upsertEvaluationNotification({
     userId: evaluation.userId,
     senderId: evaluation.pawnshopId,

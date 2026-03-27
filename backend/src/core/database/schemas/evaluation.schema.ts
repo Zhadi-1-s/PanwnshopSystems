@@ -53,6 +53,11 @@ export class Evaluation extends Document {
   @Prop({required:false})
   cancelReason?: string;
 
+  @Prop({required:false})
+  approvedAmount?:number;
+
+  @Prop({required:false})
+  category?: string;
 
 }
 

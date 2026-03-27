@@ -29,7 +29,7 @@ export class ProductService {
 
   ) {}
 
-  async create(dto: CreateProductDto): Promise<Product> {
+  async create(dto: CreateProductDto): Promise<ProductDocument> {
     const createdProduct = new this.productModel({
       ...dto,
       ownerId: new Types.ObjectId(dto.ownerId),
