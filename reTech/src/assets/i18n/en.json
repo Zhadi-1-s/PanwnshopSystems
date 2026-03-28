@@ -392,6 +392,8 @@
     "In Loan":"In loan",
     "Activate deal":"Activate deal",
     "Reject deal":"Reject deal",
-    "Time left":"Time left"
+    "Time left":"Time left",
+    "Ealuation":"Evaluation",
+    "Category is required":"Category is required"
 
 }

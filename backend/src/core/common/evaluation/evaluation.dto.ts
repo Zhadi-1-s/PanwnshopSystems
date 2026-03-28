@@ -1,4 +1,5 @@
 import { IsString, IsOptional, IsEnum, IsArray, IsNumber } from 'class-validator';
+import { Category } from '../enums/category.enum';
 
 export class CreateEvaluationDto {
   @IsString()
@@ -36,6 +37,7 @@ export class CreateEvaluationDto {
   status?: 'pending' | 'in_inspection' | 'rejected'|'no_show'|'completed' | 'expired'|'canceled' = 'pending';
 
   @IsOptional()
+  @IsEnum([Category])
   category?: string;
 
 }

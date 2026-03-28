@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, HydratedDocument } from 'mongoose';
+import { Category } from 'src/core/common/enums/category.enum';
 
 export type EvaluationDocument = HydratedDocument<Evaluation> & {createdAt: Date; updatedAt: Date;};
 
@@ -56,7 +57,7 @@ export class Evaluation extends Document {
   @Prop({required:false})
   approvedAmount?:number;
 
-  @Prop({required:false})
+  @Prop({required:false, enum:Category})
   category?: string;
 
 }

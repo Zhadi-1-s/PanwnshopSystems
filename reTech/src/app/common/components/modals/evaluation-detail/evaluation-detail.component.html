@@ -195,6 +195,35 @@
                 </button>
               </div>
 
+              <div *ngIf="showApproveInput" class="mt-4 p-4 border rounded bg-gray-50">
+              <label class="form-label fw-semibold">
+                {{ 'Approved amount' | translate }}
+              </label>
+
+              <input
+                type="number"
+                class="form-control mb-3"
+                [(ngModel)]="approveAmount"
+                placeholder="{{ 'Enter amount' | translate }}"
+              />
+
+              <div class="flex gap-2">
+                <button
+                  class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                  (click)="confirmApprove()"
+                >
+                  {{ 'Confirm' | translate }}
+                </button>
+
+                <button
+                  class="px-4 py-2 bg-gray-400 text-white rounded"
+                  (click)="showApproveInput = false"
+                >
+                  {{ 'Cancel' | translate }}
+                </button>
+              </div>
+            </div>
+
             </div>
 
             <div *ngIf="evaluation.status === 'in_inspection' && userRole === 'user'" 

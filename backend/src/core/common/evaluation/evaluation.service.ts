@@ -67,90 +67,10 @@ import { ProductDocument } from 'src/core/database/schemas/product.schema';
     return evalFound;
   }
 
- async updateStatus(
-  id: string,
-  dto: UpdateEvaluationStatusDto
-  ): Promise<Evaluation> {
-
-    const evaluation = await this.evaluationModel.findById(id);
-    if (!evaluation) throw new NotFoundException('Evaluation not found');
-
-    if (dto.status === 'in_inspection') {
-      evaluation.expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
-    }
-
-    evaluation.status = dto.status;
-    evaluation.updatedAt = new Date();
-
-    await evaluation.save();
-
-    let type: 'evaluation-accepted' | 'evaluation-updated';
-
-    if (dto.status === 'in_inspection') {
-      type = 'evaluation-accepted';
-    } else {
-      type = 'evaluation-updated';
-    }
-
-    if(dto.status === 'completed'){
-
-      const pawnshop = await this.pawnshopModel.findById(evaluation.pawnshopId)
-
-      if (!pawnshop) {
-        throw new NotFoundException('Pawnshop not found');
-      }
-
-      
-      const terms = pawnshop.terms;
-      
-      const amount = dto.approvedAmount ?? 0;
-
-      if (amount > terms.limits.maxAmount) {
-        throw new BadRequestException('Amount exceeds pawnshop limit');
-      }
-      const product:ProductDocument = await this.productService.create({
-        ownerId: evaluation.userId,
-        ownerType:'user',
-        title: evaluation.title,
-        description: evaluation.description,
-        category:Category.OTHER,
-        photos: evaluation.photos,
-        price: evaluation.expectedPrice ?? 0,
-        type:ProductType.LOAN,
-        loanTerm:evaluation.termDays,
-        status:ProductStatus.IN_LOAN,
-        activatedAt: new Date()
-      })
-
-      await this.slotService.createSlot({
-        product:(product._id as any).toString(),
-        pawnshopId: evaluation.pawnshopId,
-        userId: evaluation.userId,
-        loanAmount: evaluation.expectedPrice ?? 0,
-        startDate: new Date(),
-        endDate: new Date(Date.now() + (evaluation.termDays || 0) * 24 * 60 * 60 * 1000),
-        interestRate: terms?.interest?.rate ?? 0,
-        status:LoanStatus.ACTIVE
-      })
-    }
-    
-  await this.upsertEvaluationNotification({
-    userId: evaluation.userId,
-    senderId: evaluation.pawnshopId,
-    type: dto.status === 'in_inspection' ? 'evaluation-accepted' : 'evaluation-updated',
-    title: dto.status === 'in_inspection' ? 'Evaluation accepted' : 'Evaluation updated',
-    message:
-      dto.status === 'in_inspection'
-        ? `Pawnshop agreed to inspect ${evaluation.title}`
-        : `Status updated for ${evaluation.title}`,
-    refId: (evaluation._id as any).toString()
-  });
-
-  return evaluation;
-}
+ y
 
   private async createEvaluationNotification(
-    status: 'pending' | 'in_inspection' | 'rejected' | 'no_show' | 'completed' | 'expired',
+    status: 'pending' | 'in_inspection' | 'rejected' | 'no_show' | 'completed' | 'expired' | 'canceled',
     evaluation: Evaluation
   ) {
     const messages: Record<
@@ -191,6 +111,12 @@ import { ProductDocument } from 'src/core/database/schemas/product.schema';
         type: 'evaluation-updated',
         title: 'Evaluation expired',
         message: `Evaluation expired for ${evaluation.title}`,
+        senderId: evaluation.pawnshopId
+      },
+      canceled:{
+        type:'evaluation-updated',
+        title:'Evaluation canceled',
+        message:`Evaluation canceled for ${evaluation.title}`,
         senderId: evaluation.pawnshopId
       }
     };

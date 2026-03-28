@@ -15,6 +15,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { CloudinaryService } from '../../../../shared/services/cloudinary.service';
 import { finalize,distinctUntilChanged } from 'rxjs';
 import { PRODUCT_MODELS } from '../../../../shared/models/product.models';
+import { Category } from '../../../../shared/enums/category.enum';
 
 @Component({
   selector: 'app-evalutaion',
@@ -36,6 +37,8 @@ export class EvalutaionComponent implements OnInit {
   selectedFiles: File[] = [];
   previewUrls: string[] = [];
   uploading = false;
+
+  categories = Object.values(Category);
 
   sliderMinOptions: Options = {
     floor: 0,
@@ -67,7 +70,8 @@ export class EvalutaionComponent implements OnInit {
       userTelephoneNumber: ['', [
         Validators.required,
         Validators.pattern(/^(\+7|7|8)\d{10}$/)
-      ]]
+      ]],
+      category: [null, Validators.required]
     });
     
   }

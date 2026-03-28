@@ -394,6 +394,8 @@
     "In Loan":"В займе",
     "Activate deal":"Активировать сделку",
     "Reject deal":"Отклонить сделку",
-    "Time left":"Осталось времени"
+    "Time left":"Осталось времени",
+    "Evaluation":"Оценка",
+    "Category is required":"Категория обязательна"
 
 }

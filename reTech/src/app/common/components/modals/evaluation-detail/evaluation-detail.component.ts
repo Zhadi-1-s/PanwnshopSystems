@@ -11,11 +11,12 @@ import { AuthService } from '../../../../shared/services/auth.service';
 import { LombardService } from '../../../../shared/services/lombard.service';
 import { PawnshopTerms } from '../../../../shared/interfaces/pawnshopTerm.interface';
 import { PawnshopProfile } from '../../../../shared/interfaces/shop-profile.interface';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-evaluation-detail',
   standalone: true,
-  imports: [CommonModule,TranslateModule],
+  imports: [CommonModule,TranslateModule,ReactiveFormsModule,FormsModule],
   templateUrl: './evaluation-detail.component.html',
   styleUrl: './evaluation-detail.component.scss'
 })
@@ -42,6 +43,11 @@ export class EvaluationDetailComponent implements OnInit, OnDestroy {
 
   remainingTime: string = '';
   interval: any;
+
+  showApproveInput = false;
+  selectedEvaluationId: string | null = null;
+
+  approveAmount: number | null = null;
 
   loanCalculation: {
     loanAmount: number;
@@ -183,18 +189,32 @@ export class EvaluationDetailComponent implements OnInit, OnDestroy {
   }
 
   onActivateDeal(evaluation: any) {
-    // логика позже
-    this.evaluationService.updateStatus(evaluation._id, 'completed').subscribe({
-      next: res => {
-        this.evaluation.status = res.status;
-        this.loading = false;
-        this.close();
-      },
-      error: err => {
-        console.error(err.message);
-        this.loading = false;
-      }
-    });
+    this.showApproveInput = true;
+    this.selectedEvaluationId = evaluation._id;
+    this.approveAmount = evaluation.expectedPrice || null; // можно автоподставить
+  }
+
+  confirmApprove() {
+    if (!this.approveAmount || !this.selectedEvaluationId) return;
+
+    this.loading = true;
+
+    this.evaluationService
+      .updateStatus(this.selectedEvaluationId, 'completed', this.approveAmount)
+      .subscribe({
+        next: res => {
+          this.evaluation.status = res.status;
+          this.evaluation.approvedAmount = this.approveAmount;
+
+          this.showApproveInput = false;
+          this.loading = false;
+          this.close();
+        },
+        error: err => {
+          console.error(err.message);
+          this.loading = false;
+        }
+      });
   }
 
   onRejectDeal(evaluation: any) {

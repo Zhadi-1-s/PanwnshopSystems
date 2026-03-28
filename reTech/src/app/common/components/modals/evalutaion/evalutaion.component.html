@@ -44,6 +44,29 @@
           </div>
         </div>
 
+        <div class="mb-3">
+          <label class="form-label fw-semibold">
+            {{ 'Category' | translate }}
+          </label>
+
+          <select
+            formControlName="category"
+            class="form-control"
+            [class.is-invalid]="form.get('category')?.invalid && (form.get('category')?.dirty || form.get('category')?.touched)"
+          >
+            <option value="" disabled selected>
+              {{ 'Select category' | translate }}
+            </option>
+
+            <option *ngFor="let cat of categories" [value]="cat">
+              {{ cat }}
+            </option>
+          </select>
+
+          <div class="invalid-feedback" *ngIf="form.get('category')?.invalid">
+            {{ 'Category is required' | translate }}
+          </div>
+        </div>
 
         <!-- Описание -->
         <div>
