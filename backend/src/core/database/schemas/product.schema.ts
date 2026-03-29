@@ -2,7 +2,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { Category } from 'src/core/common/enums/category.enum';
-import { Status } from 'src/core/common/enums/status.enum';
+import { ProductStatus, Status } from 'src/core/common/enums/status.enum';
 
 export type ProductDocument = Product & Document;
 
@@ -38,8 +38,8 @@ export class Product {
     publicId: string;
   }[];
 
-  @Prop({ required: true, enum:Status })
-  status: Status;
+  @Prop({ required: true, enum:ProductStatus })
+  status: ProductStatus;
   
   @Prop({ required: true, type: Number, min: 0 })
   price: number;

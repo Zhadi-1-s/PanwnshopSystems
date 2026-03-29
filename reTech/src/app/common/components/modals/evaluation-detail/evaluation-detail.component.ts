@@ -159,7 +159,7 @@ export class EvaluationDetailComponent implements OnInit, OnDestroy {
 
     this.loading = true; 
 
-    this.evaluationService.updateStatus(id,'rejected').subscribe(
+    this.evaluationService.updateStatus(id,{status: 'rejected'}).subscribe(
       next => {
         this.evaluation.status = next.status;
         this.loading = false;
@@ -175,7 +175,7 @@ export class EvaluationDetailComponent implements OnInit, OnDestroy {
   acceptEvaluation(id: string) {
     this.loading = true;
 
-    this.evaluationService.updateStatus(id, 'in_inspection').subscribe({
+    this.evaluationService.updateStatus(id, {status: 'in_inspection'}).subscribe({
       next: res => {
         this.evaluation.status = res.status;
         this.loading = false;
@@ -200,7 +200,7 @@ export class EvaluationDetailComponent implements OnInit, OnDestroy {
     this.loading = true;
 
     this.evaluationService
-      .updateStatus(this.selectedEvaluationId, 'completed', this.approveAmount)
+      .updateStatus(this.selectedEvaluationId, {status: 'completed', approvedAmount: this.approveAmount})
       .subscribe({
         next: res => {
           this.evaluation.status = res.status;
@@ -217,19 +217,5 @@ export class EvaluationDetailComponent implements OnInit, OnDestroy {
       });
   }
 
-  onRejectDeal(evaluation: any) {
-    // логика позже
-    this.evaluationService.updateStatus(evaluation._id, 'rejected').subscribe({
-      next: res => {
-        this.evaluation.status = res.status;
-        this.loading = false;
-        this.close();
-      },
-      error: err => {
-        console.error(err.message);
-        this.loading = false;
-      }
-    });
-  }
 
 }

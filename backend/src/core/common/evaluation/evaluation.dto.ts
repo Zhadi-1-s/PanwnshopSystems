@@ -22,7 +22,7 @@ export class CreateEvaluationDto {
   condition: 'new' | 'good' | 'used' | 'broken';
 
   @IsArray()
-  photos: string[];
+  photos: { url: string; publicId: string }[];
 
   @IsOptional()
   @IsNumber()
@@ -37,7 +37,7 @@ export class CreateEvaluationDto {
   status?: 'pending' | 'in_inspection' | 'rejected'|'no_show'|'completed' | 'expired'|'canceled' = 'pending';
 
   @IsOptional()
-  @IsEnum([Category])
+  @IsEnum(Category)
   category?: string;
 
 }

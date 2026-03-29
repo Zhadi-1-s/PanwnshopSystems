@@ -178,7 +178,9 @@ export class EvalutaionComponent implements OnInit {
 
     const payload = {
       ...this.form.value,
-      photos:uploadedUrls,
+      expectedPrice: Number(this.form.value.expectedPrice),
+      termDays: Number(this.form.value.termDays),
+      photos: uploadedUrls,
       pawnshopId: this.pawnshopId,
       userId: this.userId
     };
