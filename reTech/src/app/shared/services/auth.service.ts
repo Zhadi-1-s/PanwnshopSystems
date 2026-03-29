@@ -16,6 +16,9 @@ import { environment } from "../../../environments/environment";
 })
 export class AuthService{
 
+    private isLoadedSubject = new BehaviorSubject(false);
+    isLoaded$ = this.isLoadedSubject.asObservable();
+
     private apiUrl = environment.apiUrl.auth;
 
     private currentUserSubject = new BehaviorSubject<User | null>(null);
@@ -24,8 +27,11 @@ export class AuthService{
     constructor(private http: HttpClient) {
         if (this.getToken()) {
             this.getUserProfile().subscribe(user => {
-                this.currentUserSubject.next(user);
+            this.currentUserSubject.next(user);
+            this.isLoadedSubject.next(true);
             });
+        } else {
+            this.isLoadedSubject.next(true);
         }
     }
 

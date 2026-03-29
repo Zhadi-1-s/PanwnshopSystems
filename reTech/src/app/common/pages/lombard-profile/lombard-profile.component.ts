@@ -35,6 +35,7 @@ import { SlotDetailComponent } from '../../components/modals/slot-detail/slot-de
 import { Evaluation, Offer } from '../../../shared/interfaces/offer.interface';
 import { OfferDetailComponent } from '../../components/modals/offer-detail/offer-detail.component';
 import { RouterModule } from '@angular/router';
+import { AnalitycsComponent } from '../../components/analitycs/analytics.component';
 
 @Component({
   selector: 'app-lombard-profile',
@@ -609,7 +610,10 @@ export class LombardProfileComponent implements OnInit{
   }
 
   openAnalytics(){
-    
+    const modalRef = this.modalService.open(AnalitycsComponent,{size:'lg',centered:true});
+
+    modalRef.componentInstance.pawnshopId = this.profile?._id;
+
   }
 
   openViewAllModal(){
@@ -696,7 +700,7 @@ export class LombardProfileComponent implements OnInit{
 
 
   openTermsModal(){
-    const modalRef = this.modalService.open(TermModalComponent, { size: 'lg', centered: true });
+    const modalRef = this.modalService.open(TermModalComponent);
 
     modalRef.componentInstance.terms = this.profile.terms;
   }

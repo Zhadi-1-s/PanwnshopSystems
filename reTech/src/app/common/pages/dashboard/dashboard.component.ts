@@ -22,10 +22,14 @@ export class DashboardComponent implements OnInit{
 
   constructor(
               private lombardService:LombardService,
-              private authService:AuthService
+              public authService:AuthService
   ){}
 
   ngOnInit(){
+
+    this.user$.subscribe(u => console.log('USER:', u));
+
+
       this.lombardService.getLombards().subscribe({
         next : (pawnshops) => {
           this.lombardList = pawnshops;

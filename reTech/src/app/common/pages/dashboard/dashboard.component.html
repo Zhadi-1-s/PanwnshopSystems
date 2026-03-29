@@ -11,19 +11,27 @@
       <a  class="hidden sm:inline text-sm md:text-base text-slate-300 hover:text-white transition-colors cursor-pointer" (click)="scrollToHowItWorks()">
         {{ 'How it works' | translate }}
       </a>
-      <a 
-        *ngIf="!(user$ | async); else loggedInNav"
-        routerLink="/register" 
-        class="bg-white text-slate-950 px-4 sm:px-6 py-2 sm:py-2.5 text-sm sm:text-base rounded-full font-semibold hover:bg-slate-100 transition-colors">
-        {{ 'Start now' | translate }}
-      </a>
-      <ng-template #loggedInNav>
-        <a 
-          routerLink="/offers" 
-          class="bg-blue-600 text-white px-4 sm:px-6 py-2 sm:py-2.5 text-sm sm:text-base rounded-full font-semibold hover:bg-blue-700 transition-colors">
-          {{ 'Start now' | translate }}
-        </a>
-      </ng-template>
+      <ng-container *ngIf="user$ | async as user">
+        
+        <!-- если НЕ залогинен -->
+        <ng-container *ngIf="!user; else loggedInNav">
+          <a 
+            routerLink="/register" 
+            class="bg-gray-200 text-gray-800 px-4 sm:px-6 py-2 sm:py-2.5 text-sm sm:text-base rounded-full font-semibold hover:bg-gray-300 transition-colors">
+            {{ 'Sign up' | translate }}
+          </a>
+        </ng-container>
+
+        <!-- если залогинен -->
+        <ng-template #loggedInNav>
+          <a 
+            routerLink="/offers" 
+            class="bg-blue-600 text-white px-4 sm:px-6 py-2 sm:py-2.5 text-sm sm:text-base rounded-full font-semibold hover:bg-blue-700 transition-colors">
+            {{ 'Start now' | translate }}
+          </a>
+        </ng-template>
+
+      </ng-container>
     </div>
   </nav>
 

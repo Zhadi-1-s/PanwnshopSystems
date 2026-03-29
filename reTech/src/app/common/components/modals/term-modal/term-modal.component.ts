@@ -2,11 +2,12 @@ import { Component,Input } from '@angular/core';
 import { PawnshopTerms } from '../../../../shared/interfaces/pawnshopTerm.interface';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-term-modal',
   standalone: true,
-  imports: [CommonModule,],
+  imports: [CommonModule,TranslateModule],
   templateUrl: './term-modal.component.html',
   styleUrl: './term-modal.component.scss'
 })
