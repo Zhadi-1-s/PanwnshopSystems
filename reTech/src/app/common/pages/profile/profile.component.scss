@@ -3,3 +3,12 @@
   color: #111827;
   width: 100%;
 }
+
+.highlight {
+  animation: highlightFade 1.5s ease;
+}
+
+@keyframes highlightFade {
+  0% { background: rgba(59, 130, 246, 0.2); }
+  100% { background: transparent; }
+}

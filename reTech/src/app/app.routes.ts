@@ -34,6 +34,9 @@ export const routes: Routes = [
     },
     {
         path:'product-list',loadComponent: () => import('./common/pages/products-list/products-list.component').then(m => m.ProductsListComponent)
+    },
+    {
+        path:'help',loadComponent: () => import('./common/pages/help/help.component').then(m => m.HelpComponent)
     }
     
 ];

@@ -14,22 +14,7 @@
       <ng-container *ngIf="user$ | async as user">
         
         <!-- если НЕ залогинен -->
-        <ng-container *ngIf="!user; else loggedInNav">
-          <a 
-            routerLink="/register" 
-            class="bg-gray-200 text-gray-800 px-4 sm:px-6 py-2 sm:py-2.5 text-sm sm:text-base rounded-full font-semibold hover:bg-gray-300 transition-colors">
-            {{ 'Sign up' | translate }}
-          </a>
-        </ng-container>
-
-        <!-- если залогинен -->
-        <ng-template #loggedInNav>
-          <a 
-            routerLink="/offers" 
-            class="bg-blue-600 text-white px-4 sm:px-6 py-2 sm:py-2.5 text-sm sm:text-base rounded-full font-semibold hover:bg-blue-700 transition-colors">
-            {{ 'Start now' | translate }}
-          </a>
-        </ng-template>
+      
 
       </ng-container>
     </div>
@@ -50,7 +35,7 @@
 
       <!-- Search Bar -->
       <!-- Responsive search bar with adjusted padding and icon sizes -->
-      <div class="max-w-2xl mx-auto mb-10 sm:mb-16 px-4">
+      <!-- <div class="max-w-2xl mx-auto mb-10 sm:mb-16 px-4">
         <div class="relative backdrop-blur-sm bg-slate-800/50 rounded-xl sm:rounded-2xl">
           <svg class="absolute left-4 sm:left-5 top-1/2 -translate-y-1/2 w-4 sm:w-5 h-4 sm:h-5 text-slate-400 pointer-events-none z-10"
               fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -66,7 +51,7 @@
             placeholder="{{ 'Find a gadget or device' | translate }}"
           >
         </div>
-      </div>
+      </div> -->
 
       <!-- Stats -->
       <!-- Responsive stats grid from 1 column on mobile to 3 on tablet+ -->

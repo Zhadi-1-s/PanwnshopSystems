@@ -174,6 +174,27 @@ export class PawnshopDetailComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.terms = this.pawnShop.terms;
   }
 
+  getFirstLetter(name?: string): string {
+    return name ? name.charAt(0).toUpperCase() : '?';
+  }
+
+  getAvatarColor(name?: string): string {
+    if (!name) return '#64748b'; // slate
+
+    const colors = [
+      '#3b82f6', // blue
+      '#ef4444', // red
+      '#22c55e', // green
+      '#f59e0b', // amber
+      '#8b5cf6', // violet
+      '#ec4899', // pink
+    ];
+
+    // делаем цвет стабильным от имени
+    const index = name.charCodeAt(0) % colors.length;
+    return colors[index];
+  }
+
   submitReview(pawnshopId: string) {
     this.ratingError = this.newRating === 0;
     this.commentError = !this.newComment.trim();

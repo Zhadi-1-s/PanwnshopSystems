@@ -69,7 +69,7 @@ export class ProfileComponent implements OnInit {
 
   user:User;
 
-  hasActiveLoan:false;
+  hasActiveLoan = false;
 
   products$:Observable<Product[]>;
   activeProducts$!: Observable<Product[]>;
@@ -202,8 +202,10 @@ export class ProfileComponent implements OnInit {
       filter((user): user is User => !!user?._id),
       switchMap(user => this.slotService.getSlotsByUserId(user._id)),
       switchMap((slots: Slot[]) => {
+        this.hasActiveLoan = slots.length > 0;
         if (!slots.length) return of([] as SlotView[]);
-
+        
+        console.log(this.hasActiveLoan,'has active deal')
         return forkJoin(
           slots.map(slot => {
             const pawnshopId = typeof slot.pawnshopId === 'string'
@@ -713,6 +715,20 @@ export class ProfileComponent implements OnInit {
       const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
 
       return slot.loanAmount * (1 + slot.interestRate * days);
+    }
+
+    goToLoans() {
+      this.activeSection = 'loans';
+
+      setTimeout(() => {
+        const el = document.getElementById('loans-section');
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+          el.classList.add('highlight');
+          setTimeout(() => el.classList.remove('highlight'), 1500);
+        }
+      }, 0);
     }
 
 }
