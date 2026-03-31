@@ -69,7 +69,6 @@ export class ProductsListComponent implements OnInit, OnDestroy {
   appliedFilters$ = new BehaviorSubject<string[]>([])
   showFavoritesOnly$ = new BehaviorSubject<boolean>(false);
 
-  favoriteItems$:Observable<Product[]>;
 
   isBrowser = false;
   isLoading = true;
@@ -95,7 +94,7 @@ export class ProductsListComponent implements OnInit, OnDestroy {
   };
 
   favitems$ = new BehaviorSubject<Product[]>([]);
-
+  favoriteItems$ = this.favitems$.asObservable();
   toogleFilterBlock: boolean = false;
 
   private destroy$ = new Subject<void>();
@@ -284,8 +283,8 @@ export class ProductsListComponent implements OnInit, OnDestroy {
   }
 
   toggleFavorite(product: Product, event: MouseEvent) {
-    console.log(product)
     event.stopPropagation();
+
     if (!this.user?._id) {
       this.modalService.open(LoginRequiredComponent, {
         centered: true,
@@ -295,7 +294,6 @@ export class ProductsListComponent implements OnInit, OnDestroy {
     }
 
     const current = this.favitems$.value;
-
     const isFav = current.some(f => f._id === product._id);
 
     const req$ = isFav
@@ -304,14 +302,12 @@ export class ProductsListComponent implements OnInit, OnDestroy {
 
     req$.subscribe({
       next: () => {
-
         if (isFav) {
-          this.favitems$.next(current.filter(f => f._id !== product._id));
+          this.favitems$.next([...current.filter(f => f._id !== product._id)]);
         } else {
           this.favitems$.next([...current, product]);
         }
-      },
-      error: (err) => console.error('Ошибка при обновлении избранного:', err)
+      }
     });
   }
 

@@ -681,4 +681,16 @@ export class ProfileComponent implements OnInit {
       }, 0);
     }
 
+    removeFromFavorites(pawnshopId: string) {
+      if (!this.user?._id) return;
+
+      this.userService.removeFavorite(this.user._id, pawnshopId).subscribe({
+        next: () => {
+          this.favoritePawnshops$ = this.favoritePawnshops$.pipe(
+            map(list => list.filter(p => p._id !== pawnshopId))
+          );
+        }
+      });
+    }
+
 }
