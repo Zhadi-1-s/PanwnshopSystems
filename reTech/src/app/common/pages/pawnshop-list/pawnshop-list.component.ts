@@ -31,6 +31,8 @@ export class PawnshopListComponent implements OnInit{
   searchTerm$ = new BehaviorSubject<string>('');
   productsOfPawnShop$: Observable<Product[]>;
 
+  searchTitle$ = new BehaviorSubject<string>('');
+
   activeFilter: 'all' | 'active' | 'empty' = 'all';
   sortByRating: 'none' | 'asc' | 'desc' = 'none';
 
@@ -102,9 +104,10 @@ export class PawnshopListComponent implements OnInit{
     this.filteredLombards$ = combineLatest([
       this.lombards$,
       this.searchTerm$,
-      this.appliedFilters$
+      this.appliedFilters$,
+      this.searchTitle$
     ]).pipe(
-      map(([lombards, search, appliedFilters])=>{
+      map(([lombards, search, appliedFilters, searchTitle])=>{
         let filtered = lombards;
 
         if(search.trim()){
@@ -113,10 +116,10 @@ export class PawnshopListComponent implements OnInit{
           );
         }
 
-        if (this.searchTitle.trim()) {
+        if (searchTitle.trim()) {
           filtered = filtered.filter(lombard =>
             lombard.products?.some(product =>
-              product.title.toLowerCase().includes(this.searchTitle.toLowerCase())
+              product.title.toLowerCase().includes(searchTitle.toLowerCase())
             )
           );
         }
@@ -212,6 +215,8 @@ export class PawnshopListComponent implements OnInit{
     const current = this.appliedFilters$.value;
     this.appliedFilters$.next(current.filter(f => f !== filter));
     this.searchTerm$.next(this.searchTerm$.value);
+    this.searchTitle = '';   
+    this.searchTitle$.next('');  
   }
 
    onSearchChange(value: string) {
@@ -235,6 +240,7 @@ export class PawnshopListComponent implements OnInit{
       return;
     }
     const v = this.searchTitle.toLowerCase();
+    this.searchTitle$.next(this.searchTitle);
     this.filteredModels = this.models.filter(m => m.toLowerCase().includes(v)).slice(0, 10);
   }
 
@@ -253,6 +259,7 @@ export class PawnshopListComponent implements OnInit{
   clearFilteredModels() {
     setTimeout(() => {
       this.filteredModels = [];
+              
     }, 100);
   }
 

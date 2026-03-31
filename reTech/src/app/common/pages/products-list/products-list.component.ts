@@ -271,11 +271,13 @@ export class ProductsListComponent implements OnInit, OnDestroy {
   }
 
   loadFavorites(){
-    this.favoriteItems$ = this.authService.currentUser$.pipe(
+    this.authService.currentUser$.pipe(
       filter((user): user is User => !!user?._id),
       switchMap(user => this.userService.getFavoriteItems(user._id)),
       takeUntil(this.destroy$),
-    )
+    ).subscribe(favorites => {
+      this.favitems$.next(favorites);
+    })
   }
 
   isFavorite(productId: string): boolean {
