@@ -418,6 +418,7 @@
     "Maximum": "Максимум",
     "Fee": "Комиссия",
     "Price Adjustment Limit": "Лимит изменения цены",
-    "Terms are subject to change. Contact pawnshop for details.": "Условия могут изменяться. Свяжитесь с ломбардом для уточнения."
+    "Terms are subject to change. Contact pawnshop for details.": "Условия могут изменяться. Свяжитесь с ломбардом для уточнения.",
+    "You have an active loan":"У вас есть активный займ"
 
 }
