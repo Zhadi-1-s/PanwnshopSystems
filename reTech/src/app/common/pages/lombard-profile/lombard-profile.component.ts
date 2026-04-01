@@ -36,6 +36,8 @@ import { Evaluation, Offer } from '../../../shared/interfaces/offer.interface';
 import { OfferDetailComponent } from '../../components/modals/offer-detail/offer-detail.component';
 import { RouterModule } from '@angular/router';
 import { AnalitycsComponent } from '../../components/analitycs/analytics.component';
+import { SlotDeleteComponent } from '../../components/modals/slot-delete/slot-delete.component';
+import { LoanStatus } from '../../../shared/enums/status.enum';
 
 @Component({
   selector: 'app-lombard-profile',
@@ -406,11 +408,11 @@ export class LombardProfileComponent implements OnInit{
   }
 
   markAsRead(notification:AppNotification){
-    if (!notification._id || notification.isRead) return;
+    if (!notification._id || notification.readBy.some(r => r.userId === this.user._id)) return;
 
     this.notificationService.markAsRead(notification._id).subscribe({
       next: updatedNotification => {
-        notification.isRead = true;
+        notification.readBy.push({ userId: this.user._id, readAt: new Date() });
       },
       error: err => console.error(err)
     });
@@ -493,7 +495,7 @@ export class LombardProfileComponent implements OnInit{
 
   get unreadOfferNotifications() {
     return (this.notificationsList || []).filter(
-      n => ['new-offer','offer-accepted','offer-rejected','evaluation-accepted'].includes(n.type) && !n.isRead
+      n => ['new-offer','offer-accepted','offer-rejected','evaluation-accepted'].includes(n.type) && !n.readBy.some(r => r.userId === this.user._id)
     );
   }
 
@@ -582,13 +584,25 @@ export class LombardProfileComponent implements OnInit{
 
   extendSlot(item:Slot){}
   
-  deleteSlot(slotId: string) {
-    this.slotService.deleteSlot(slotId).subscribe({
-      next: () => {
-        const updated = this.slotsSubject.value.filter(item => item.slot._id !== slotId);
-        this.slotsSubject.next(updated);
+  openSlotDeleteModal(slotId:string){
+    const modalRef = this.modalService.open(SlotDeleteComponent,{centered:true});
+    modalRef.componentInstance.slotId = slotId;
+    modalRef.result.then(
+      (deletedId:string) => {
+        if(deletedId){
+          this.deleteSlot(deletedId);
+        }
       },
-      error: err => console.error(err)
+      () => {}
+    )
+  }
+
+  deleteSlot(slotId: string) {
+    this.slotService.updateSlotStatus(slotId, { status: LoanStatus.CLOSED, userId: this.user?._id || '' }).subscribe({
+      next: () => {
+        this.slotsSubject.next(this.slotsSubject.value.filter(s => s.slot._id !== slotId));
+      },
+      error: (err) => console.error('Error deleting slot:', err)
     });
   }
 

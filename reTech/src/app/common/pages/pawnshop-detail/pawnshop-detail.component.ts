@@ -347,10 +347,7 @@ export class PawnshopDetailComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.pawnshopId = this.pawnShop._id;
     modalRef.componentInstance.userId = this.user?._id;
     modalRef.componentInstance.term = this.pawnShop.terms
-    modalRef.closed.subscribe(() => {
-      // Handle modal close if needed
-      modalRef.close();
-    });
+
   }
 
 }

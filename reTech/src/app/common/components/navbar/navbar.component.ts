@@ -10,6 +10,9 @@ import { User } from '../../../shared/interfaces/user.interface';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { Router } from '@angular/router';
+import { AppNotification } from '../../../shared/interfaces/notification.interface';
+import { filter, Observable, switchMap, tap } from 'rxjs';
+import { NotificationService } from '../../../shared/services/notification.service';
 
 @Component({
   selector: 'app-navbar',
@@ -24,6 +27,9 @@ export class NavbarComponent implements OnInit {
   currentLang = 'en';
   user: User | null = null;
  
+  notifications$:AppNotification[] = [];
+  unreadCount$: Observable<number>;
+
   sidebarOpen: boolean = true; 
   @Output() sidebarToggled = new EventEmitter<boolean>();
 
@@ -31,6 +37,7 @@ export class NavbarComponent implements OnInit {
     this.sidebarOpen = !this.sidebarOpen
     this.sidebarToggled.emit(this.sidebarOpen);
   }
+
   private platformId = inject(PLATFORM_ID);
 
   @HostListener('window:resize', ['$event'])
@@ -65,7 +72,8 @@ export class NavbarComponent implements OnInit {
   constructor(
       private authService: AuthService,
       private router: Router,
-      private translate:TranslateService)
+      private translate:TranslateService,
+      private notificaitonService:NotificationService)
     {
       if(isPlatformBrowser(this.platformId)) {
               const savedLang = localStorage.getItem('lang') || 'en';
@@ -97,6 +105,12 @@ export class NavbarComponent implements OnInit {
         this.filteredItems = this.navItemsUser;
       }
     });
+
+    this.unreadCount$ = this.authService.currentUser$.pipe(
+      filter((user):user is User => !!user?._id),
+      switchMap(user => this.notificaitonService.getUnreadCount(user?._id)),
+      tap(count => console.log('Unread notifications count:', count))
+    )
 
     if(typeof window !== 'undefined' && window.innerWidth < 1024) {
       this.toggleSidebar()

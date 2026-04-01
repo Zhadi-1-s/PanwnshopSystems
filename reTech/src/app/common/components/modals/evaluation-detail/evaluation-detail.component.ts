@@ -136,7 +136,7 @@ export class EvaluationDetailComponent implements OnInit, OnDestroy {
 
     let loanAmount = Math.min(Math.max(price, minAmount), maxAmount);
 
-    const interestAmount = loanAmount * (interestRate / 100) * (termDays / 30);
+    const interestAmount = loanAmount * (interestRate / 100) * termDays;
 
     const totalRepayable = loanAmount + interestAmount + fee;
 

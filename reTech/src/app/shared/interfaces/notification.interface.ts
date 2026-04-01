@@ -28,7 +28,12 @@ export interface AppNotification {
 
   refId: string; // ссылка на offerId / chatId / productId
 
-  isRead: boolean;
+  readBy: [
+    {
+      userId: string,
+      readAt: Date
+    }
+  ]
   createdAt?: Date;
   data:any;
 }

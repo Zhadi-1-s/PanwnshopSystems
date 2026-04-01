@@ -171,6 +171,20 @@ export class SlotService {
       });
     }
 
+    if(dto.status === LoanStatus.CLOSED){
+
+      await this.notificationService.create({
+        userId:slot.userId.toString(),
+        senderId:dto.userId,
+        type:'slot-completed',
+        title:'Loan completed',
+        message:'Ваш займ завершён. Спасибо, что воспользовались нашими услугами!',
+        refId: slot._id.toString(),
+        isRead:false,
+        data:{ slotData:slot }
+      })
+    }
+
 
     return slot;
   }

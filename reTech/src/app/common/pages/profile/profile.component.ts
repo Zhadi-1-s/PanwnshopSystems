@@ -195,7 +195,7 @@ export class ProfileComponent implements OnInit {
     this.favoritePawnshops$ = this.authService.currentUser$.pipe(
       filter((user): user is User => !!user?._id),
       switchMap(user => this.userService.getFavorites(user._id)),
-      tap(pawnshop => console.log(pawnshop,'loaded farvoire pawnshops'))
+    
     )
 
     this.slots$ = this.authService.currentUser$.pipe(
@@ -205,7 +205,6 @@ export class ProfileComponent implements OnInit {
         this.hasActiveLoan = slots.length > 0;
         if (!slots.length) return of([] as SlotView[]);
         
-        console.log(this.hasActiveLoan,'has active deal')
         return forkJoin(
           slots.map(slot => {
             const pawnshopId = typeof slot.pawnshopId === 'string'
@@ -387,7 +386,7 @@ export class ProfileComponent implements OnInit {
 
     console.log('CLICK', n);
     
-    if (!n.isRead) {
+    if (!n.readBy.some(r => r.userId === this.user._id)) {
       this.markAsRead(n);
     }
 
@@ -427,10 +426,10 @@ export class ProfileComponent implements OnInit {
 
   markAsRead(notification: AppNotification) {
     console.log('Marking as read', notification._id);
-    if (!notification.isRead) {
+    if (!notification.readBy.some(r => r.userId === this.user._id)) {
       this.notificationService.markAsRead(notification._id).subscribe({
         next: () => {
-          notification.isRead = true;
+          notification.readBy.push({ userId: this.user._id, readAt: new Date() });
         },
         error: err => console.error('Failed to mark notification as read', err)
       })
@@ -609,7 +608,7 @@ export class ProfileComponent implements OnInit {
   }
 
   get unreadSystemNotificationsCount() {
-    return this.systemNotifications.filter(n => !n.isRead).length;
+    return this.systemNotifications.filter(n => !n.readBy.some(r => r.userId === this.user._id)).length;
   }
 
   get loanNotifications(){
@@ -628,15 +627,33 @@ export class ProfileComponent implements OnInit {
 
   get unreadOtherNotifications() {
     return (this.notificationsList || []).filter(
-      n => ['product-sold','price-changed','chat-opened'].includes(n.type) && !n.isRead
+      n => ['product-sold','price-changed','chat-opened'].includes(n.type) && !n.readBy.some(r => r.userId === this.user._id)
     );
   }
 
   get unreadOfferNotifications() {
     const unreaded = (this.notificationsList || []).filter(n =>
-      ['new-offer','offer-accepted','offer-rejected','offer-canceled','evaluation-created','evaluation-accepted','evaluation-updated'].includes(n.type) && !n.isRead
+      ['new-offer','offer-accepted','offer-rejected','offer-canceled','evaluation-created','evaluation-accepted','evaluation-updated'].includes(n.type) && !n.readBy.some(r => r.userId === this.user._id)
     );
     return unreaded;
+  }
+
+  isUnread(n: AppNotification): boolean {
+    return !n.readBy?.some((r: any) => r.userId === this.user?._id);
+  }
+
+  get unreadReceivedOffers() {
+    const received = (this.notificationsList || []).filter(n =>
+      ['new-offer','offer-accepted','offer-rejected','offer-canceled'].includes(n.type) && !n.readBy.some(r => r.userId === this.user._id)
+    );
+    return received;
+    
+  }
+  get unreadSentOffers() {
+    const sent = (this.notificationsList || []).filter(n =>
+      ['evaluation-created','evaluation-accepted','evaluation-updated'].includes(n.type) && !n.readBy.some(r => r.userId === this.user._id)
+    );
+    return sent;
   }
 
   // In your component class:
@@ -664,7 +681,7 @@ export class ProfileComponent implements OnInit {
       const end = new Date(slot.endDate);
       const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
 
-      return slot.loanAmount * (1 + slot.interestRate * days);
+      return slot.loanAmount * (1 + (slot.interestRate / 100) * days);
     }
 
     goToLoans() {
