@@ -221,14 +221,17 @@
                 </h6>
 
                 <!-- CENTER -->
-                <div class="flex gap-1 p-1.5 mx-auto rounded-xl bg-gray-100 dark:bg-gray-800/60">
+                <div class=" relative flex gap-1 p-1.5 mx-auto rounded-xl bg-gray-100 dark:bg-gray-800/60">
                   <button (click)="offerSection = 'received'"
                           class="flex-1 px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200"
                           [ngClass]="{
                             'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm': offerSection === 'received',
                             'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200': offerSection !== 'received',
-                            'ring-2 ring-red-500': unreadReceivedOffers.length > 0 && offerSection !== 'received'
+                            
                           }">
+                      <span *ngIf="unreadReceivedOffers.length > 0 && offerSection !== 'received'"
+                            class="absolute top-1 right-2 w-2.5 h-2.5 bg-red-500 rounded-full">
+                      </span>
                     <span class="flex items-center justify-center gap-2">
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" 
@@ -239,12 +242,15 @@
                   </button>
 
                   <button (click)="offerSection = 'sent'"
-                          class="flex-1 px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200"
+                          class="relative flex-1 px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200"
                           [ngClass]="{
                             'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm': offerSection === 'sent',
                             'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200': offerSection !== 'sent',
-                            'ring-2 ring-red-500': unreadSentOffers.length > 0 && offerSection !== 'sent'
+                            
                           }">
+                      <span *ngIf="unreadSentOffers.length > 0 && offerSection !== 'sent'"
+                            class="absolute top-1 right-2 w-2.5 h-2.5 bg-red-500 rounded-full">
+                      </span>
                     <span class="flex items-center justify-center gap-2">
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
@@ -997,7 +1003,7 @@
                           {{ n.message | translate }}
                         </div>
                       </div>
-                      <div *ngIf="!n.readBy.some(r => r.userId === this.user._id)" class="w-2.5 h-2.5 rounded-full bg-blue-600 dark:bg-blue-500 flex-shrink-0 mt-1 shadow-lg shadow-blue-500/50"></div>
+                      <div *ngIf="isUnread(n)" class="w-2.5 h-2.5 rounded-full bg-blue-600 dark:bg-blue-500 flex-shrink-0 mt-1 shadow-lg shadow-blue-500/50"></div>
                     </div>
 
                     <div class="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-500 font-medium">

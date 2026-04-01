@@ -250,7 +250,7 @@ const THREE_DAYS = 3 * ONE_DAY;
           type: data.type,     // обновляем текущий статус
           title: data.title,
           message: data.message,
-          isRead: false,
+          readBy: [], // сбрасываем прочтения при обновлении статуса
           updatedAt: new Date(),
         }
       },

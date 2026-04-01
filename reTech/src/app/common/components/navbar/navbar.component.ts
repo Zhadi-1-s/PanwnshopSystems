@@ -14,6 +14,8 @@ import { AppNotification } from '../../../shared/interfaces/notification.interfa
 import { filter, Observable, switchMap, tap } from 'rxjs';
 import { NotificationService } from '../../../shared/services/notification.service';
 
+import { of } from 'rxjs';
+
 @Component({
   selector: 'app-navbar',
   standalone: true,
@@ -73,7 +75,7 @@ export class NavbarComponent implements OnInit {
       private authService: AuthService,
       private router: Router,
       private translate:TranslateService,
-      private notificaitonService:NotificationService)
+      private notificationService:NotificationService)
     {
       if(isPlatformBrowser(this.platformId)) {
               const savedLang = localStorage.getItem('lang') || 'en';
@@ -106,11 +108,23 @@ export class NavbarComponent implements OnInit {
       }
     });
 
-    this.unreadCount$ = this.authService.currentUser$.pipe(
-      filter((user):user is User => !!user?._id),
-      switchMap(user => this.notificaitonService.getUnreadCount(user?._id)),
+   this.unreadCount$ = this.authService.currentUser$.pipe(
+      filter((user): user is User => !!user?._id),
+
+      switchMap(user => {
+        if (this.user.role === 'user') {
+          return this.notificationService.getUnreadCount(user._id);
+        }
+
+        if (this.user.role === 'pawnshop') {
+          return this.notificationService.getUnreadCount(user._id); // или другой метод
+        }
+
+        return of(0); // fallback
+      }),
+
       tap(count => console.log('Unread notifications count:', count))
-    )
+    );
 
     if(typeof window !== 'undefined' && window.innerWidth < 1024) {
       this.toggleSidebar()

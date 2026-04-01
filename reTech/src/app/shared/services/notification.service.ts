@@ -23,8 +23,8 @@ export class NotificationService {
   }
 
   /** Пометить как прочитанное */
-  markAsRead(id: string): Observable<AppNotification> {
-    return this.http.patch<AppNotification>(`${this.apiUrl}/${id}/read`, {});
+  markAsRead(id: string, userId: string): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/${id}/read`, { userId });
   }
 
   /** Получить количество непрочитанных */

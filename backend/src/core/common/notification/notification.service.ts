@@ -31,11 +31,25 @@ export class NotificationService {
       .exec();
   }
 
-  async markAsRead(id: string) {
-    return this.notificationModel.findByIdAndUpdate(id, { isRead: true });
+  async markAsRead(id: string, userId: string) {
+    return this.notificationModel.updateOne(
+      { _id: id, 'readBy.userId': { $ne: userId } }, // чтобы не было дублей
+      {
+        $push: {
+          readBy: {
+            userId,
+            readAt: new Date()
+          }
+        }
+      }
+    );
   }
 
-  async unreadCount(userId: string) {
-    return this.notificationModel.countDocuments({ userId, isRead: false });
+ async unreadCount(userId: string) {
+    return this.notificationModel.countDocuments({
+      userId,
+      'readBy.userId': { $ne: userId }
+    });
   }
+
 }

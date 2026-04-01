@@ -408,11 +408,15 @@ export class LombardProfileComponent implements OnInit{
   }
 
   markAsRead(notification:AppNotification){
+
+    console.log('CLICK', notification);
+
     if (!notification._id || notification.readBy.some(r => r.userId === this.user._id)) return;
 
-    this.notificationService.markAsRead(notification._id).subscribe({
+    this.notificationService.markAsRead(notification._id, this.user._id).subscribe({
       next: updatedNotification => {
         notification.readBy.push({ userId: this.user._id, readAt: new Date() });
+        console.log('Notification marked as read:', this.user._id);
       },
       error: err => console.error(err)
     });
@@ -692,6 +696,12 @@ export class LombardProfileComponent implements OnInit{
     } else if (n.type === 'new-offer' || n.type === 'evaluation-created') {
       this.openEvaluationDetail(n.refId);
     }
+  }
+
+  isUnread(n: AppNotification): boolean {
+    if (!n.readBy?.length) return true;
+
+    return !n.readBy.some(r => r.userId === this.user?._id);
   }
 
   openEvaluationDetail(evaluationId: string) {

@@ -72,8 +72,19 @@ export class Notification {
   @Prop()
   refId?: string; // ссылка на продукт / оффер / чат
 
-  @Prop({ default: false })
-  isRead: boolean;
+  @Prop({
+    type: [
+      {
+        userId: { type: String, required: true },
+        readAt: { type: Date, default: Date.now }
+      }
+    ],
+    default: []
+  })
+  readBy: {
+    userId: string;
+    readAt: Date;
+  }[];
 
   @IsOptional()
   data?: any;

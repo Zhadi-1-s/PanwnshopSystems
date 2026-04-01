@@ -19,8 +19,11 @@ export class NotificationController {
   }
 
   @Patch(':id/read')
-  markAsRead(@Param('id') id: string) {
-    return this.notificationService.markAsRead(id);
+  markAsRead(
+    @Param('id') id: string,
+    @Body('userId') userId: string
+  ) {
+    return this.notificationService.markAsRead(id, userId);
   }
 
   @Get('user/:id/unread-count')

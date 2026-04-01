@@ -34,7 +34,7 @@ export class SlotService {
       title: 'Loan created',
       message: 'Ваш займ успешно оформлен.',
       refId: slot._id?.toString(),
-      isRead: false,
+      readBy: [],
     });
 
     return slot;
@@ -142,7 +142,7 @@ export class SlotService {
         title: 'Extension request',
         message: 'Пользователь запросил продление займа',
         refId: slot._id.toString(),
-        isRead: false,
+        readBy: [],
         data: { slotId: slot._id.toString() }
       });
     }
@@ -166,7 +166,7 @@ export class SlotService {
         title: 'Extension approved',
         message: 'Продление займа одобрено',
         refId: slot._id.toString(),
-        isRead: false,
+        readBy: [],
         data: { slotId: slot._id.toString() }
       });
     }
@@ -180,7 +180,7 @@ export class SlotService {
         title:'Loan completed',
         message:'Ваш займ завершён. Спасибо, что воспользовались нашими услугами!',
         refId: slot._id.toString(),
-        isRead:false,
+        readBy: [],
         data:{ slotData:slot }
       })
     }

@@ -129,7 +129,7 @@ export class ProductService {
           title: 'Цена обновлена',
           message: `Цена продукта была изменена с ${existing.price}₸ на ${dto.price}₸.`,
           refId: id,
-          isRead: false,
+          readBy: [],
         });
       }
     }

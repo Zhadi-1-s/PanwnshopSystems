@@ -427,7 +427,7 @@ export class ProfileComponent implements OnInit {
   markAsRead(notification: AppNotification) {
     console.log('Marking as read', notification._id);
     if (!notification.readBy.some(r => r.userId === this.user._id)) {
-      this.notificationService.markAsRead(notification._id).subscribe({
+      this.notificationService.markAsRead(notification._id, this.user._id).subscribe({
         next: () => {
           notification.readBy.push({ userId: this.user._id, readAt: new Date() });
         },
@@ -639,7 +639,9 @@ export class ProfileComponent implements OnInit {
   }
 
   isUnread(n: AppNotification): boolean {
-    return !n.readBy?.some((r: any) => r.userId === this.user?._id);
+    if (!n.readBy?.length) return true;
+
+    return !n.readBy.some(r => r.userId === this.user?._id);
   }
 
   get unreadReceivedOffers() {

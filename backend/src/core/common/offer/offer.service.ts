@@ -45,7 +45,8 @@ export class OfferService {
       title: 'New offer received',
       message: `${pawnshopName} отправил предложение вашему товару.`,
       refId: offer._id?.toString(),
-      isRead:false,
+      readBy: [],
+      data:{offer:offer}
     });
 
     return offer;
@@ -134,7 +135,7 @@ export class OfferService {
             title: 'Loan started',
             message: `Your loan for product "${product.title}" has started.`,
             refId: offer._id.toString(),
-            isRead: false,
+            readBy: [],
             // data: { productId: product._id.toString(), slotId: slot._id.toString() }
           });
         }
@@ -156,7 +157,7 @@ export class OfferService {
           type: status === 'pending' ? 'offer-accepted' : 'offer-updated',
           title: `Offer ${status}`,
           refId: offer._id.toString(),
-          isRead: false,
+          readBy: [],
       });
 
       return offer;
@@ -184,7 +185,7 @@ export class OfferService {
       title:'Offer cancelled by pawnshop',
       message:reason,
       refId:offer._id.toString(),
-      isRead:false
+      readBy: [],
     })
 
   }
