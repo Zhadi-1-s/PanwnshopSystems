@@ -678,211 +678,90 @@
 
             <!-- loans-section.component.html -->
             <div *ngIf="activeSection === 'loans'" class="animate-fade-in" id="loans-section">
-              <!-- Section Header -->
-              <div class="flex items-center justify-between mb-6">
-                <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-50 tracking-tight">
-                  {{ 'Loans' | translate }}
-                </h2>
-                
-              </div>
 
-              <!-- Loan Cards -->
-              <div class="flex flex-col gap-4">
-                <div
-                  *ngFor="let slot of slots$ | async"
-                  class="group relative bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden transition-all duration-200 hover:shadow-lg hover:border-gray-300 dark:hover:border-gray-700"
-                >
-                  <!-- Top accent bar -->
-                  <div
-                    class="h-1 w-full"
-                    [ngClass]="{
-                      'bg-red-500': isOverdue(slot),
-                      'bg-amber-500': isExpiringSoon(slot),
-                      'bg-emerald-500': slot.status === 'active' && !isExpiringSoon(slot) && !isOverdue(slot),
-                      'bg-gray-300 dark:bg-gray-700': slot.status !== 'active'
-                    }"
-                  ></div>
+              <div *ngFor="let n of slotNotifications"
+                  (click)="onNotificationClick(n)"
+                  [class.notification-unread]="isUnread(n)"
+                  class="relative notification-card bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700 rounded-xl p-4 mb-3 cursor-pointer transition-all hover:bg-gray-100 dark:hover:bg-gray-800 hover:shadow-md hover:-translate-y-0.5">
 
-                  <div class="p-5">
-                    <!-- Header: Product + Status -->
-                    <div class="flex items-start justify-between gap-3 mb-4">
-                      <div class="flex items-center gap-3 min-w-0">
-                        <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                          <!-- Replace with your icon component or SVG -->
-                          <svg class="w-5 h-5 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5m8.25 3v6.75m0 0-3-3m3 3 3-3M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z" />
-                          </svg>
+                <div class="flex gap-4 items-start">
+
+                  <!-- Product (если есть) -->
+                  <div *ngIf="productsById[n.refId] as p"
+                      class="w-14 h-14 flex-shrink-0 rounded-lg overflow-hidden bg-gray-200 dark:bg-gray-700">
+
+                    <img *ngIf="p.photos?.length > 0; else noImage"
+                        [src]="p.photos[0]"
+                        [alt]="p.title"
+                        class="w-full h-full object-cover">
+
+                    <ng-template #noImage>
+                      <div class="w-full h-full flex items-center justify-center text-gray-400">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                          <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                          <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                          <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
+                      </div>
+                    </ng-template>
+                  </div>
+
+                  <!-- Body -->
+                  <div class="flex-1 min-w-0">
+
+                    <div class="flex items-start justify-between gap-4 mb-3">
+
+                      <div class="flex-1 min-w-0">
+
+                        <!-- Title -->
+                        <div class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-1.5">
+                          {{ n.title | translate }}
                         </div>
-                        <div class="min-w-0">
-                          <h3 class="font-semibold text-gray-900 dark:text-gray-100 text-sm leading-tight truncate cursor-pointer" (click)="openProductDetails(slot.product?._id)">
-                            {{ slot.product?.title }}
-                          </h3>
-                          <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                            {{'Item value'|translate}}: {{ slot.product?.price | number }} &#8376;
-                          </p>
+
+                        <!-- Message -->
+                        <div class="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                          {{ n.message | translate }}
                         </div>
+
+                        <!-- Product title -->
+                        <div *ngIf="productsById[n.refId] as p"
+                            class="text-xs font-semibold text-blue-600 dark:text-blue-400 mt-2">
+                          {{ p.title }}
+                        </div>
+
                       </div>
 
-                      <span
-                        class="flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-full capitalize"
+                      <!-- ✅ Статус слота -->
+                      <div
+                        class="inline-flex items-center text-xs font-semibold mt-2 px-2 py-1 rounded-full"
                         [ngClass]="{
-                          'bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400': isOverdue(slot),
-                          'bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400': isExpiringSoon(slot),
-                          'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400': slot.status === 'active' && !isExpiringSoon(slot) && !isOverdue(slot),
-                          'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400': slot.status !== 'active'
+                          'bg-blue-100 text-blue-800': n.type === 'slot-created',
+                          'bg-green-100 text-green-800': n.type === 'slot-completed'
                         }"
                       >
-                        <span
-                          class="w-1.5 h-1.5 rounded-full"
-                          [ngClass]="{
-                            'bg-red-500': isOverdue(slot),
-                            'bg-amber-500': isExpiringSoon(slot),
-                            'bg-emerald-500': slot.status === 'active' && !isExpiringSoon(slot) && !isOverdue(slot),
-                            'bg-gray-400': slot.status !== 'active'
-                          }"
-                        ></span>
-                        {{ isOverdue(slot) ? 'overdue' : slot.status }}
-                      </span>
-                    </div>
-
-                    <!-- Loan Amount - Hero number -->
-                    <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-3.5 mb-4">
-                      <p class="text-xs text-gray-500 dark:text-gray-400 font-medium mb-1">
-                        {{ 'Loan Amount' | translate }}
-                      </p>
-                      <p class="text-2xl font-bold text-gray-900 dark:text-gray-50 tracking-tight">
-                        {{ slot.loanAmount | number }}
-                        <span class="text-base font-medium text-gray-400 dark:text-gray-500">&#8376;</span>
-                      </p>
-                      <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        {{ 'Total to return' | translate }}:
-                        <span class="font-semibold">
-                          {{ getTotalToReturn(slot) | number }} &#8376;
-                        </span>
-                      </p>
-                    </div>
-
-                    <!-- Info Grid -->
-                    <div class="grid grid-cols-2 gap-3">
-                      <div class="flex items-start gap-2.5">
-                        <div class="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <svg class="w-4 h-4 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
-                          </svg>
-                        </div>
-                        <div>
-                          <p class="text-[11px] text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium">
-                            {{ 'Pawnshop' | translate }}
-                          </p>
-                          <p class="text-sm font-medium text-gray-900 dark:text-gray-100 leading-tight mt-0.5">
-                            {{ slot.pawnshopId?.name }}
-                          </p>
-                        </div>
+                        {{ n.type === 'slot-created' ? ('loan.created' | translate) : ('loan.completed' | translate) }}
                       </div>
 
-                      <div class="flex items-start gap-2.5">
-                        <div class="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <svg class="w-4 h-4 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                          </svg>
-                        </div>
-                        <div>
-                          <p class="text-[11px] text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium">
-                            {{ 'Interest' | translate }}
-                          </p>
-                          <p class="text-sm font-medium text-gray-900 dark:text-gray-100 leading-tight mt-0.5">
-                            {{ slot.interestRate * 100 | number:'1.1-1' }}%
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Date Range -->
-                    <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-800">
-                      <div class="flex items-center gap-2.5">
-                        <svg class="w-4 h-4 text-gray-400 dark:text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
-                        </svg>
-                        <div class="flex items-center gap-2 text-sm">
-                          <span class="text-gray-500 dark:text-gray-400">
-                            {{ slot.startDate | date:'dd.MM.yyyy' }}
-                          </span>
-                          <svg class="w-4 h-4 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                          </svg>
-                          <span
-                            class="font-semibold"
-                            [ngClass]="{
-                              'text-red-500': isOverdue(slot),
-                              'text-amber-600 dark:text-amber-400': isExpiringSoon(slot),
-                              'text-gray-900 dark:text-gray-100': !isOverdue(slot) && !isExpiringSoon(slot)
-                            }"
-                          >
-                            {{ slot.endDate | date:'dd.MM.yyyy' }}
-                          </span>
-                        </div>
+                      <!-- Unread -->
+                      <div *ngIf="isUnread(n)"
+                          class="w-2.5 h-2.5 rounded-full bg-blue-600 flex-shrink-0 mt-1">
                       </div>
 
-                      <!-- Days remaining chip -->
-                      <div *ngIf="slot.status === 'active'" class="mt-2.5">
-                        <span
-                          class="inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-md"
-                          [ngClass]="{
-                            'bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400': isOverdue(slot),
-                            'bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400': isExpiringSoon(slot),
-                            'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400': !isOverdue(slot) && !isExpiringSoon(slot)
-                          }"
-                        >
-                          {{ isOverdue(slot)
-                            ? 'Overdue by ' + getAbsDaysLeft(slot) + (getAbsDaysLeft(slot) === 1 ? ' day' : ' days')
-                            : getDaysLeft(slot) + (getDaysLeft(slot) === 1 ? ' ' + ('day' | translate) : ' ' + ('days' | translate)) + ' ' + ('remaining' | translate)
-                          }}
-                        </span>
-                      </div>
                     </div>
-                    <div
-                      *ngIf="slot.status === 'expired'"                      
-                      class="px-5 pb-5 pt-3 border-t border-gray-200 dark:border-gray-800 flex justify-end"
 
-                    >
-                      <button
-                        (click)="openExtendSlotModal(slot)"
-                        class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold
-                              bg-indigo-600 text-white
-                              hover:bg-indigo-700 active:scale-[0.98]
-                              transition-all duration-150
-                              shadow-sm hover:shadow-md"
-                        [ngbTooltip]="slot.prolongationAllowed ? 'Продлить' : 'Продление запрещено'"
-                        [disabled]="!slot.prolongationAllowed"
-                      >
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M16.023 9.348h4.992v4.992M20.015 9.355l-6.36 6.36a6 6 0 1 1-8.486-8.486l1.91-1.91" />
-                        </svg>
-                        {{ 'Extend' | translate }}
-                      </button>
+                    <!-- Date -->
+                    <div class="flex items-center gap-1.5 text-xs text-gray-500">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                      </svg>
+                      <span>{{ n.createdAt | date:'short' }}</span>
                     </div>
+
                   </div>
                 </div>
               </div>
 
-              <!-- Empty state --> 
-               <ng-container *ngIf="slots$ | async as slots;">
-                 <div
-                   *ngIf="slots.length === 0"
-                   class="flex flex-col items-center justify-center py-16 text-center"
-                 >
-                   <div  class="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
-                     <svg class="w-6 h-6 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                       <path d="M12 1v22" />
-                       <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" />
-                     </svg>
-                   </div>
-                   <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
-                     {{ 'No loan notifications' | translate }}
-                   </p>
-                 </div>
-               </ng-container>
             </div>
 
             <!-- System Section -->

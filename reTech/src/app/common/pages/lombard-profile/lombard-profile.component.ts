@@ -411,12 +411,12 @@ export class LombardProfileComponent implements OnInit{
 
     console.log('CLICK', notification);
 
-    if (!notification._id || notification.readBy.some(r => r.userId === this.user._id)) return;
+    if (!notification._id || notification.readBy.some(r => r.userId === this.profile._id)) return;
 
-    this.notificationService.markAsRead(notification._id, this.user._id).subscribe({
+    this.notificationService.markAsRead(notification._id, this.profile._id).subscribe({
       next: updatedNotification => {
-        notification.readBy.push({ userId: this.user._id, readAt: new Date() });
-        console.log('Notification marked as read:', this.user._id);
+        notification.readBy.push({ userId: this.profile._id, readAt: new Date() });
+        console.log('Notification marked as read:', this.profile._id);
       },
       error: err => console.error(err)
     });
@@ -601,8 +601,21 @@ export class LombardProfileComponent implements OnInit{
     )
   }
 
+  confirmDeleteSlot(slotId: string) {
+    const modalRef = this.modalService.open(SlotDeleteComponent, { centered: true });
+    modalRef.componentInstance.slotId = slotId;
+    modalRef.result.then(
+      (confirmed: boolean) => {
+        if (confirmed) {
+          this.deleteSlot(slotId);
+        }
+      },
+      () => {}
+    );
+  }
+
   deleteSlot(slotId: string) {
-    this.slotService.updateSlotStatus(slotId, { status: LoanStatus.CLOSED, userId: this.user?._id || '' }).subscribe({
+    this.slotService.updateSlotStatus(slotId, { status: LoanStatus.CLOSED, userId: this.profile?._id || '' }).subscribe({
       next: () => {
         this.slotsSubject.next(this.slotsSubject.value.filter(s => s.slot._id !== slotId));
       },
@@ -701,7 +714,7 @@ export class LombardProfileComponent implements OnInit{
   isUnread(n: AppNotification): boolean {
     if (!n.readBy?.length) return true;
 
-    return !n.readBy.some(r => r.userId === this.user?._id);
+    return !n.readBy.some(r => r.userId === this.profile?._id);
   }
 
   openEvaluationDetail(evaluationId: string) {

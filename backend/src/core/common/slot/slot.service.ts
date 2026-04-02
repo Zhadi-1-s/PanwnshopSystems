@@ -96,14 +96,16 @@ export class SlotService {
 
   // Получить слот по его ID
   async findById(id: string): Promise<Slot> {
-    if (!Types.ObjectId.isValid(id)) throw new NotFoundException('Invalid slot ID');
-    const slot = await this.slotModel
-      .findById(id)
-      .populate('product', 'title price')
-      .populate('pawnshopId', 'name')
-      .populate('userId', 'username')
-      .exec();
-    if (!slot) throw new NotFoundException('Slot not found');
+    if (!Types.ObjectId.isValid(id)) {
+      throw new NotFoundException('Invalid slot ID');
+    }
+
+    const slot = await this.slotModel.findById(id).exec();
+
+    if (!slot) {
+      throw new NotFoundException('Slot not found');
+    }
+
     return slot;
   }
 
@@ -167,7 +169,7 @@ export class SlotService {
         message: 'Продление займа одобрено',
         refId: slot._id.toString(),
         readBy: [],
-        data: { slotId: slot._id.toString() }
+        data: { slotData:slot }
       });
     }
 

@@ -11,10 +11,12 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { Router } from '@angular/router';
 import { AppNotification } from '../../../shared/interfaces/notification.interface';
-import { filter, Observable, switchMap, tap } from 'rxjs';
+import { combineLatest, filter, Observable, shareReplay, startWith, Subject, switchMap, tap } from 'rxjs';
 import { NotificationService } from '../../../shared/services/notification.service';
 
 import { of } from 'rxjs';
+import { LombardService } from '../../../shared/services/lombard.service';
+import { PawnshopProfile } from '../../../shared/interfaces/shop-profile.interface';
 
 @Component({
   selector: 'app-navbar',
@@ -31,6 +33,8 @@ export class NavbarComponent implements OnInit {
  
   notifications$:AppNotification[] = [];
   unreadCount$: Observable<number>;
+
+  pawnshop$:Observable<PawnshopProfile>;
 
   sidebarOpen: boolean = true; 
   @Output() sidebarToggled = new EventEmitter<boolean>();
@@ -75,7 +79,8 @@ export class NavbarComponent implements OnInit {
       private authService: AuthService,
       private router: Router,
       private translate:TranslateService,
-      private notificationService:NotificationService)
+      private notificationService:NotificationService,
+      private pawnshopService:LombardService)
     {
       if(isPlatformBrowser(this.platformId)) {
               const savedLang = localStorage.getItem('lang') || 'en';
@@ -108,21 +113,34 @@ export class NavbarComponent implements OnInit {
       }
     });
 
-   this.unreadCount$ = this.authService.currentUser$.pipe(
-      filter((user): user is User => !!user?._id),
+    this.pawnshop$ = this.authService.currentUser$.pipe(
+      filter((user): user is User => !!user?._id && user.role === 'pawnshop'),
+      switchMap(user => this.pawnshopService.getLombardByUserId(user._id)),
+      shareReplay(1)
+    );
 
-      switchMap(user => {
-        if (this.user.role === 'user') {
+   this.unreadCount$ = combineLatest([
+      this.authService.currentUser$.pipe(
+        filter((user): user is User => !!user?._id)
+      ),
+      this.notificationService.refreshTrigger$.pipe(startWith(null)) // 👈 важно
+    ]).pipe(
+      switchMap(([user]) => {
+        if (user.role === 'user') {
           return this.notificationService.getUnreadCount(user._id);
         }
 
-        if (this.user.role === 'pawnshop') {
-          return this.notificationService.getUnreadCount(user._id); // или другой метод
+        if (user.role === 'pawnshop') {
+           return this.pawnshop$.pipe(
+              switchMap(pawnshop => {
+                if (!pawnshop?._id) return of(0);
+                return this.notificationService.getUnreadCount(pawnshop._id);
+              })
+            );
         }
 
-        return of(0); // fallback
+        return of(0);
       }),
-
       tap(count => console.log('Unread notifications count:', count))
     );
 
@@ -132,7 +150,6 @@ export class NavbarComponent implements OnInit {
     }
 
   }
-
 
   logout() {
     localStorage.removeItem('access_token');

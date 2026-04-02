@@ -15,6 +15,7 @@ export interface AppNotification {
     | 'price-changed'
     | 'offer-in-loan'
     | 'slot-created'
+    | 'slot-completed'
     | 'product-expired'
     | 'extend-requested'
     | 'extend-approved'

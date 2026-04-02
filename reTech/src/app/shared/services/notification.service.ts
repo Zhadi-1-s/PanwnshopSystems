@@ -1,6 +1,6 @@
 import { HttpClient,HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
+import { Observable, Subject,tap } from "rxjs";
 import { AppNotification } from "../interfaces/notification.interface";
 import { environment } from "../../../environments/environment";
 
@@ -10,6 +10,8 @@ import { environment } from "../../../environments/environment";
 export class NotificationService {
 
   private apiUrl = environment.apiUrl.notifications;
+
+  private refresh$ = new Subject<void>();
 
   constructor(private http: HttpClient) {}
 
@@ -24,11 +26,22 @@ export class NotificationService {
 
   /** Пометить как прочитанное */
   markAsRead(id: string, userId: string): Observable<any> {
-    return this.http.patch(`${this.apiUrl}/${id}/read`, { userId });
+    return this.http.patch(`${this.apiUrl}/${id}/read`, { userId }).pipe(
+      tap(() => this.triggerRefresh())
+    );
   }
 
   /** Получить количество непрочитанных */
   getUnreadCount(userId: string): Observable<number> {
     return this.http.get<number>(`${this.apiUrl}/user/${userId}/unread-count`);
   }
+
+  triggerRefresh() {
+    this.refresh$.next();
+  }
+
+  get refreshTrigger$() {
+    return this.refresh$.asObservable();
+  }
+
 }

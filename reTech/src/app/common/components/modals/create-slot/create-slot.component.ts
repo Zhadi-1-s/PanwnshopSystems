@@ -16,6 +16,7 @@ import { SlotService } from '../../../../shared/services/slot.service';
 import { ProductService } from '../../../../shared/services/product.service';
 import { AuthService } from '../../../../shared/services/auth.service';
 import { take } from 'rxjs/internal/operators/take';
+import { firstValueFrom } from 'rxjs';
 @Component({
   selector: 'app-create-slot',
   standalone: true,
@@ -103,7 +104,9 @@ export class CreateSlotComponent implements OnInit {
         loanTerm: Math.ceil((new Date(this.form.value.endDate).getTime() - new Date(this.form.value.startDate).getTime()) / (1000 * 60 * 60 * 24)),
       }
 
-      const createdProduct = await this.productService.createProduct(productPayload).toPromise();
+      const createdProduct = await firstValueFrom(
+        this.productService.createProduct(productPayload)
+      );
    
       const slotPayload: Slot = {
         product: createdProduct._id,
@@ -116,7 +119,9 @@ export class CreateSlotComponent implements OnInit {
         status: LoanStatus.ACTIVE
       };
 
-      const createdSlot = await this.slotService.createSlot(slotPayload).toPromise();
+      const createdSlot = await firstValueFrom(
+        this.slotService.createSlot(slotPayload)
+      );
       window.alert('Слот успешно создан!');
 
       this.slotCreated.emit(createdSlot);
@@ -125,6 +130,7 @@ export class CreateSlotComponent implements OnInit {
       this.errorMessage = 'Ошибка при создании слота';
     } finally {
       this.loading = false;
+      this.activeModal.close();
     }
   }
 

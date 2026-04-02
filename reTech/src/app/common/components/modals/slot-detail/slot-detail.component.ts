@@ -6,6 +6,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SlotExtendComponent } from '../slot-extend/slot-extend.component';
 import { User } from '../../../../shared/interfaces/user.interface';
+import { SlotService } from '../../../../shared/services/slot.service';
+import { take } from 'rxjs/internal/operators/take';
 
 @Component({
   selector: 'app-slot-detail',
@@ -16,9 +18,11 @@ import { User } from '../../../../shared/interfaces/user.interface';
 })
 export class SlotDetailComponent implements OnInit {
 
-  @Input() slot:Slot
+  @Input() slotId:string;
   @Input() user:User;
   Status = LoanStatus
+
+  slot:Slot;
 
   daysUsed!: number;
   absoluteDays!: number;
@@ -28,37 +32,51 @@ export class SlotDetailComponent implements OnInit {
 
   constructor(
     public activeModal:NgbActiveModal,
-    private modalService:NgbModal
+    private modalService:NgbModal,
+    private slotService:SlotService
   ){
-    console.log('this user is ', this.user);
   }
 
   ngOnInit(): void {
-    if (this.slot) {
-      const now = Date.now();
-
-      const start = new Date(this.slot.startDate).getTime();
-      const end = new Date(this.slot.endDate).getTime();
-
-      this.daysDiff = Math.ceil((end - now) / (1000 * 60 * 60 * 24));
-
-      // прогресс
-      this.progress = ((now - start) / (end - start)) * 100;
-      this.progress = Math.min(Math.max(this.progress, 0), 100);
-
-      // дни до окончания и абсолютные дни
-      this.daysUsed = Math.ceil((now - start) / (1000 * 60 * 60 * 24));
-      this.absoluteDays = Math.abs(Math.ceil((end - now) / (1000 * 60 * 60 * 24)));
-
-      // начисленные проценты
-      const dailyInterest = this.slot.loanAmount * (this.slot.interestRate / 100);
-      this.accruedInterest = Math.max(this.daysUsed, 0) * dailyInterest;
-    }
+    this.loadSlot();
   }
 
   finishSlot(slot:Slot){}
   extendSlot(slot:Slot){}
   deleteSlot(slorId:string){}
+
+  private loadSlot() {
+    this.slotService.getSlotById(this.slotId)
+      .pipe(take(1))
+      .subscribe(slot => {
+        this.slot = slot;
+      });
+      this.calculate();
+  }
+
+  private calculate(){
+    if (!this.slot) {
+      return;
+    }
+    const now = Date.now();
+
+    const start = new Date(this.slot.startDate).getTime();
+    const end = new Date(this.slot.endDate).getTime();
+
+    this.daysDiff = Math.ceil((end - now) / (1000 * 60 * 60 * 24));
+
+    // прогресс
+    this.progress = ((now - start) / (end - start)) * 100;
+    this.progress = Math.min(Math.max(this.progress, 0), 100);
+
+    // дни до окончания и абсолютные дни
+    this.daysUsed = Math.ceil((now - start) / (1000 * 60 * 60 * 24));
+    this.absoluteDays = Math.abs(Math.ceil((end - now) / (1000 * 60 * 60 * 24)));
+
+    // начисленные проценты
+    const dailyInterest = this.slot.loanAmount * (this.slot.interestRate / 100);
+    this.accruedInterest = Math.max(this.daysUsed, 0) * dailyInterest;
+  }
 
   getProgress(startDate: any, endDate: any): number {
     if (!startDate || !endDate) return 0;

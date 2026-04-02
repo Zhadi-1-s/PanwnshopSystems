@@ -28,6 +28,7 @@ import { LombardService } from '../../../shared/services/lombard.service';
 import { EvaluationDetailComponent } from '../../components/modals/evaluation-detail/evaluation-detail.component';
 import { EvaluationService } from '../../../shared/services/evaluation.service';
 import { FormsModule } from '@angular/forms';
+import { SlotDetailComponent } from '../../components/modals/slot-detail/slot-detail.component';
 
 interface SlotView extends Slot {
   prolongationAllowed: boolean;
@@ -385,8 +386,10 @@ export class ProfileComponent implements OnInit {
   onNotificationClick(n: AppNotification) {
 
     console.log('CLICK', n);
+    console.log('user is ', this.user);
     
     if (!n.readBy.some(r => r.userId === this.user._id)) {
+      console.log('Marking notification as read:', n._id);
       this.markAsRead(n);
     }
 
@@ -409,10 +412,27 @@ export class ProfileComponent implements OnInit {
       this.openEvaluationDetailModal(n.refId);
     }
 
+    if(n.type === 'slot-created' || n.type === 'slot-completed'){
+      this.openSlotDetail(n.refId);
+    }
+
   }
 
   openPawnshopDetail(id:string){
     this.router.navigate(['/pawnshop-detail',id])
+  }
+
+  openSlotDetail(slotId:string){
+
+    console.log('Opening slot detail for user', this.user);
+
+    const modalRef = this.modalService.open(SlotDetailComponent,{
+      centered:true
+    });
+
+    modalRef.componentInstance.slotId = slotId;
+    modalRef.componentInstance.user = this.user;
+    
   }
 
   openEvaluationDetailModal(evaluationId:string){
@@ -459,7 +479,9 @@ export class ProfileComponent implements OnInit {
         'offer-canceled',
         'evaluation-created',
         'evaluation-accepted',
-        'evaluation-updated'
+        'evaluation-updated',
+        'slot-created',
+        'slot-completed'
       ].includes(n.type)
     );
 
@@ -508,6 +530,37 @@ export class ProfileComponent implements OnInit {
 
     return notifications;
   }
+
+  get slotNotifications() {
+    let notifications = (this.notificationsList || []).filter(n =>
+      ['slot-created', 'slot-completed'].includes(n.type)
+    );
+
+    // 🔹 группировка по refId (оставляем последнее)
+    const latestByRefId = Object.values(
+      notifications.reduce((acc, n) => {
+        if (
+          !acc[n.refId] ||
+          new Date(acc[n.refId].createdAt) < new Date(n.createdAt)
+        ) {
+          acc[n.refId] = n;
+        }
+        return acc;
+      }, {} as Record<string, AppNotification>)
+    );
+
+    // 🔹 сортировка
+    latestByRefId.sort((a, b) => {
+      if (this.sortByDate === 'newest') {
+        return +new Date(b.createdAt) - +new Date(a.createdAt);
+      }
+      return +new Date(a.createdAt) - +new Date(b.createdAt);
+    });
+
+    return latestByRefId;
+  }
+  
+
 
   getActiveFilterCount(): number {
     return Object.values(this.statusFilter).filter(v => v).length;

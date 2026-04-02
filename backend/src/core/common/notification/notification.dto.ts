@@ -3,11 +3,11 @@ import { IsEnum, IsOptional, IsString, IsNotEmpty, IsBoolean, IsArray } from 'cl
 export class CreateNotificationDto {
   @IsString()
   @IsNotEmpty()
-  userId: string;
+  userId!: string;
 
   @IsString()
   @IsNotEmpty()
-  senderId:string;
+  senderId!:string;
 
   @IsEnum([
      'new-offer',
@@ -26,16 +26,17 @@ export class CreateNotificationDto {
       'evauluation-accepted',
       'evaluation-created',
       'slot-created',
+      'slot-completed',
       'product-expired',
       'extend-requested',
       'extend-approved',
       'extend-rejected'
   ])
-  type: string;
+  type!: string;
 
   @IsString()
   @IsNotEmpty()
-  title: string;
+  title!: string;
 
   @IsString()
   @IsOptional()

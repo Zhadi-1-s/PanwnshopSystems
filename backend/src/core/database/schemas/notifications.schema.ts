@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsOptional } from 'class-validator';
-import { Document } from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 
 export type NotificationDocument = Notification & Document;
 
@@ -30,7 +30,7 @@ export type NotificationType =
 export class Notification {
 
   @Prop({ required: true })
-  userId: string; 
+  userId!: string; 
 
   @Prop()
   senderId?:string;
@@ -61,10 +61,10 @@ export class Notification {
       'extend-rejected'
     ],
   })
-  type: NotificationType;
+  type!: NotificationType;
 
   @Prop({ required: true })
-  title: string;
+  title!: string;
 
   @Prop()
   message?: string;
@@ -81,17 +81,17 @@ export class Notification {
     ],
     default: []
   })
-  readBy: {
+  readBy!: {
     userId: string;
     readAt: Date;
   }[];
 
-  @IsOptional()
+  @Prop({ type: mongoose.Schema.Types.Mixed })
   data?: any;
 }
 
 export const NotificationSchema = SchemaFactory.createForClass(Notification);
 
 // Индексы
-NotificationSchema.index({ userId: 1, isRead: 1 });
+NotificationSchema.index({ userId: 1, 'readBy.userId': 1 });
 NotificationSchema.index({ createdAt: -1 });
