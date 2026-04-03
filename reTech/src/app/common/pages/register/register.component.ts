@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormsModule,FormBuilder,Validators  } from '@angular/forms';
 
 import { AuthService } from '../../../shared/services/auth.service';
@@ -16,7 +16,7 @@ import { CloudinaryService } from '../../../shared/services/cloudinary.service';
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss'
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnInit {
   submitted = false;
   registerForm: FormGroup;
   uploading = false;
@@ -24,6 +24,8 @@ export class RegisterComponent {
   avatarPreview: string | ArrayBuffer | null = null;
   avatarFile: File | null = null;
   avatarError: string | null = null;
+
+  serverError: string | null = null;
 
   constructor(
     private router: Router,
@@ -40,38 +42,54 @@ export class RegisterComponent {
     });
   }
 
+  ngOnInit() {
+      this.registerForm.valueChanges.subscribe(() => {
+        this.serverError = null;
+      });
+  }
+
   async onSubmit(): Promise<void> {
     this.submitted = true;
+    this.serverError = null; // сбрасываем старую ошибку
+
     if (this.registerForm.invalid) return;
 
     try {
       let logoUrl = this.registerForm.value.logoUrl;
 
-      // Если файл выбран — заливаем его в Cloudinary
       if (this.avatarFile) {
         this.uploading = true;
         logoUrl = await this.cloudinary.uploadImage(this.avatarFile);
-        console.log('Uploaded to Cloudinary:', logoUrl);
         this.uploading = false;
       }
 
       const dto: RegisterDto = {
         ...this.registerForm.value,
-        avatarUrl:logoUrl
+        avatarUrl: logoUrl
       };
 
       this.authService.register(dto).subscribe({
         next: (response) => {
-          console.log('Registration success:', response);
           this.router.navigate(['/login']);
         },
         error: (err) => {
-          console.error('Registration error:', err);
+          this.uploading = false;
+
+          // 👉 нормализуем ошибку
+          this.serverError =
+            err?.error?.message ||
+            err?.message ||
+            'Registration failed. Please try again.';
         }
       });
-    } catch (err) {
-      console.error('Upload failed:', err);
+
+    } catch (err: any) {
       this.uploading = false;
+
+      this.serverError =
+        err?.error?.message ||
+        err?.message ||
+        'Upload failed. Please try again.';
     }
   }
 

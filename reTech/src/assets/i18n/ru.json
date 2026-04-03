@@ -422,6 +422,26 @@
     "You have an active loan":"У вас есть активный займ",
     "Confirm delete":"Подтвердите удаление",
     "Are you sure you want to delete this slot?":"Вы уверены, что хотите удалить этот слот?",
-    "Loan completed successfully":"Заем успешно завершен"
+    "Loan completed successfully":"Заем успешно завершен",
+    "Login":"Войти",
+    "Register":"Зарегистрироваться",
+    "A simple way to connect with new clients": "Простой способ привлекать новых клиентов",
+    "TechLombard helps pawnshops receive requests from real users and respond with their offers. A convenient way to expand your customer base locally.": "TechLombard помогает ломбардам получать заявки от реальных пользователей и отвечать своими предложениями. Удобный способ расширить клиентскую базу в своём регионе.",
+    "Receive requests from users in your area": "Получайте заявки от пользователей в вашем регионе",
+    "Send offers and communicate directly with clients": "Отправляйте предложения и напрямую общайтесь с клиентами",
+    "No complex setup — start in minutes": "Без сложной настройки — начните за несколько минут",
+    "Users":"Пользователи",
+    "Join TechLombard": "Присоединяйтесь к TechLombard",
+    "A platform that connects people who want to sell items with pawnshops ready to make offers. Register as a client or as a pawnshop and start using the service in minutes.": "Платформа, которая соединяет людей, желающих продать вещи, с ломбардами, готовыми делать предложения. Зарегистрируйтесь как клиент или как ломбард и начните пользоваться сервисом за несколько минут.",
+    "Simple registration for all users": "Простая регистрация для всех пользователей",
+    "Connect with real people in your area": "Связывайтесь с реальными людьми в вашем регионе",
+    "Start using the platform right away": "Начните пользоваться платформой сразу",
+    "Log in to your account to continue using TechLombard and manage your activity in one place.": "Войдите в свой аккаунт, чтобы продолжить пользоваться TechLombard и управлять своей активностью в одном месте.",
+    "Access your dashboard anytime": "Доступ к панели в любое время",
+    "Stay updated with your activity": "Будьте в курсе своей активности",
+    "Manage your profile and settings": "Управляйте своим профилем и настройками",
+    "User creates a request": "Пользователь создаёт заявку",
+    "Pawnshops send offers": "Ломбарды отправляют предложения",
+    "User chooses the best option": "Пользователь выбирает лучшее предложение"
 
 }

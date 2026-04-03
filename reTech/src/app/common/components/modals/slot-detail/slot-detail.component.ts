@@ -50,8 +50,10 @@ export class SlotDetailComponent implements OnInit {
       .pipe(take(1))
       .subscribe(slot => {
         this.slot = slot;
+        console.log('Loaded slot:', slot);
+        this.calculate();
       });
-      this.calculate();
+      
   }
 
   private calculate(){
@@ -62,6 +64,8 @@ export class SlotDetailComponent implements OnInit {
 
     const start = new Date(this.slot.startDate).getTime();
     const end = new Date(this.slot.endDate).getTime();
+
+    
 
     this.daysDiff = Math.ceil((end - now) / (1000 * 60 * 60 * 24));
 
@@ -76,6 +80,7 @@ export class SlotDetailComponent implements OnInit {
     // начисленные проценты
     const dailyInterest = this.slot.loanAmount * (this.slot.interestRate / 100);
     this.accruedInterest = Math.max(this.daysUsed, 0) * dailyInterest;
+    console.log(this.daysDiff, this.absoluteDays, this.accruedInterest, this.progress);
   }
 
   getProgress(startDate: any, endDate: any): number {
