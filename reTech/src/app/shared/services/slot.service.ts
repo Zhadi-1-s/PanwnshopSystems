@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable,Subject } from 'rxjs';
 import { Slot } from '../interfaces/slot.interface';
 import { environment } from '../../../environments/environment';
 import { LoanStatus } from '../enums/status.enum';
@@ -10,6 +10,10 @@ import { LoanStatus } from '../enums/status.enum';
 })
 export class SlotService {
   private apiUrl  = environment.apiUrl.slots;
+
+  private refreshSubject = new Subject<void>();
+  refresh$ = this.refreshSubject.asObservable();
+
 
   constructor(private http: HttpClient) {}
 
@@ -43,7 +47,11 @@ export class SlotService {
   }
 
  updateSlotStatus(id: string, dto: { status: LoanStatus; userId: string }): Observable<Slot> {
-  return this.http.patch<Slot>(`${this.apiUrl}/${id}/status`, dto);
-}
+    return this.http.patch<Slot>(`${this.apiUrl}/${id}/status`, dto);
+  }
+
+  triggerRefresh() {
+    this.refreshSubject.next();
+  }
 
 }

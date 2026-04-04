@@ -17,6 +17,7 @@ export type NotificationType =
     | 'price-changed'
     | 'offer-in-loan'
     | 'slot-created'
+    | 'slot-updated'
     | 'slot-completed'
     | 'product-expired'
     | 'evaluation-created'
@@ -55,6 +56,7 @@ export class Notification {
       'evaluation-created',
       'slot-created',
       'slot-completed',
+      'slot-updated',
       'product-expired',
       'extend-requested',
       'extend-approved',

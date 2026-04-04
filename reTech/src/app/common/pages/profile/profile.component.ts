@@ -450,6 +450,7 @@ export class ProfileComponent implements OnInit {
       this.notificationService.markAsRead(notification._id, this.user._id).subscribe({
         next: () => {
           notification.readBy.push({ userId: this.user._id, readAt: new Date() });
+          this.notificationService.triggerRefresh();
         },
         error: err => console.error('Failed to mark notification as read', err)
       })
@@ -689,6 +690,16 @@ export class ProfileComponent implements OnInit {
       ['new-offer','offer-accepted','offer-rejected','offer-canceled','evaluation-created','evaluation-accepted','evaluation-updated'].includes(n.type) && !n.readBy.some(r => r.userId === this.user._id)
     );
     return unreaded;
+  }
+
+  get unreadLoanNotifications(){
+
+    const unreaded = (this.notificationsList || []).filter(n =>
+      ['slot-created','slot-completed','slot-updated'].includes(n.type) && !n.readBy.some(r => r.userId === this.user._id)
+    );
+    console.log(unreaded,'unread loan notifications')
+    return unreaded;
+
   }
 
   isUnread(n: AppNotification): boolean {

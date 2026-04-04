@@ -8,6 +8,7 @@ import { SlotExtendComponent } from '../slot-extend/slot-extend.component';
 import { User } from '../../../../shared/interfaces/user.interface';
 import { SlotService } from '../../../../shared/services/slot.service';
 import { take } from 'rxjs/internal/operators/take';
+import { SlotDeleteComponent } from '../slot-delete/slot-delete.component';
 
 @Component({
   selector: 'app-slot-detail',
@@ -41,9 +42,28 @@ export class SlotDetailComponent implements OnInit {
     this.loadSlot();
   }
 
-  finishSlot(slot:Slot){}
+  confirmDeleteSlot(slotId:string){
+    const modalRef = this.modalService.open(SlotDeleteComponent, { centered: true });
+    
+    if(modalRef.result){
+      modalRef.result.then((result) => {
+        if (result === 'confirm') {
+          this.finishSlot(slotId);
+        }
+      });
+    }
+
+  }
+
+  finishSlot(slotId:string){
+    this.slotService.updateSlotStatus(slotId, { status: LoanStatus.CLOSED, userId: this.user._id }).subscribe({
+      next:updatedSlot => {
+        console.log('Slot updated:', updatedSlot);
+      }
+    });
+  }
   extendSlot(slot:Slot){}
-  deleteSlot(slorId:string){}
+  deleteSlot(slotId:string){}
 
   private loadSlot() {
     this.slotService.getSlotById(this.slotId)
@@ -81,6 +101,21 @@ export class SlotDetailComponent implements OnInit {
     const dailyInterest = this.slot.loanAmount * (this.slot.interestRate / 100);
     this.accruedInterest = Math.max(this.daysUsed, 0) * dailyInterest;
     console.log(this.daysDiff, this.absoluteDays, this.accruedInterest, this.progress);
+  }
+
+  calculateTotalAmount(): number {
+    if (!this.slot) return 0;
+
+    const start = new Date(this.slot.startDate).getTime();
+    const end = new Date(this.slot.endDate).getTime();
+
+    const totalDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+
+    const dailyInterest = this.slot.loanAmount * (this.slot.interestRate / 100);
+
+    const totalInterest = totalDays * dailyInterest;
+
+    return this.slot.loanAmount + totalInterest;
   }
 
   getProgress(startDate: any, endDate: any): number {

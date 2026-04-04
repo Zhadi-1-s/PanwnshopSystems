@@ -16,7 +16,7 @@ export class PawnshopTerms {
       minChargeDays: null
     }
   })
-  interest: {
+  interest!: {
     rate: number;
     period: 'day' | 'month';
     startsAfterDays: number;
@@ -30,7 +30,7 @@ export class PawnshopTerms {
       minAmount: null
     }
   })
-  limits: {
+  limits!: {
     maxAmount: number;
     minAmount?: number;
   };
@@ -48,7 +48,7 @@ export class PawnshopTerms {
   };
 
   @Prop({ default: 0 })
-  priceAdjustmentLimitPercent: number;
+  priceAdjustmentLimitPercent!: number;
 }
 
 export const PawnshopTermsSchema = SchemaFactory.createForClass(PawnshopTerms);

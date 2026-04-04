@@ -203,6 +203,10 @@
                 </svg>
                 <span class="text-sm font-medium">{{'Loans' | translate}}</span>
               </div>
+              <span *ngIf="unreadLoanNotifications.length > 0" 
+                    class="px-2 py-0.5 text-xs font-semibold bg-red-600 dark:bg-red-500 text-white rounded-full min-w-[22px] text-center">
+                {{unreadLoanNotifications.length}}
+              </span>
 
              
             </div>
@@ -576,9 +580,18 @@
               <div *ngFor="let n of filteredOfferNotifications" 
                    (click)="onNotificationClick(n)"
                    [class.notification-unread]="isUnread(n)"
-                   class=" relative notification-card bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700 rounded-xl p-4 mb-3 cursor-pointer transition-all hover:bg-gray-100 dark:hover:bg-gray-800 hover:shadow-md hover:-translate-y-0.5">
+                   class=" relative notification-card bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700 rounded-xl p-4 mb-3 cursor-pointer transition-all hover:bg-gray-100 dark:hover:bg-gray-800 hover:shadow-md hover:-translate-y-0.5"
+                   [ngClass]="{
+                      'bg-gray-100 dark:bg-gray-800': offersById[n.refId]?.status === 'completed',
+                      'bg-red-50 dark:bg-red-900/20': offersById[n.refId]?.status === 'rejected',
+                      'bg-gray-50 dark:bg-gray-800/30':
+                        !offersById[n.refId] ||
+                        (offersById[n.refId]?.status !== 'completed' &&
+                          offersById[n.refId]?.status !== 'rejected')
+                    }">
 
-                <div class="flex gap-4 items-start">
+                <div class="flex gap-4 items-start p-4 rounded-xl transition-colors"
+            >
                   <!-- Product Thumbnail -->
                   <div *ngIf="productsById[n.refId] as p" class="w-14 h-14 flex-shrink-0 rounded-lg overflow-hidden bg-gray-200 dark:bg-gray-700">
                     <img *ngIf="p.photos?.length > 0; else noImage"
@@ -597,7 +610,8 @@
                   </div>
 
                   <!-- Notification Body -->
-                  <div class="flex-1 min-w-0">
+                  <div class="flex-1 min-w-0"
+                  >
                     <div class="flex items-start justify-between gap-4 mb-3">
                       <div class="flex-1 min-w-0">
                         <div class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-1.5 leading-snug">

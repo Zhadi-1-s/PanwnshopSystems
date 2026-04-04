@@ -118,6 +118,8 @@ export class LombardProfileComponent implements OnInit{
 
   evaluationsById: { [id: string]: Evaluation | null } = {};
 
+  private refresh$ = new BehaviorSubject<void>(undefined);
+
   constructor(
     private lombardService:LombardService,
     private authService:AuthService,
@@ -165,7 +167,9 @@ export class LombardProfileComponent implements OnInit{
       switchMap(profile => this.slotService.getSlotsByPawnshopId(profile._id)),
     )
 
-    this.notifications$ = this.profile$.pipe(
+    this.notifications$ = this.refresh$.pipe(
+      switchMap(() => this.profile$),
+
       switchMap(profile =>
         this.notificationService.getUserNotifications(profile._id)
       ),
@@ -334,18 +338,25 @@ export class LombardProfileComponent implements OnInit{
   loadSlots() {
     combineLatest([
       this.authService.currentUser$.pipe(
-        filter((user): user is User => !!user?._id),
-        take(1),
-        switchMap(user => this.lombardService.getLombardByUserId(user._id)),
-        switchMap(pawnshop => this.slotService.getSlotsByPawnshopId(pawnshop._id))
+        filter((user): user is User => !!user?._id)
       ),
-      this.showHistory$
-    ]).pipe(
-      map(([slots, history]) =>
-        slots.filter(slot =>
-          history
-            ? ['closed', 'sold'].includes(slot.status)
-            : ['active', 'expired'].includes(slot.status)
+      this.showHistory$,
+      this.slotService.refresh$ // 👈 добавили триггер
+    ])
+    .pipe(
+      switchMap(([user, history]) =>
+        this.lombardService.getLombardByUserId(user._id).pipe(
+          switchMap(pawnshop =>
+            this.slotService.getSlotsByPawnshopId(pawnshop._id).pipe(
+              map(slots =>
+                slots.filter(slot =>
+                  history
+                    ? ['closed', 'sold'].includes(slot.status)
+                    : ['active', 'expired'].includes(slot.status)
+                )
+              )
+            )
+          )
         )
       ),
       switchMap(filteredSlots => {
@@ -410,13 +421,13 @@ export class LombardProfileComponent implements OnInit{
   markAsRead(notification:AppNotification){
 
     console.log('CLICK', notification);
-
+    this.notificationService.triggerRefresh();
     if (!notification._id || notification.readBy.some(r => r.userId === this.profile._id)) return;
 
     this.notificationService.markAsRead(notification._id, this.profile._id).subscribe({
-      next: updatedNotification => {
-        notification.readBy.push({ userId: this.profile._id, readAt: new Date() });
-        console.log('Notification marked as read:', this.profile._id);
+      next: () => {
+        
+        this.refresh$.next(); // обновляем список уведомлений, чтобы UI отобразил изменения
       },
       error: err => console.error(err)
     });
@@ -588,18 +599,6 @@ export class LombardProfileComponent implements OnInit{
 
   extendSlot(item:Slot){}
   
-  openSlotDeleteModal(slotId:string){
-    const modalRef = this.modalService.open(SlotDeleteComponent,{centered:true});
-    modalRef.componentInstance.slotId = slotId;
-    modalRef.result.then(
-      (deletedId:string) => {
-        if(deletedId){
-          this.deleteSlot(deletedId);
-        }
-      },
-      () => {}
-    )
-  }
 
   confirmDeleteSlot(slotId: string) {
     const modalRef = this.modalService.open(SlotDeleteComponent, { centered: true });
@@ -745,7 +744,7 @@ export class LombardProfileComponent implements OnInit{
   openSlotDetails(item: Slot) {
       const modalRef = this.modalService.open(SlotDetailComponent,{size:'lg',centered:true});
 
-      modalRef.componentInstance.slot = item;
+      modalRef.componentInstance.slotId  = item._id;
       modalRef.componentInstance.user = this.user;
   }
   editSlot(item: Slot) {}

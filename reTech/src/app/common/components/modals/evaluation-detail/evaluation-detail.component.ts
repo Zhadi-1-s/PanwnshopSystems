@@ -12,6 +12,8 @@ import { LombardService } from '../../../../shared/services/lombard.service';
 import { PawnshopTerms } from '../../../../shared/interfaces/pawnshopTerm.interface';
 import { PawnshopProfile } from '../../../../shared/interfaces/shop-profile.interface';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NotificationService } from '../../../../shared/services/notification.service';
+import { SlotService } from '../../../../shared/services/slot.service';
 
 @Component({
   selector: 'app-evaluation-detail',
@@ -63,7 +65,9 @@ export class EvaluationDetailComponent implements OnInit, OnDestroy {
     private evaluationService:EvaluationService,
     private activeModal:NgbActiveModal,
     private authService:AuthService,
-    private pawnShopService:LombardService
+    private pawnShopService:LombardService,
+    private notificationService:NotificationService,
+    private slotService:SlotService
   ){}
 
   ngOnInit() {
@@ -180,6 +184,7 @@ export class EvaluationDetailComponent implements OnInit, OnDestroy {
         this.evaluation.status = res.status;
         this.loading = false;
         this.close();
+        this.notificationService.triggerRefresh();
       },
       error: err => {
         console.error(err.message);
@@ -208,6 +213,7 @@ export class EvaluationDetailComponent implements OnInit, OnDestroy {
 
           this.showApproveInput = false;
           this.loading = false;
+          this.slotService.triggerRefresh();
           this.close();
         },
         error: err => {

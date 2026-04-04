@@ -16,6 +16,7 @@ export interface AppNotification {
     | 'offer-in-loan'
     | 'slot-created'
     | 'slot-completed'
+    | 'slot-updated'
     | 'product-expired'
     | 'extend-requested'
     | 'extend-approved'
