@@ -23,8 +23,6 @@ export const cities = [
   {code:'qyzylorda', name: 'Кызылорда'},
 ];
 
-
-
 @Component({
   selector: 'app-create-lombard',
   standalone: true,
@@ -55,9 +53,9 @@ export class CreateLombardComponent {
   ){
       this.lombardForm = this.fb.group({
         name: [null, Validators.required],
-        logo: [null],
-        photos: [[]],
-        cityCode: ['', Validators.required],
+        logoUrl: [null],
+        photos: this.fb.control<{ url: string; publicId: string }[]>([]),
+        city: ['', Validators.required],
         address: [null, Validators.required],
         phone: [null, Validators.required],
         slotLimit: [0, Validators.required],
@@ -67,20 +65,26 @@ export class CreateLombardComponent {
         
         terms: this.fb.group({
           interest: this.fb.group({
-            rate: [null, Validators.required],
-            period: ['month', Validators.required],
-            startsAfterDays: [0, Validators.required],
-            minChargeDays: [null]
+            rate: [null, Validators.required]
           }),
+
           limits: this.fb.group({
             maxAmount: [null, Validators.required],
             minAmount: [null]
           }),
+
           fees: this.fb.group({
-            type: ['percent'], // или 'fixed'
-            value: [null]
+            type: ['percent', Validators.required], // 'fixed' | 'percent'
+            value: [null, Validators.required]
           }),
-          priceAdjustmentLimitPercent: [0, Validators.required]
+
+          priceAdjustmentLimitPercent: [0, Validators.required],
+
+          minLoanTermDays: [null],
+
+          prolongationAllowed: [false],
+
+          lateFeePercent: [null]
         })
       });
 

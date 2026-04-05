@@ -10,29 +10,29 @@ export type PawnshopProfileDocument = PawnshopProfile & Document;
 @Schema({ timestamps: { createdAt: true, updatedAt: false } })
 export class PawnshopProfile {
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
-  userId: Types.ObjectId;
+  userId!: Types.ObjectId;
 
   @Prop({ required: true })
-  name: string;
+  name!: string;
 
   @Prop({ required: true })
-  address: string;
+  address!: string;
 
   @Prop({ required: true })
-  phone: string;
+  phone!: string;
 
   @Prop()
   logoUrl?: string;
 
    @Prop({ required: true})
-  openTime: string;
+  openTime!: string;
 
   @Prop({ required: true })
-  closeTime: string;
+  closeTime!: string;
 
 
   @Prop({ type: [String], default: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'] })
-  workingDays: string[];
+  workingDays!: string[];
 
   @Prop({required:false, default:5})
   rating?: number;
@@ -55,7 +55,7 @@ export class PawnshopProfile {
   // activeSlots: Types.ObjectId[];
 
   @Prop({type:Number,required:true})
-  slotLimit:number
+  slotLimit!:number
 
   @Prop({ type: [{ type: Types.ObjectId, ref: 'Product' }], default: [] })
   products: Types.ObjectId[];
