@@ -443,6 +443,11 @@
     "User creates a request": "Пользователь создаёт заявку",
     "Pawnshops send offers": "Ломбарды отправляют предложения",
     "User chooses the best option": "Пользователь выбирает лучшее предложение",
-    "Complete":"Завершить"
+    "Complete":"Завершить",
+    "Evaluation updated":"Оценка обновлена",
+    "Evaluation cancelled":"Оценка отменена",
+    "Active":"Активный",
+    "Loan created":"Заем создан",
+    "Loan completed":"Заем завершён"
 
 }

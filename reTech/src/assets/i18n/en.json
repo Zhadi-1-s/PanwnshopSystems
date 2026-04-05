@@ -441,5 +441,10 @@
     "User creates a request": "User creates a request",
     "Pawnshops send offers": "Pawnshops send offers",
     "User chooses the best option": "User chooses the best option",
-    "Complete":"Complete"
+    "Complete":"Complete",
+    "Evaluation updated":"Evaluation updated",
+    "Evaluation cancelled":"Evaluation cancelled",
+    "Active":"Active",
+    "Loan created":"Loan created",
+    "Loan completed":"Loan completed"
 }

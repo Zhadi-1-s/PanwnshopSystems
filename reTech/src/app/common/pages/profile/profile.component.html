@@ -581,14 +581,7 @@
                    (click)="onNotificationClick(n)"
                    [class.notification-unread]="isUnread(n)"
                    class=" relative notification-card bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700 rounded-xl p-4 mb-3 cursor-pointer transition-all hover:bg-gray-100 dark:hover:bg-gray-800 hover:shadow-md hover:-translate-y-0.5"
-                   [ngClass]="{
-                      'bg-gray-100 dark:bg-gray-800': offersById[n.refId]?.status === 'completed',
-                      'bg-red-50 dark:bg-red-900/20': offersById[n.refId]?.status === 'rejected',
-                      'bg-gray-50 dark:bg-gray-800/30':
-                        !offersById[n.refId] ||
-                        (offersById[n.refId]?.status !== 'completed' &&
-                          offersById[n.refId]?.status !== 'rejected')
-                    }">
+                   [ngClass]="getCardClasses(n.refId)">
 
                 <div class="flex gap-4 items-start p-4 rounded-xl transition-colors"
             >
@@ -633,7 +626,7 @@
                         </div>
                       </div>
                       <div
-                        *ngIf="offersById[n.refId] as offer;else evaluationBlock"
+                        *ngIf="itemsRefId[n.refId] as offer;else evaluationBlock"
                         class="inline-flex items-center gap-1.5 text-xs font-semibold mt-2 px-2 py-1 rounded-full"
                         [ngClass]="{
                           'bg-yellow-100 text-yellow-800': offer.status === 'pending',
@@ -652,7 +645,7 @@
                     </div>
                     <ng-template #evaluationBlock>
                       <div
-                        *ngIf="evaluationsById[n.refId] as evaluation"
+                        *ngIf="itemsRefId[n.refId] as evaluation"
                         class="inline-flex items-center gap-1.5 text-xs font-semibold mt-2 px-2 py-1 rounded-full"
                         [ngClass]="{
                           'bg-yellow-100 text-yellow-800': evaluation.status === 'pending',
@@ -740,7 +733,7 @@
                         <!-- Product title -->
                         <div *ngIf="productsById[n.refId] as p"
                             class="text-xs font-semibold text-blue-600 dark:text-blue-400 mt-2">
-                          {{ p.title }}
+                          {{ p.title  | translate }}
                         </div>
 
                       </div>
@@ -753,7 +746,7 @@
                           'bg-green-100 text-green-800': n.type === 'slot-completed'
                         }"
                       >
-                        {{ n.type === 'slot-created' ? ('loan.created' | translate) : ('loan.completed' | translate) }}
+                        {{ n.type === 'slot-created' ? ('Active' | translate) : ('Completed' | translate) }}
                       </div>
 
                       <!-- Unread -->

@@ -34,6 +34,11 @@ interface SlotView extends Slot {
   prolongationAllowed: boolean;
 }
 
+type UnifiedItem = {
+  status: string;
+  type: 'offer' | 'evaluation';
+};
+
 @Component({
   selector: 'app-profile',
   standalone: true,
@@ -49,6 +54,8 @@ export class ProfileComponent implements OnInit {
   offersById: Record<string, Offer> = {};
 
   evaluationsById: Record<string, Evaluation> = {};
+
+  itemsRefId: Record<string, UnifiedItem> = {};
 
   myProducts:string[];
 
@@ -259,6 +266,13 @@ export class ProfileComponent implements OnInit {
             .map(o => [o._id!, o])
         );
 
+        Object.values(this.offersById).forEach(o => {
+          this.itemsRefId[o._id!] = {
+            status: o.status,
+            type: 'offer'
+          };
+        });
+
         console.log('Offers by id loaded', this.offersById);
         console.log('pawnshopId',this.offersById[Object.keys(this.offersById)[0]]?.pawnshopId);
       })
@@ -272,7 +286,7 @@ export class ProfileComponent implements OnInit {
       switchMap(user => this.notificationService.getUserNotifications(user._id)),
       map(notifications =>
         notifications.filter(n =>
-          ['evaluation-created','evaluation-accepted','evaluation-rejected'].includes(n.type) && !!n.refId
+          ['evaluation-created','evaluation-accepted','evaluation-rejected', 'evaluation-updated'].includes(n.type) && !!n.refId
         )
       ),
       switchMap(evaluationNotifications => {
@@ -292,6 +306,13 @@ export class ProfileComponent implements OnInit {
             .filter((e): e is Evaluation => !!e && !!e._id)
             .map(e => [e._id!, e])
         );
+
+        Object.values(this.evaluationsById).forEach(e => {
+          this.itemsRefId[e._id!] = {
+            status: e.status,
+            type: 'evaluation'
+          };
+        });
 
         console.log('Evaluations by id loaded', this.evaluationsById);
       })
@@ -368,6 +389,38 @@ export class ProfileComponent implements OnInit {
           console.error('Failed to load pawnshop', err);
         }
       });
+  }
+
+  getStatus(refId: string): string | undefined {
+    return this.offersById[refId]?.status 
+        || this.evaluationsById[refId]?.status;
+  }
+
+  getCardClasses(refId: string) {
+    const status = this.getStatus(refId);
+
+    if (!status) {
+      return 'bg-gray-50 dark:bg-gray-800/30';
+    }
+
+    const isInactive = !['in_inspection', 'active'].includes(status);
+
+    return {
+      // 🔻 приглушаем неактивные
+      'opacity-70 grayscale': isInactive,
+
+      // 🎨 цвета
+      'bg-green-50 dark:bg-green-900/10': status === 'completed',
+      'bg-red-50 dark:bg-red-900/20': status === 'rejected',
+      'bg-gray-200 dark:bg-gray-700/40': status === 'no_show',
+
+      // 🟢 активные
+      'bg-blue-50 dark:bg-blue-900/10': status === 'in_inspection',
+      'bg-white dark:bg-gray-800/30': status === 'active',
+
+      // fallback
+      'bg-gray-50 dark:bg-gray-800/30': !status
+    };
   }
 
   async openOfferDetailModal(offer:Offer){
@@ -697,7 +750,7 @@ export class ProfileComponent implements OnInit {
     const unreaded = (this.notificationsList || []).filter(n =>
       ['slot-created','slot-completed','slot-updated'].includes(n.type) && !n.readBy.some(r => r.userId === this.user._id)
     );
-    console.log(unreaded,'unread loan notifications')
+
     return unreaded;
 
   }
