@@ -111,11 +111,14 @@ export class CreateLombardComponent {
         }
       }
 
+      const formValue = this.lombardForm.value;
+
       const payload: PawnshopProfile = {
         userId: this.userId,
         ...this.lombardForm.value,
         logoUrl: logo?.url || 'assets/png/pawnshopLogo.jpg', 
-        photos: uploadedPhotos
+        photos: uploadedPhotos,
+        cityCode: formValue.city
       };
 
       console.log('вот ка выглядит ломбард', payload);

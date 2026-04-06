@@ -13,18 +13,7 @@ export class PawnshopInterestDto {
   @IsNumber()
   rate: number;
 
-  @ApiProperty({ example: 'month', enum: ['day', 'month'] })
-  @IsIn(['day', 'month'])
-  period: 'day' | 'month';
 
-  @ApiProperty({ example: 0 })
-  @IsNumber()
-  startsAfterDays: number;
-
-  @ApiProperty({ example: 7, required: false })
-  @IsOptional()
-  @IsNumber()
-  minChargeDays?: number;
 }
 
 /* ---------- Limits ---------- */

@@ -446,5 +446,7 @@
     "Evaluation cancelled":"Evaluation cancelled",
     "Active":"Active",
     "Loan created":"Loan created",
-    "Loan completed":"Loan completed"
+    "Loan completed":"Loan completed",
+    "Approved amount":"Approved amount",
+    "Confirm":"Confirm"
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable,Subject } from 'rxjs';
+import { BehaviorSubject, Observable,Subject } from 'rxjs';
 import { Slot } from '../interfaces/slot.interface';
 import { environment } from '../../../environments/environment';
 import { LoanStatus } from '../enums/status.enum';
@@ -11,7 +11,7 @@ import { LoanStatus } from '../enums/status.enum';
 export class SlotService {
   private apiUrl  = environment.apiUrl.slots;
 
-  private refreshSubject = new Subject<void>();
+  private refreshSubject = new BehaviorSubject<void>(null);
   refresh$ = this.refreshSubject.asObservable();
 
 

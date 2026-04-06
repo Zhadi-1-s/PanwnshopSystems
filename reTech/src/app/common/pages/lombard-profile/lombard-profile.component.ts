@@ -162,9 +162,11 @@ export class LombardProfileComponent implements OnInit{
       switchMap(profile => this.lombardService.getSummary(profile._id))
     )
 
+
     this.pawnShopSlots$ = this.profile$.pipe(
       filter(profile => !!profile?._id),
       switchMap(profile => this.slotService.getSlotsByPawnshopId(profile._id)),
+      tap(pawnshop => console.log('pawnshop', pawnshop)),
     )
 
     this.notifications$ = this.refresh$.pipe(
@@ -336,10 +338,16 @@ export class LombardProfileComponent implements OnInit{
    }
 
   loadSlots() {
+
+    console.log('Loading slots...');
+    this.slotService.refresh$.subscribe(v => console.log('refresh$ emits:', v));
     combineLatest([
       this.authService.currentUser$.pipe(
-        filter((user): user is User => !!user?._id)
+        filter((user): user is User => !!user?._id),
+      
       ),
+  
+      
       this.showHistory$,
       this.slotService.refresh$ // 👈 добавили триггер
     ])
@@ -349,6 +357,7 @@ export class LombardProfileComponent implements OnInit{
           switchMap(pawnshop =>
             this.slotService.getSlotsByPawnshopId(pawnshop._id).pipe(
               map(slots =>
+                
                 slots.filter(slot =>
                   history
                     ? ['closed', 'sold'].includes(slot.status)

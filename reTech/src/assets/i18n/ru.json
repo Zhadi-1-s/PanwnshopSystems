@@ -448,6 +448,8 @@
     "Evaluation cancelled":"Оценка отменена",
     "Active":"Активный",
     "Loan created":"Заем создан",
-    "Loan completed":"Заем завершён"
+    "Loan completed":"Заем завершён",
+    "Approved amount":"Одобренная сумма",
+    "Confirm":"Подтвердить"
 
 }

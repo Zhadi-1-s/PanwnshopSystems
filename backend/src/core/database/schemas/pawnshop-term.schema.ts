@@ -10,17 +10,11 @@ export class PawnshopTerms {
   @Prop({
     type: () => Object,
     default: {
-      rate: 0,
-      period: 'month',
-      startsAfterDays: 0,
-      minChargeDays: null
+      rate: 0
     }
   })
   interest!: {
     rate: number;
-    period: 'day' | 'month';
-    startsAfterDays: number;
-    minChargeDays?: number;
   };
 
   @Prop({

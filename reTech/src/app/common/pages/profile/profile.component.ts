@@ -403,7 +403,7 @@ export class ProfileComponent implements OnInit {
       return 'bg-gray-50 dark:bg-gray-800/30';
     }
 
-    const isInactive = !['in_inspection', 'active'].includes(status);
+    const isInactive = !['in_inspection', 'active','pending'].includes(status);
 
     return {
       // 🔻 приглушаем неактивные
@@ -438,7 +438,7 @@ export class ProfileComponent implements OnInit {
 
   onNotificationClick(n: AppNotification) {
 
-    console.log('CLICK', n);
+    console.log('CLICK', this.itemsRefId[n.refId]);
     console.log('user is ', this.user);
     
     if (!n.readBy.some(r => r.userId === this.user._id)) {

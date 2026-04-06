@@ -30,6 +30,8 @@ export class EvaluationDetailComponent implements OnInit, OnDestroy {
 
   showCounterOffer = false;
 
+  selectedImage: string | null = null;
+
   evaluation : Evaluation;
   user$:User;
 
@@ -42,6 +44,7 @@ export class EvaluationDetailComponent implements OnInit, OnDestroy {
   pawnshop:PawnshopProfile;
   
   priceAdjustmentLimitPercent: number;
+  appRovedPriceAdjustment = 0;
 
   remainingTime: string = '';
   interval: any;
@@ -60,6 +63,9 @@ export class EvaluationDetailComponent implements OnInit, OnDestroy {
     prolongationAllowed: boolean;
     lateFeePercent: number;
   };
+
+  minAmount: number;
+  maxAmount: number;
 
   constructor(
     private evaluationService:EvaluationService,
@@ -87,6 +93,14 @@ export class EvaluationDetailComponent implements OnInit, OnDestroy {
                 evaluation.termDays,
                 pawnshop.terms
               );
+              const limits = this.getLimits(
+                evaluation.expectedPrice,
+                this.priceAdjustmentLimitPercent
+              );
+
+              this.minAmount = limits.min;
+              this.maxAmount = limits.max;
+            
             }
 
             this.loading = false;
@@ -125,6 +139,17 @@ export class EvaluationDetailComponent implements OnInit, OnDestroy {
     clearInterval(this.interval);
   }
 
+  getLimits(expectedPrice: number, percent: number) {
+    const adjustment = expectedPrice * (percent / 100);
+
+    return {
+      min: expectedPrice - adjustment,
+      max: expectedPrice + adjustment
+    };
+  }
+
+
+  
   private calculateLoan(price: number, termDays: number, terms: PawnshopTerms) {
 
     const interestRate = terms.interest?.rate ?? 0;
@@ -202,6 +227,11 @@ export class EvaluationDetailComponent implements OnInit, OnDestroy {
   confirmApprove() {
     if (!this.approveAmount || !this.selectedEvaluationId) return;
 
+     if (this.approveAmount < this.minAmount || this.approveAmount > this.maxAmount) {
+      alert('Сумма вне допустимого диапазона');
+      return;
+    }
+
     this.loading = true;
 
     this.evaluationService
@@ -221,6 +251,15 @@ export class EvaluationDetailComponent implements OnInit, OnDestroy {
           this.loading = false;
         }
       });
+  }
+
+
+  openImage(url: string) {
+    this.selectedImage = url;
+  }
+
+  closeImage() {
+    this.selectedImage = null;
   }
 
 

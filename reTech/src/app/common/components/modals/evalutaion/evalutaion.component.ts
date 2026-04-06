@@ -193,7 +193,7 @@ export class EvalutaionComponent implements OnInit {
       )
       .subscribe({
         next: () => {
-          this.closed.emit();
+          this.activeModal.close();
         },
         error: (err) => {
           window.alert('Ошибка при создании оценки: ' + (err.error?.message || err.message || 'Unknown error'));

@@ -9,6 +9,7 @@ import { User } from '../../../../shared/interfaces/user.interface';
 import { SlotService } from '../../../../shared/services/slot.service';
 import { take } from 'rxjs/internal/operators/take';
 import { SlotDeleteComponent } from '../slot-delete/slot-delete.component';
+import { LombardService } from '../../../../shared/services/lombard.service';
 
 @Component({
   selector: 'app-slot-detail',
@@ -31,16 +32,25 @@ export class SlotDetailComponent implements OnInit {
   progress!: number;
   daysDiff!: number;
 
+  pawnshopTermFee: { type: string; value: number };
+
   constructor(
     public activeModal:NgbActiveModal,
     private modalService:NgbModal,
-    private slotService:SlotService
+    private slotService:SlotService,
+    private pawnshopService:LombardService
   ){
   }
 
   ngOnInit(): void {
     this.loadSlot();
-  }
+    this.pawnshopService.getLombardByUserId(this.user._id).subscribe(
+      pawnshop => {
+        this.pawnshopTermFee = pawnshop.terms?.fees;
+        console.log('Pawnshop terms fee:', this.pawnshopTermFee);
+      }
+    )
+  } 
 
   confirmDeleteSlot(slotId:string){
     const modalRef = this.modalService.open(SlotDeleteComponent, { centered: true });
@@ -115,7 +125,14 @@ export class SlotDetailComponent implements OnInit {
 
     const totalInterest = totalDays * dailyInterest;
 
-    return this.slot.loanAmount + totalInterest;
+    const fee =
+    this.pawnshopTermFee?.type === 'percent'
+      ? this.slot.loanAmount * (this.pawnshopTermFee.value / 100)
+      : this.pawnshopTermFee?.type === 'fixed'
+      ? this.pawnshopTermFee.value
+      : 0;
+
+    return this.slot.loanAmount + totalInterest + fee;
   }
 
   getProgress(startDate: any, endDate: any): number {
