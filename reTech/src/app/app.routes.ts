@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { AuthGuard } from './shared/guards/auth.guard';
 import { ProfileComponent } from './common/pages/profile/profile.component';
+import { SlotDetailComponent } from './common/components/modals/slot-detail/slot-detail.component';
 
 export const routes: Routes = [
     {
@@ -37,6 +38,10 @@ export const routes: Routes = [
     },
     {
         path:'help',loadComponent: () => import('./common/pages/help/help.component').then(m => m.HelpComponent)
+    },
+    {
+        path: 'slot/:id',
+        component: SlotDetailComponent
     }
     
 ];

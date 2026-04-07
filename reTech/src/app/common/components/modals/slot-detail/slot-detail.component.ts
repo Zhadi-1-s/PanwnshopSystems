@@ -10,6 +10,7 @@ import { SlotService } from '../../../../shared/services/slot.service';
 import { take } from 'rxjs/internal/operators/take';
 import { SlotDeleteComponent } from '../slot-delete/slot-delete.component';
 import { LombardService } from '../../../../shared/services/lombard.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-slot-detail',
@@ -38,12 +39,18 @@ export class SlotDetailComponent implements OnInit {
     public activeModal:NgbActiveModal,
     private modalService:NgbModal,
     private slotService:SlotService,
-    private pawnshopService:LombardService
+    private pawnshopService:LombardService,
+    private route:ActivatedRoute
   ){
   }
 
   ngOnInit(): void {
-    this.loadSlot();
+    if(!this.slotId){
+      this.slotId = this.route.snapshot.paramMap.get('id');
+    }
+    if(this.slotId){
+      this.loadSlot();
+    }
     this.pawnshopService.getLombardByUserId(this.user._id).subscribe(
       pawnshop => {
         this.pawnshopTermFee = pawnshop?.terms?.fees;
