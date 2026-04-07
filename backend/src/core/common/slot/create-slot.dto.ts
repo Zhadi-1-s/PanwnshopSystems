@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsNumber, IsDateString, IsEnum,ValidateNested, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsString, IsNumber, IsDateString, IsEnum,ValidateNested, IsOptional, Matches } from 'class-validator';
 import { LoanStatus, Status } from '../enums/status.enum';
 import { Type } from 'class-transformer';
 import { Transform } from 'class-transformer';
@@ -63,7 +63,7 @@ export class CreateSlotDto {
 
   @ApiProperty({
     example: 'active',
-    enum: ['active', 'closed', 'expired','sold'],
+    enum: LoanStatus,
     description: 'Статус слота',
     default: 'active',
   })
@@ -79,4 +79,14 @@ export class CreateSlotDto {
   @IsOptional()
   @Transform(({ value }) => value === 'true' || value === true)
   prolongationAllowed?: boolean;
+
+  @ApiProperty({
+    example: '+77086757610',
+    description: 'Телефонный номер пользователя для связи',})
+  @IsOptional()
+  @IsString()
+  @Matches(/^\+7\d{10}$/, {
+    message: 'Телефон должен быть в формате +7XXXXXXXXXX',
+  })
+  telephone?: string;
 }

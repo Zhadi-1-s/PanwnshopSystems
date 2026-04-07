@@ -448,5 +448,7 @@
     "Loan created":"Loan created",
     "Loan completed":"Loan completed",
     "Approved amount":"Approved amount",
-    "Confirm":"Confirm"
+    "Confirm":"Confirm",
+    "Client Telephone":"Client Telephone",
+    "Enter client telephone":"Enter client telephone"
 }

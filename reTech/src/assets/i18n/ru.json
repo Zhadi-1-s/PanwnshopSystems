@@ -450,6 +450,8 @@
     "Loan created":"Заем создан",
     "Loan completed":"Заем завершён",
     "Approved amount":"Одобренная сумма",
-    "Confirm":"Подтвердить"
+    "Confirm":"Подтвердить",
+    "Client Telephone":"Телефон клиента",
+    "Enter client telephone":"Введите телефон клиента"
 
 }

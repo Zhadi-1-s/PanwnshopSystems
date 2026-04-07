@@ -186,6 +186,10 @@ export class SlotService {
         data:{ slotData:slot }
       })
     }
+    if(dto.status === LoanStatus.FORFEITED){
+
+  
+    }
 
 
     return slot;

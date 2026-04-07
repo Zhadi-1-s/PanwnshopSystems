@@ -17,4 +17,6 @@ export interface Slot {
 
   createdAt?: Date;
   updatedAt?: Date;
+
+  telephone?: string;
 }

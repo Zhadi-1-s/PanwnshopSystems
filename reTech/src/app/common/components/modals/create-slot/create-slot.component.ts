@@ -55,7 +55,10 @@ export class CreateSlotComponent implements OnInit {
       description: [''],
       category: ['', Validators.required],
       photos: [[]],
-
+      telephone: ['', [
+          Validators.required,
+          Validators.pattern(/^\+7\d{10}$/)
+        ]],
       // Параметры займа
       loanAmount: [null, [Validators.required, Validators.min(100)]],
       interestRate: [null, [Validators.required, Validators.min(0.1)]],

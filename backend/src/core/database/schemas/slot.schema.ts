@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, HydratedDocument, Types } from 'mongoose';
 import { LoanStatus, Status } from 'src/core/common/enums/status.enum';
 import { Product } from './product.schema';
+import { IsOptional } from 'class-validator/types/decorator/common/IsOptional';
 export type SlotDocument = HydratedDocument<Slot>;
 
 @Schema({ timestamps: true })
@@ -39,6 +40,10 @@ export class Slot {
 
   createdAt?: Date;
   updatedAt?: Date;
+
+  @Prop()
+  @IsOptional()
+  telephone?: string;
   
 }
 export const SlotSchema = SchemaFactory.createForClass(Slot);

@@ -46,8 +46,8 @@ export class SlotDetailComponent implements OnInit {
     this.loadSlot();
     this.pawnshopService.getLombardByUserId(this.user._id).subscribe(
       pawnshop => {
-        this.pawnshopTermFee = pawnshop.terms?.fees;
-        console.log('Pawnshop terms fee:', this.pawnshopTermFee);
+        this.pawnshopTermFee = pawnshop?.terms?.fees;
+
       }
     )
   } 
@@ -73,6 +73,7 @@ export class SlotDetailComponent implements OnInit {
     });
   }
   extendSlot(slot:Slot){}
+
   deleteSlot(slotId:string){}
 
   private loadSlot() {
@@ -82,8 +83,15 @@ export class SlotDetailComponent implements OnInit {
         this.slot = slot;
         console.log('Loaded slot:', slot);
         this.calculate();
+        this.loadPawnshop(slot.pawnshopId);
       });
       
+  }
+
+  loadPawnshop(pawnshopId: string) {
+    this.pawnshopService.getLombardById(pawnshopId).subscribe(pawnshop => {
+      this.pawnshopTermFee = pawnshop?.terms?.fees;
+    });
   }
 
   private calculate(){

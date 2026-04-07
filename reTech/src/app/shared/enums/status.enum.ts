@@ -15,5 +15,6 @@ export enum LoanStatus {
   CLOSED = 'closed',     // погашен
   EXPIRED = 'expired',   // просрочен
   SOLD = 'sold',       // товар продали из-за просрочки
-  EXTEND_REQUESTED = 'extend_requested'
+  EXTEND_REQUESTED = 'extend_requested',
+  FORFEITED = 'forfeited'
 }
