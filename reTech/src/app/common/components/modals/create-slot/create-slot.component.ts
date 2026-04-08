@@ -36,6 +36,9 @@ export class CreateSlotComponent implements OnInit {
 
   form: FormGroup;
 
+  showSuccess = false;
+  createdSlot: any;
+
   categories = Object.values(Category);
   loading = false;
   errorMessage = '';
@@ -125,20 +128,56 @@ export class CreateSlotComponent implements OnInit {
       const createdSlot = await firstValueFrom(
         this.slotService.createSlot(slotPayload)
       );
-      window.alert('Слот успешно создан!');
-
-      this.slotCreated.emit(createdSlot);
+      this.createdSlot = createdSlot;
+      this.showSuccess = true;
       this.form.reset();
     } catch (err) {
       this.errorMessage = 'Ошибка при создании слота';
     } finally {
       this.loading = false;
-      this.activeModal.close();
+     
     }
   }
 
   cancel(): void {
     this.activeModal.dismiss();
+  }
+
+  getSlotLink(): string {
+    return `${window.location.origin}/slot/${this.createdSlot?._id}`;
+  }
+
+  copyLink() {
+    const link = this.getSlotLink();
+
+    navigator.clipboard.writeText(link).then(() => {
+      console.log('Ссылка скопирована');
+    });
+  }
+
+  getWhatsAppLink(): string {
+    const phone = this.formatPhone(this.createdSlot?.telephone);
+
+    return `https://api.whatsapp.com/send?phone=${phone}`;
+  }
+
+  formatPhone(phone: string): string {
+    if (!phone) return '';
+
+    // убираем всё кроме цифр
+    let clean = phone.replace(/\D/g, '');
+
+    // если номер без кода страны — добавь (например Казахстан +7)
+    if (clean.length === 10) {
+      clean = '7' + clean;
+    }
+
+    return clean;
+  }
+
+  closeModal(){
+    this.showSuccess = false;
+    this.activeModal.close();
   }
 
 }

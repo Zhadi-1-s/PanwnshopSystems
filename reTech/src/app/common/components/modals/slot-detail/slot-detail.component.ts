@@ -1,4 +1,4 @@
-import { Component,Input, OnInit } from '@angular/core';
+import { Component,Input, OnInit, Optional } from '@angular/core';
 import { Slot } from '../../../../shared/interfaces/slot.interface';
 import { CommonModule } from '@angular/common';
 import { LoanStatus, Status } from '../../../../shared/enums/status.enum';
@@ -36,7 +36,7 @@ export class SlotDetailComponent implements OnInit {
   pawnshopTermFee: { type: string; value: number };
 
   constructor(
-    public activeModal:NgbActiveModal,
+   @Optional() public activeModal:NgbActiveModal,
     private modalService:NgbModal,
     private slotService:SlotService,
     private pawnshopService:LombardService,
@@ -47,16 +47,23 @@ export class SlotDetailComponent implements OnInit {
   ngOnInit(): void {
     if(!this.slotId){
       this.slotId = this.route.snapshot.paramMap.get('id');
+      this.slotService.getSlotById(this.slotId).subscribe(slot => {
+        this.slot = slot;
+        this.calculate();
+        this.loadPawnshop(slot.pawnshopId);
+      })
     }
     if(this.slotId){
       this.loadSlot();
     }
-    this.pawnshopService.getLombardByUserId(this.user._id).subscribe(
-      pawnshop => {
-        this.pawnshopTermFee = pawnshop?.terms?.fees;
-
-      }
-    )
+    if(this.user?._id){
+      this.pawnshopService.getLombardByUserId(this.user._id).subscribe(
+        pawnshop => {
+          this.pawnshopTermFee = pawnshop?.terms?.fees;
+  
+        }
+      )
+    }
   } 
 
   confirmDeleteSlot(slotId:string){

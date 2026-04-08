@@ -119,3 +119,43 @@
     </button>
   </div>
 </form>
+<div *ngIf="showSuccess" class="overlay">
+  <div class="overlay-content">
+    <h4 class="text-success mb-3">
+      {{ 'Slot successfully created' | translate }}
+    </h4>
+
+    <p>
+      {{ 'Client phone' | translate }}:
+      <strong>{{ createdSlot?.telephone }}</strong>
+    </p>
+
+    <p>
+      {{ 'You can send WhatsApp message using this link' | translate }}:
+    </p>
+
+    <div class="d-flex gap-2 align-items-center justify-content-center mb-3">
+      <input
+        class="form-control"
+        [value]="getSlotLink()"
+        readonly
+      />
+
+      <button class="btn btn-outline-primary" (click)="copyLink()">
+        {{ 'Copy' | translate }}
+      </button>
+    </div>
+
+    <a
+      [href]="'https://wa.me/' + formatPhone(createdSlot?.telephone)"
+      target="_blank"
+      class="btn btn-success"
+    >
+      {{'Open WhatsApp' | translate}}
+    </a>
+
+    <button class="btn btn-secondary mt-3" (click)="closeModal()">
+      {{'Close' | translate}}
+    </button>
+  </div>
+</div>

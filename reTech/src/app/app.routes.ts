@@ -40,8 +40,7 @@ export const routes: Routes = [
         path:'help',loadComponent: () => import('./common/pages/help/help.component').then(m => m.HelpComponent)
     },
     {
-        path: 'slot/:id',
-        component: SlotDetailComponent
+        path:'slot/:id',loadComponent: () => import('./common/components/modals/slot-detail/slot-detail.component').then(m => m.SlotDetailComponent)
     }
     
 ];

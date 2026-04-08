@@ -42,7 +42,6 @@ export class Slot {
   updatedAt?: Date;
 
   @Prop()
-  @IsOptional()
   telephone?: string;
   
 }
