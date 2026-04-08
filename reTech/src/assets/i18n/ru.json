@@ -452,6 +452,9 @@
     "Approved amount":"Одобренная сумма",
     "Confirm":"Подтвердить",
     "Client Telephone":"Телефон клиента",
-    "Enter client telephone":"Введите телефон клиента"
+    "Enter client telephone":"Введите телефон клиента",
+    "Not registered user":"Нерегистрированный пользователь",
+    "Slot successfully created":"Слот успешно создан",
+    "Do not show again":"Больше не показывать"
 
 }

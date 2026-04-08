@@ -450,5 +450,8 @@
     "Approved amount":"Approved amount",
     "Confirm":"Confirm",
     "Client Telephone":"Client Telephone",
-    "Enter client telephone":"Enter client telephone"
+    "Enter client telephone":"Enter client telephone",
+    "Not registered user":"Not registered user",
+    "Slot successfully created":"Slot successfully created",
+    "Do not show again":"Do not show again"
 }

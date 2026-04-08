@@ -11,11 +11,12 @@ import { take } from 'rxjs/internal/operators/take';
 import { SlotDeleteComponent } from '../slot-delete/slot-delete.component';
 import { LombardService } from '../../../../shared/services/lombard.service';
 import { ActivatedRoute } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-slot-detail',
   standalone: true,
-  imports: [CommonModule,TranslateModule],
+  imports: [CommonModule,TranslateModule,FormsModule],
   templateUrl: './slot-detail.component.html',
   styleUrl: './slot-detail.component.scss'
 })
@@ -33,7 +34,13 @@ export class SlotDetailComponent implements OnInit {
   progress!: number;
   daysDiff!: number;
 
+  createdSlot: any;
+
+  isRegistered = true;
+
   pawnshopTermFee: { type: string; value: number };
+
+  dontShowAgain = false;
 
   constructor(
    @Optional() public activeModal:NgbActiveModal,
@@ -45,10 +52,15 @@ export class SlotDetailComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
+    const hideOverlay = localStorage.getItem('hideSlotOverlay');
+
     if(!this.slotId){
       this.slotId = this.route.snapshot.paramMap.get('id');
       this.slotService.getSlotById(this.slotId).subscribe(slot => {
+        
         this.slot = slot;
+        console.log('laoded user',this.user)
         this.calculate();
         this.loadPawnshop(slot.pawnshopId);
       })
@@ -56,7 +68,14 @@ export class SlotDetailComponent implements OnInit {
     if(this.slotId){
       this.loadSlot();
     }
+
+    if (hideOverlay === 'true') {
+      this.isRegistered = true;
+      return
+    }
+
     if(this.user?._id){
+
       this.pawnshopService.getLombardByUserId(this.user._id).subscribe(
         pawnshop => {
           this.pawnshopTermFee = pawnshop?.terms?.fees;
@@ -94,7 +113,16 @@ export class SlotDetailComponent implements OnInit {
     this.slotService.getSlotById(this.slotId)
       .pipe(take(1))
       .subscribe(slot => {
+        
         this.slot = slot;
+        
+        const hideOverlay = localStorage.getItem('hideSlotOverlay');
+
+        if (this.user?._id && this.slot?.userId === this.user._id && !hideOverlay) {
+          this.isRegistered = false;
+        } else  {
+          this.isRegistered = true;
+        }
         console.log('Loaded slot:', slot);
         this.calculate();
         this.loadPawnshop(slot.pawnshopId);
@@ -108,6 +136,14 @@ export class SlotDetailComponent implements OnInit {
     });
   }
 
+  hideSuccess(){
+     if (this.dontShowAgain) {
+        localStorage.setItem('hideSlotOverlay', 'true');
+      }
+
+    this.isRegistered = true;
+  }
+
   private calculate(){
     if (!this.slot) {
       return;
@@ -117,8 +153,7 @@ export class SlotDetailComponent implements OnInit {
     const start = new Date(this.slot.startDate).getTime();
     const end = new Date(this.slot.endDate).getTime();
 
-    
-
+  
     this.daysDiff = Math.ceil((end - now) / (1000 * 60 * 60 * 24));
 
     // прогресс
@@ -214,6 +249,40 @@ export class SlotDetailComponent implements OnInit {
     modalRef.componentInstance.slot = slot;
     modalRef.componentInstance.user = this.user;
 
+  }
+
+   copyLink() {
+    const link = this.getSlotLink();
+
+    navigator.clipboard.writeText(link).then(() => {
+      window.alert('Ссылка скопирована');
+    });
+  }
+
+  getSlotLink(): string {
+    return `${window.location.origin}/slot/${this.slot?._id}`;
+  }
+
+  getWhatsAppLink(): string {
+    const phone = this.formatPhone(this.slot?.telephone);
+
+    const text = `Здравствуйте! Вы можете посмотреть информацию о вашем займе по этой ссылке: ${this.getSlotLink()}`;
+
+    return `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
+  }
+
+  formatPhone(phone: string): string {
+    if (!phone) return '';
+
+    // убираем всё кроме цифр
+    let clean = phone.replace(/\D/g, '');
+
+    // если номер без кода страны — добавь (например Казахстан +7)
+    if (clean.length === 10) {
+      clean = '7' + clean;
+    }
+
+    return clean;
   }
 
 }

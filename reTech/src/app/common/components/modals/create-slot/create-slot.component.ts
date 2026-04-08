@@ -105,7 +105,7 @@ export class CreateSlotComponent implements OnInit {
         category: this.form.value.category,
         photos: this.form.value.photos || [],
         price: 0,
-        status: ProductStatus.INACTIVE,
+        status: ProductStatus.IN_LOAN,
         type:'loan',
         loanTerm: Math.ceil((new Date(this.form.value.endDate).getTime() - new Date(this.form.value.startDate).getTime()) / (1000 * 60 * 60 * 24)),
       }
@@ -122,7 +122,8 @@ export class CreateSlotComponent implements OnInit {
         interestRate: this.form.value.interestRate,
         startDate: this.form.value.startDate,
         endDate: this.form.value.endDate,
-        status: LoanStatus.ACTIVE
+        status: LoanStatus.ACTIVE,
+        telephone:this.form.value.telephone
       };
 
       const createdSlot = await firstValueFrom(
@@ -156,6 +157,10 @@ export class CreateSlotComponent implements OnInit {
   }
 
   getWhatsAppLink(): string {
+
+    console.log('RAW phone:', this.createdSlot?.telephone);
+    console.log('FORMATTED phone:', this.formatPhone(this.createdSlot?.telephone));
+
     const phone = this.formatPhone(this.createdSlot?.telephone);
 
     return `https://api.whatsapp.com/send?phone=${phone}`;
