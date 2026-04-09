@@ -26,6 +26,8 @@ export class OfferModalComponent implements OnInit {
 
   pawnshopTerm : PawnshopTerms
 
+  isSubmitting = false;
+
   product:Product;
 
   isLoan = false;
@@ -75,6 +77,8 @@ export class OfferModalComponent implements OnInit {
   submit() {
     if (this.offerForm.invalid) return;
 
+    this.isSubmitting = true;
+
     const baseOffer = {
       productId: this.productId,
       pawnshopId: this.pawnshopId,
@@ -93,9 +97,12 @@ export class OfferModalComponent implements OnInit {
     this.offerService.createOffer(payload).subscribe({
       next: (offer) => {
         console.log('Offer sent successfully', offer);
+        this.isSubmitting = false;
         this.activeModal.close(offer);
+        
       },
       error: (err) => {
+        this.isSubmitting = false;
         console.error('Failed to send offer', err);
       }
     });

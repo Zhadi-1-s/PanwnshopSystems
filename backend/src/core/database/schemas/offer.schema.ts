@@ -41,7 +41,6 @@ export class Offer {
     required: false,
     type: {
       rate: { type: Number },
-      period: { type: String, enum: ['day', 'month'] },
       loanTerm: { type: Number },
       estimatedRepayment: { type: Number },
     },

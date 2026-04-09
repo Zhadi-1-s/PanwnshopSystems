@@ -8,10 +8,6 @@ class LoanDetailsDto {
   @IsNumber()
   rate: number;
 
-  @ApiProperty({ enum: ['day', 'month'] })
-  @IsEnum(['day', 'month'])
-  period: 'day' | 'month';
-
   @ApiProperty()
   @IsNumber()
   loanTerm: number;

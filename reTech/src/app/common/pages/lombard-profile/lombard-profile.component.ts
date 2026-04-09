@@ -461,7 +461,7 @@ export class LombardProfileComponent implements OnInit{
   
   get offerNotifications() {
     let offers = (this.notificationsList || []).filter(n =>
-      ['new-offer', 'sent-offer', 'evaluation-created'].includes(n.type)
+      ['new-offer', 'sent-offer', 'evaluation-created','offer-updated'].includes(n.type)
     );
 
     // 1️⃣ sent / received
@@ -482,7 +482,7 @@ export class LombardProfileComponent implements OnInit{
           (this.statusFilter.completed && status === 'completed') || 
           (this.statusFilter.in_inspection && status === 'in_inspection') ||
           (this.statusFilter.pending && status === 'pending') ||
-          (this.statusFilter.no_show&& status === 'now_show') || 
+          (this.statusFilter.no_show&& status === 'no_show') || 
           (this.statusFilter.rejected_by_pawnshop && status === 'rejected_by_pawnshop') ||
           (this.statusFilter.in_loan && status === 'in_loan')
         );
@@ -519,7 +519,7 @@ export class LombardProfileComponent implements OnInit{
 
   get unreadOfferNotifications() {
     return (this.notificationsList || []).filter(
-      n => ['new-offer','offer-accepted','offer-rejected','evaluation-accepted'].includes(n.type) && !n.readBy.some(r => r.userId === this.user._id)
+      n => ['new-offer','offer-accepted','offer-rejected','evaluation-accepted','sent-offer'].includes(n.type) && !n.readBy.some(r => r.userId === this.user._id)
     );
   }
 
@@ -702,10 +702,13 @@ export class LombardProfileComponent implements OnInit{
 
   openNotificationDetail(n: any) {
     console.log('Opening notification detail for:', n);
-    if (n.type === 'sent-offer') {
-      const offer = this.offersById[n._id];
+    if (n.type === 'sent-offer' || n.type === 'offer-updated') {
+      const offer = this.offersById[n.refId];
+      console.log('offer found:', offer);
       if(offer && offer.status === 'in_inspection'){
+        this.markAsRead(n)
         this.openOfferDetail(offer);
+
       }
       else if(n.data?.productId){
         const product = this.prodcuctsFromNotifications[n.refId];

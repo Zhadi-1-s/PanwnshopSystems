@@ -246,7 +246,7 @@ export class ProfileComponent implements OnInit {
       take(1),
       switchMap(user => this.notificationService.getUserNotifications(user._id)),
       map(notifications =>
-        notifications.filter(n => n.type === 'new-offer' && !!n.refId)
+        notifications.filter(n => ['new-offer','offer-updated'].includes(n.type) && !!n.refId)
       ),
       switchMap(offerNotifications => {
         if (!offerNotifications.length) return of([]);
@@ -556,7 +556,7 @@ export class ProfileComponent implements OnInit {
       );
     } else {
       notifications = latestByRefId.filter(n =>
-        ['new-offer','offer-accepted','offer-rejected','offer-canceled'].includes(n.type)
+        ['new-offer','offer-accepted','offer-rejected','offer-canceled','offer-updated'].includes(n.type)
       );
     }
 
@@ -740,7 +740,7 @@ export class ProfileComponent implements OnInit {
 
   get unreadOfferNotifications() {
     const unreaded = (this.notificationsList || []).filter(n =>
-      ['new-offer','offer-accepted','offer-rejected','offer-canceled','evaluation-created','evaluation-accepted','evaluation-updated'].includes(n.type) && !n.readBy.some(r => r.userId === this.user._id)
+      ['new-offer','offer-accepted','offer-rejected','offer-canceled','evaluation-created','evaluation-accepted','evaluation-updated','offer-updated'].includes(n.type) && !n.readBy.some(r => r.userId === this.user._id)
     );
     return unreaded;
   }

@@ -105,21 +105,18 @@ export class OfferService {
           const endDate = new Date(startDate.getTime());
           endDate.setDate(startDate.getDate() + loanTermDays);
 
-          let interestRate = offer.loanDetails?.rate || 0;
-
-          if (offer.loanDetails?.period === 'month') {
-            interestRate = interestRate / 30;
-          }
+          let interestRate = offer.loanDetails?.rate || 0.50;
 
           await this.slotService.createSlot({
             product: offer.productId.toString(),
             pawnshopId: offer.pawnshopId.toString(),
             userId: offer.productOwnerId.toString(),
             loanAmount: offer.price,
-            startDate,
-            endDate,
+            startDate:startDate.toISOString(),
+            endDate:endDate.toISOString(),
             interestRate,
-            status:LoanStatus.ACTIVE
+            status:LoanStatus.ACTIVE,
+            prolongationAllowed:true
           });
 
            await this.productService.updateStatus(
@@ -158,6 +155,11 @@ export class OfferService {
           title: `Offer ${status}`,
           refId: offer._id.toString(),
           readBy: [],
+          data: {
+            status: offer.status, // 👈 ВАЖНО
+            price: offer.price,
+            productId: offer.productId.toString()
+          }
       });
 
       return offer;

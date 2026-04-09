@@ -44,7 +44,7 @@
       </div>
     </div>
 
-    <div class="col-md-6 mb-3" *ngIf="user?.role === 'pawnshop'">
+    <div class="col-md-6 mb-3" *ngIf="user?.role !== 'pawnshop'">
       <label class="form-label">{{ 'Type' | translate }}</label>
       <select class="form-select" formControlName="type">
         <option value="sale">{{ 'Sale' | translate }}</option>
@@ -60,10 +60,7 @@
         formControlName="loanTerm"
         min="1"
       />
-       <small class="text-muted d-block mt-2">
-        Цена является ориентировочной. Ломбарды могут предложить другую сумму
-        в зависимости от состояния товара.
-      </small>
+      
     </div>
 
     <!-- Категория -->
@@ -152,6 +149,10 @@
       <div class="invalid-feedback" *ngIf="price.errors?.['min']">
         {{ 'Price must be greater than 0' | translate }}
       </div>
+       <small class="text-muted d-block mt-2">
+        Цена является ориентировочной. Ломбарды могут предложить другую сумму
+        в зависимости от состояния товара.
+      </small>
     </div>
 
   </form>

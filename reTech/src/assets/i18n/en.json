@@ -453,5 +453,7 @@
     "Enter client telephone":"Enter client telephone",
     "Not registered user":"Not registered user",
     "Slot successfully created":"Slot successfully created",
-    "Do not show again":"Do not show again"
+    "Do not show again":"Do not show again",
+    "Sent offer":"Sent offer",
+    "Client should bring the product for inspection within:":"Client should bring the product for inspection within:"
 }

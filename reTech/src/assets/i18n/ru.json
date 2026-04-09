@@ -455,6 +455,8 @@
     "Enter client telephone":"Введите телефон клиента",
     "Not registered user":"Нерегистрированный пользователь",
     "Slot successfully created":"Слот успешно создан",
-    "Do not show again":"Больше не показывать"
+    "Do not show again":"Больше не показывать",
+    "Sent offer":"Отправить предложение",
+    "Client should bring the product for inspection within:":"Клиент должен привезти товар на осмотр в течении:"
 
 }

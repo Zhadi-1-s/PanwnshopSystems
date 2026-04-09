@@ -43,7 +43,7 @@ export class CreateSlotDto {
   })
   @IsNotEmpty()
   @IsDateString()
-  startDate: Date;
+  startDate: string;
 
   @ApiProperty({
     example: '2025-11-25T00:00:00.000Z',
@@ -51,7 +51,7 @@ export class CreateSlotDto {
   })
   @IsNotEmpty()
   @IsDateString()
-  endDate: Date;
+  endDate: string;
 
   @ApiProperty({
     example: 0.5,
