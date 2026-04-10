@@ -137,8 +137,8 @@ const THREE_DAYS = 3 * ONE_DAY;
           pawnshopId: evaluation.pawnshopId,
           userId: evaluation.userId,
           loanAmount: evaluation.expectedPrice ?? 0,
-          startDate: new Date(),
-          endDate: new Date(Date.now() + (evaluation.termDays || 0) * 24 * 60 * 60 * 1000),
+          startDate: new Date().toISOString(),
+          endDate: new Date(Date.now() + (evaluation.termDays || 0) * 24 * 60 * 60 * 1000).toISOString(),
           interestRate: terms?.interest?.rate ?? 0,
           status:LoanStatus.ACTIVE
         })
@@ -290,4 +290,4 @@ const THREE_DAYS = 3 * ONE_DAY;
     }
   }
 
-}
+} 
