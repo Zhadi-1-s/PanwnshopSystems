@@ -195,7 +195,7 @@ export class SlotService {
     return slot;
   }
 
-  @Cron(CronExpression.EVERY_HOUR)
+  @Cron(CronExpression.EVERY_10_SECONDS)
   async handleExpiredSlots() {
     const now = new Date();
 
@@ -205,7 +205,7 @@ export class SlotService {
         endDate: { $lt: now }
       },
       {
-        status: 'expired' // или closed если решил так
+        status: LoanStatus.EXPIRED // или closed если решил так
       }
     );
 

@@ -9,7 +9,7 @@ import { NotificationDocument ,Notification} from 'src/core/database/schemas/not
 import { ProductService } from '../product/product.service';
 import { SlotService } from '../slot/slot.service';
 import { LoanStatus, ProductStatus, Status } from '../enums/status.enum';
-
+import { NotificationType } from 'src/core/database/schemas/notifications.schema';
 
 
 @Injectable()
@@ -191,5 +191,35 @@ export class OfferService {
     })
 
   }
+
+   async upsertEvaluationNotification(data: {
+      userId: string;
+      senderId?: string;
+      type: NotificationType;
+      title: string;
+      message: string;
+      refId: string;
+    }) {
+      return this.notificationModel.findOneAndUpdate(
+        {
+          userId: data.userId,
+          refId: data.refId, // ищем уведомление на этот объект
+        },
+        {
+          $set: {
+            senderId: data.senderId,
+            type: data.type,     // обновляем текущий статус
+            title: data.title,
+            message: data.message,
+            readBy: [], // сбрасываем прочтения при обновлении статуса
+            updatedAt: new Date(),
+          }
+        },
+        {
+          upsert: true,
+          new: true
+        }
+      );
+    }
 
 }

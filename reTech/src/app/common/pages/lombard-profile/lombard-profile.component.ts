@@ -702,22 +702,38 @@ export class LombardProfileComponent implements OnInit{
 
   openNotificationDetail(n: any) {
     console.log('Opening notification detail for:', n);
-    if (n.type === 'sent-offer' || n.type === 'offer-updated') {
+
+    // 👉 ВСЕ offer-типы
+    if (
+      n.type === 'sent-offer' ||
+      n.type === 'offer-updated' ||
+      n.type === 'offer-completed'
+    ) {
       const offer = this.offersById[n.refId];
       console.log('offer found:', offer);
-      if(offer && offer.status === 'in_inspection'){
-        this.markAsRead(n)
-        this.openOfferDetail(offer);
 
+      if (offer) {
+        this.markAsRead(n);
+        this.openOfferDetail(offer);
       }
-      else if(n.data?.productId){
-        const product = this.prodcuctsFromNotifications[n.refId];
-        console.log('Product from notification:', product);
-        if (product) {
-          this.openProductDetail(product);
-        }
+
+      return; // ❗ ВАЖНО: выходим, чтобы не идти дальше
+    }
+
+    // 👉 продукт (если не оффер)
+    if (n.data?.productId) {
+      const product = this.prodcuctsFromNotifications[n.data.productId];
+      console.log('Product from notification:', product);
+
+      if (product) {
+        this.openProductDetail(product);
       }
-    } else if (n.type === 'new-offer' || n.type === 'evaluation-created') {
+
+      return;
+    }
+
+    // 👉 другие кейсы
+    if (n.type === 'new-offer' || n.type === 'evaluation-created') {
       this.openEvaluationDetail(n.refId);
     }
   }

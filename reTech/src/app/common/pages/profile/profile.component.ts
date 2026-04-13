@@ -587,7 +587,7 @@ export class ProfileComponent implements OnInit {
 
   get slotNotifications() {
     let notifications = (this.notificationsList || []).filter(n =>
-      ['slot-created', 'slot-completed'].includes(n.type)
+      ['slot-created', 'slot-completed','slot-expired'].includes(n.type)
     );
 
     // 🔹 группировка по refId (оставляем последнее)
@@ -748,7 +748,7 @@ export class ProfileComponent implements OnInit {
   get unreadLoanNotifications(){
 
     const unreaded = (this.notificationsList || []).filter(n =>
-      ['slot-created','slot-completed','slot-updated'].includes(n.type) && !n.readBy.some(r => r.userId === this.user._id)
+      ['slot-created','slot-completed','slot-updated','slot-expired'].includes(n.type) && !n.readBy.some(r => r.userId === this.user._id)
     );
 
     return unreaded;
