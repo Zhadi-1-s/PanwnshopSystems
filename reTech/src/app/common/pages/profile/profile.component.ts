@@ -531,6 +531,7 @@ export class ProfileComponent implements OnInit {
         'offer-accepted',
         'offer-rejected',
         'offer-canceled',
+        'offer-updated',
         'evaluation-created',
         'evaluation-accepted',
         'evaluation-updated',

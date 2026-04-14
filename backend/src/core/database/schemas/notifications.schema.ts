@@ -9,7 +9,9 @@ export type NotificationType =
     | 'offer-accepted'
     | 'offer-rejected'
     | 'offer-updated'
-    | 'offer-canceled'
+    | 'offer-cancelled'
+    | 'offer-completed'
+    | 'offer-in-loan'
     | 'new-message'
     | 'system'
     | 'chat-opened'
@@ -19,6 +21,7 @@ export type NotificationType =
     | 'slot-created'
     | 'slot-updated'
     | 'slot-completed'
+    | 'slot-expired'
     | 'product-expired'
     | 'evaluation-created'
     | 'evaluation-updated'
@@ -44,12 +47,13 @@ export class Notification {
       'offer-rejected',
       'offer-cancelled',
       'offer-updated',
+      'offer-completed',
+      'offer-in-loan',
       'new-message',
       'system',
       'chat-opened',
       'product-sold',
       'price-changed',
-      'evaluation',
       'offer-in-loan',
       'evaluation-updated',
       'evaluation-accepted',
@@ -57,6 +61,7 @@ export class Notification {
       'slot-created',
       'slot-completed',
       'slot-updated',
+      'slot-expired',
       'product-expired',
       'extend-requested',
       'extend-approved',

@@ -90,9 +90,19 @@ export class OfferService {
 
       if (!offer) throw new NotFoundException('Offer not found');
 
+      let type: NotificationType = 'offer-updated';
+      let title = `Offer${status}`;
+      let message = `Offer status changed to ${status}`;
+
+    let finalStatus = status;
+
       if (status === 'in_inspection') {
         const inspectionHours = 24; // Количество часов на инспекцию
         offer.expiresAt = new Date(Date.now() + inspectionHours * 60 * 60 * 1000);
+        
+        title = 'Offer in inspection';
+        message = 'Оффер отправлен на проверку';
+
       }
 
       if(status === 'completed'){
@@ -121,56 +131,44 @@ export class OfferService {
 
            await this.productService.updateStatus(
               offer.productId.toString(),
-              ProductStatus.INACTIVE
+              ProductStatus.IN_LOAN
             );
 
-          offer.status = 'in_loan';
-          await this.notificationService.create({
-            userId: offer.productOwnerId.toString(),
-            senderId: offer.pawnshopId.toString(),
-            type: 'offer-in-loan',  // <-- новый тип уведомления
-            title: 'Loan started',
-            message: `Your loan for product "${product.title}" has started.`,
-            refId: offer._id.toString(),
-            readBy: [],
-            // data: { productId: product._id.toString(), slotId: slot._id.toString() }
-          });
+            finalStatus = 'in_loan';
+            type = 'offer-in-loan';
+            title = 'Loan started';
+            message = `Your loan has started`;
         }
         else{
-          offer.status = 'completed';
+            type = 'offer-completed';
+            title = 'Offer completed';
+            message = 'Оффер завершён';
         }
-
       }
 
       // Обновляем статус
-      offer.status = status;
+      offer.status = finalStatus;
       offer.updatedAt = new Date();
       await offer.save();
 
       // Отправка уведомления (можно делать более точно по статусу)
-      await this.notificationService.create({
-          userId: offer.pawnshopId.toString(),
-          senderId: offer.productOwnerId.toString(),
-          type: status === 'pending' ? 'offer-accepted' : 'offer-updated',
-          title: `Offer ${status}`,
-          refId: offer._id.toString(),
-          readBy: [],
-          data: {
-            status: offer.status, // 👈 ВАЖНО
-            price: offer.price,
-            productId: offer.productId.toString()
-          }
+      await this.upsertOfferNotification({
+        userId: offer.productOwnerId.toString(),
+        senderId: offer.pawnshopId.toString(),
+        type,
+        title,
+        message,
+        refId: offer._id.toString(),
       });
 
       return offer;
   }
 
-  async cancelOffer(offerId:string,reason:string){
+  async cancelOffer(offerId: string, reason: string) {
     const offer = await this.offerModel.findById(offerId);
-
     if (!offer) throw new NotFoundException('Offer not found');
 
-    if(offer.status !== 'in_inspection'){
+    if (offer.status !== 'in_inspection') {
       throw new NotFoundException('Only in_inspection offers can be cancelled');
     }
 
@@ -180,19 +178,18 @@ export class OfferService {
 
     await offer.save();
 
-    await this.notificationService.create({
-      userId:offer.productOwnerId.toString(),
-      senderId:offer.pawnshopId.toString(),
-      type:'offer-cancelled',
-      title:'Offer cancelled by pawnshop',
-      message:reason,
-      refId:offer._id.toString(),
-      readBy: [],
-    })
-
+    // ✅ тоже апсерт, а не create
+    await this.upsertOfferNotification({
+      userId: offer.productOwnerId.toString(),
+      senderId: offer.pawnshopId.toString(),
+      type: 'offer-cancelled',
+      title: 'Offer cancelled by pawnshop',
+      message: reason,
+      refId: offer._id.toString(),
+    });
   }
 
-   async upsertEvaluationNotification(data: {
+   async upsertOfferNotification(data: {
       userId: string;
       senderId?: string;
       type: NotificationType;
