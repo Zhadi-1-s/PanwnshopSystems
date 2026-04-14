@@ -446,7 +446,7 @@ export class ProfileComponent implements OnInit {
       this.markAsRead(n);
     }
 
-    if (n.type === 'new-offer') {
+    if (n.type === 'new-offer' || n.type === 'offer-updated' || n.type === 'offer-in-loan') {
       const offer = this.offersById[n.refId];
 
       if (!offer) {
@@ -532,6 +532,8 @@ export class ProfileComponent implements OnInit {
         'offer-rejected',
         'offer-canceled',
         'offer-updated',
+        'offer-completed',
+        'offer-in-loan',
         'evaluation-created',
         'evaluation-accepted',
         'evaluation-updated',
@@ -557,7 +559,7 @@ export class ProfileComponent implements OnInit {
       );
     } else {
       notifications = latestByRefId.filter(n =>
-        ['new-offer','offer-accepted','offer-rejected','offer-canceled','offer-updated'].includes(n.type)
+        ['new-offer','offer-accepted','offer-rejected','offer-canceled','offer-updated','offer-in-loan'].includes(n.type)
       );
     }
 

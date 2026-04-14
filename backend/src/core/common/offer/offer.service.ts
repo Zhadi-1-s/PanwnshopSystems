@@ -38,16 +38,28 @@ export class OfferService {
     const pawnshopName = pawnshop.name;
     
 
-    await this.notificationService.create({
-      userId: dto.productOwnerId, // кому отправляем уведомление
-      senderId: dto.pawnshopId,
-      type: 'new-offer',
-      title: 'New offer received',
-      message: `${pawnshopName} отправил предложение вашему товару.`,
-      refId: offer._id?.toString(),
-      readBy: [],
-      data:{offer:offer}
-    });
+    await Promise.all([
+      this.notificationService.create({
+        userId: dto.productOwnerId,
+        senderId: dto.pawnshopId,
+        type: 'new-offer',
+        title: 'New offer received',
+        message: `${pawnshopName} отправил предложение вашему товару.`,
+        refId: offer._id?.toString(),
+        readBy: [],
+        data: { offer }
+      }),
+      this.notificationService.create({
+        userId: dto.pawnshopId,
+        senderId: dto.productOwnerId,
+        type: 'new-offer',
+        title: 'Offer sent',
+        message: `Вы отправили предложение пользователю.`,
+        refId: offer._id?.toString(),
+        readBy: [],
+        data: { offer }
+      })
+    ]);
 
     return offer;
 
@@ -94,7 +106,7 @@ export class OfferService {
       let title = `Offer${status}`;
       let message = `Offer status changed to ${status}`;
 
-    let finalStatus = status;
+      let finalStatus = status;
 
       if (status === 'in_inspection') {
         const inspectionHours = 24; // Количество часов на инспекцию
@@ -152,14 +164,24 @@ export class OfferService {
       await offer.save();
 
       // Отправка уведомления (можно делать более точно по статусу)
-      await this.upsertOfferNotification({
-        userId: offer.productOwnerId.toString(),
-        senderId: offer.pawnshopId.toString(),
-        type,
-        title,
-        message,
-        refId: offer._id.toString(),
-      });
+      await Promise.all([
+        this.upsertOfferNotification({
+          userId: offer.productOwnerId.toString(),
+          senderId: offer.pawnshopId.toString(),
+          type,
+          title,
+          message,
+          refId: offer._id.toString(),
+        }),
+        this.upsertOfferNotification({
+          userId: offer.pawnshopId.toString(),
+          senderId: offer.productOwnerId.toString(),
+          type,
+          title: 'Status updated',
+          message: `Вы изменили статус оффера на ${finalStatus}`,
+          refId: offer._id.toString(),
+        })
+      ]);
 
       return offer;
   }
@@ -179,14 +201,24 @@ export class OfferService {
     await offer.save();
 
     // ✅ тоже апсерт, а не create
-    await this.upsertOfferNotification({
-      userId: offer.productOwnerId.toString(),
-      senderId: offer.pawnshopId.toString(),
-      type: 'offer-cancelled',
-      title: 'Offer cancelled by pawnshop',
-      message: reason,
-      refId: offer._id.toString(),
-    });
+    await Promise.all([
+      this.upsertOfferNotification({
+        userId: offer.productOwnerId.toString(),
+        senderId: offer.pawnshopId.toString(),
+        type: 'offer-cancelled',
+        title: 'Offer cancelled by pawnshop',
+        message: reason,
+        refId: offer._id.toString(),
+      }),
+      this.upsertOfferNotification({
+        userId: offer.pawnshopId.toString(),
+        senderId: offer.productOwnerId.toString(),
+        type: 'offer-cancelled',
+        title: 'You cancelled the offer',
+        message: reason,
+        refId: offer._id.toString(),
+      })
+    ]);
   }
 
    async upsertOfferNotification(data: {
