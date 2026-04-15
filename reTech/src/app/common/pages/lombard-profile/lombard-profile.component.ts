@@ -461,7 +461,7 @@ export class LombardProfileComponent implements OnInit{
   
   get offerNotifications() {
     let offers = (this.notificationsList || []).filter(n =>
-      ['new-offer', 'sent-offer', 'evaluation-created','offer-updated'].includes(n.type)
+      ['new-offer', 'sent-offer', 'evaluation-created','offer-updated','offer-completed','offer-in-loan'].includes(n.type)
     );
 
     // 1️⃣ sent / received
@@ -527,7 +527,7 @@ export class LombardProfileComponent implements OnInit{
     if (!n) return null;
 
     // 1. Статус оффера
-    if (['new-offer','sent-offer','offer-updated'].includes(n.type)) {
+    if (['new-offer','sent-offer','offer-updated','offer-in-loan'].includes(n.type)) {
       return n.data?.status || null;
     }
 
@@ -702,12 +702,14 @@ export class LombardProfileComponent implements OnInit{
 
   openNotificationDetail(n: any) {
     console.log('Opening notification detail for:', n);
-
+    console.log('offers by id', this.offersById)
     // 👉 ВСЕ offer-типы
     if (
       n.type === 'sent-offer' ||
       n.type === 'offer-updated' ||
-      n.type === 'offer-completed'
+      n.type === 'offer-completed' ||
+      n.type === 'offer-in-loan' ||
+      n.type === 'new-offer'
     ) {
       const offer = this.offersById[n.refId];
       console.log('offer found:', offer);

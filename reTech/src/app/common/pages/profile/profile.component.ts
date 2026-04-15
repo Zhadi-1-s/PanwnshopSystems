@@ -246,7 +246,7 @@ export class ProfileComponent implements OnInit {
       take(1),
       switchMap(user => this.notificationService.getUserNotifications(user._id)),
       map(notifications =>
-        notifications.filter(n => ['new-offer','offer-updated'].includes(n.type) && !!n.refId)
+        notifications.filter(n => ['new-offer','offer-updated','offer-completed','offer-in-loan'].includes(n.type) && !!n.refId)
       ),
       switchMap(offerNotifications => {
         if (!offerNotifications.length) return of([]);

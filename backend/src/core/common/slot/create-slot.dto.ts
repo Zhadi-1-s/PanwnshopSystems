@@ -89,4 +89,9 @@ export class CreateSlotDto {
     message: 'Телефон должен быть в формате +7XXXXXXXXXX',
   })
   telephone?: string;
+
+  @IsOptional()
+  @IsString()
+  offerId?: string;
+
 }

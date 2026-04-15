@@ -43,6 +43,9 @@ export class Slot {
 
   @Prop()
   telephone?: string;
+
+  @Prop()
+  offerId?: string;
   
 }
 export const SlotSchema = SchemaFactory.createForClass(Slot);

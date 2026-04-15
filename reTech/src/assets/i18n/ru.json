@@ -457,6 +457,11 @@
     "Slot successfully created":"Слот успешно создан",
     "Do not show again":"Больше не показывать",
     "Sent offer":"Отправить предложение",
-    "Client should bring the product for inspection within:":"Клиент должен привезти товар на осмотр в течении:"
+    "Client should bring the product for inspection within:":"Клиент должен привезти товар на осмотр в течении:",
+    "Your loan is active":"Ваш займ активен",
+    "Client loan is active":"Займ клиента активен",
+    "Please make sure to repay the loan before the due date.":"Пожалуйста, не забудьте погасить кредит до истечения установленного срока",
+    "Client should repay the loan before the due date.":"Клиент должен погасить кредит до истечения установленного срока."
+
 
 }
