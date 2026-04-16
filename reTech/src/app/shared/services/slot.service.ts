@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable,Subject } from 'rxjs';
 import { Slot } from '../interfaces/slot.interface';
 import { environment } from '../../../environments/environment';
 import { LoanStatus } from '../enums/status.enum';
+import { SlotCloseReason } from '../enums/status.enum';
 
 @Injectable({
   providedIn: 'root'
@@ -50,6 +51,20 @@ export class SlotService {
     return this.http.patch<Slot>(`${this.apiUrl}/${id}/status`, dto);
   }
 
+  closeSlot(
+    id: string,
+    dto: {
+      status: LoanStatus;
+      closeReason: SlotCloseReason;
+      userId: string;
+    }
+  ): Observable<Slot> {
+    return this.http.patch<Slot>(
+      `${this.apiUrl}/${id}/close`,
+      dto
+    );
+  }
+  
   triggerRefresh() {
     this.refreshSubject.next();
   }

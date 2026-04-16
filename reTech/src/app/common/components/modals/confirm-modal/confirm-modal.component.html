@@ -1,0 +1,19 @@
+<div class="p-4">
+      <h2 class="text-lg font-semibold mb-2">{{'Confirm action'| translate}}</h2>
+
+      <p class="text-sm text-gray-500 mb-4">
+        {{ message | translate}}
+      </p>
+
+      <div class="flex gap-2 justify-end">
+        <button class="px-4 py-2 rounded bg-gray-200"
+                (click)="activeModal.dismiss()">
+          {{'Cancel'|translate}}
+        </button>
+
+        <button class="px-4 py-2 rounded bg-red-600 text-white"
+                (click)="activeModal.close(true)">
+          {{'Confirm'|translate}}
+        </button>
+      </div>
+</div>

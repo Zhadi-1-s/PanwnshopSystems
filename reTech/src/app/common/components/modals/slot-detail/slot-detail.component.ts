@@ -12,6 +12,8 @@ import { SlotDeleteComponent } from '../slot-delete/slot-delete.component';
 import { LombardService } from '../../../../shared/services/lombard.service';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { ConfirmModalComponent } from '../confirm-modal/confirm-modal.component';
+import { SlotCloseReason } from '../../../../shared/enums/status.enum';
 
 @Component({
   selector: 'app-slot-detail',
@@ -99,15 +101,15 @@ export class SlotDetailComponent implements OnInit {
   }
 
   finishSlot(slotId:string){
-    this.slotService.updateSlotStatus(slotId, { status: LoanStatus.CLOSED, userId: this.user._id }).subscribe({
+    this.slotService.updateSlotStatus(slotId, { status: LoanStatus.COMPLETED, userId: this.user._id }).subscribe({
       next:updatedSlot => {
         console.log('Slot updated:', updatedSlot);
       }
     });
   }
+
   extendSlot(slot:Slot){}
 
-  deleteSlot(slotId:string){}
 
   private loadSlot() {
     this.slotService.getSlotById(this.slotId)
@@ -249,6 +251,35 @@ export class SlotDetailComponent implements OnInit {
     modalRef.componentInstance.slot = slot;
     modalRef.componentInstance.user = this.user;
 
+  }
+
+  closeSlot(slotId: string) {
+    const modalRef = this.modalService.open(ConfirmModalComponent, {
+      centered: true
+    });
+
+    modalRef.componentInstance.message =
+      'Are you sure you want to close this slot?';
+
+    modalRef.componentInstance.reasons = [
+      { value: SlotCloseReason.NON_PAYMENT, label: 'User did not pay' },
+      { value: SlotCloseReason.MANUAL, label: 'Manual close' },
+      { value: SlotCloseReason.ADMIN_FORCE, label: 'Force close' }
+    ];
+
+    modalRef.result
+      .then((reason) => {
+        if (!reason) return;
+
+        this.slotService.closeSlot(slotId, {
+          status: LoanStatus.CLOSED,
+          userId: this.user._id,
+          closeReason: reason
+        }).subscribe(() => {
+          console.log('Slot closed with reason:', reason);
+        });
+      })
+      .catch(() => {});
   }
 
    copyLink() {

@@ -15,6 +15,8 @@ import { LombardService } from '../../../../shared/services/lombard.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {Router} from '@angular/router';
 import { SlotService } from '../../../../shared/services/slot.service';
+import { Slot } from '../../../../shared/interfaces/slot.interface';
+import { ConfirmModalComponent } from '../confirm-modal/confirm-modal.component';
 
 @Component({
   selector: 'app-offer-detail',
@@ -49,6 +51,8 @@ export class OfferDetailComponent implements OnInit{
 
   pawnshopAddress:string;
 
+  slotId:string;
+
   constructor(
     private productService:ProductService,
     private modalService:NgbModal,
@@ -82,6 +86,28 @@ export class OfferDetailComponent implements OnInit{
         this.inspectionDeadline = new Date(this.offer.expiresAt);
         this.startCountdown();
       }
+      // if (this.offer?.status === 'in_loan') {
+      //   this.slotService.getAllSlots().pipe(
+      //     tap(slots => {
+      //       console.log('ALL SLOTS:', slots);
+      //     }),
+      //     map((slots: Slot[]) =>
+      //       slots.find(s =>
+      //         String(s.product) === String(this.offer.productId)
+      //       )
+      //     ),
+      //     tap(found => {
+      //       console.log('FOUND SLOT:', found);
+      //     })
+      //   ).subscribe(slot => {
+      //     if (!slot) {
+      //       console.warn('Slot not found for product:', this.offer.productId);
+      //       return;
+      //     }
+
+      //     this.slotId = slot._id;
+      //   });
+      // }
   }
 
   startCountdown() {

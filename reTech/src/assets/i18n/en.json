@@ -459,5 +459,7 @@
     "Your loan is active":"Your loan is active",
     "Client loan is active":"Your loan is active",
     "Please make sure to repay the loan before the due date.":"Please make sure to repay the loan before the due date.",
-    "Client should repay the loan before the due date.":"Client should repay the loan before the due date."
+    "Client should repay the loan before the due date.":"Client should repay the loan before the due date.",
+    "Are you sure you want to close this slot? This action cannot be undone.":"Are you sure you want to close this slot? This action cannot be undone.",
+    "Confirm action":"Confirm action"
 }

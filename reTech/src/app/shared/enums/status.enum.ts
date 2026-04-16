@@ -12,9 +12,16 @@ export enum ProductStatus {
 }
 export enum LoanStatus {
   ACTIVE = 'active',     // займ открыт
-  CLOSED = 'closed',     // погашен
+  COMPLETED = 'completed',
+  CLOSED = 'closed',     // закрыт
   EXPIRED = 'expired',   // просрочен
   SOLD = 'sold',       // товар продали из-за просрочки
   EXTEND_REQUESTED = 'extend_requested',
   FORFEITED = 'forfeited'
+}
+export enum SlotCloseReason {
+  NON_PAYMENT = 'non_payment',
+  MANUAL = 'manual',
+  EARLY_REPAYMENT = 'early_repayment',
+  ADMIN_FORCE = 'admin_force',
 }

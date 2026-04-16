@@ -1,0 +1,26 @@
+<div class="p-4">
+
+  <h2 class="text-lg font-semibold mb-3">Close slot</h2>
+
+  <p class="text-sm text-gray-500 mb-4">{{ message }}</p>
+
+  <select class="w-full border p-2 rounded mb-4"
+          [(ngModel)]="selectedReason">
+    <option *ngFor="let r of reasons" [value]="r.value">
+      {{ r.label }}
+    </option>
+  </select>
+
+  <div class="flex justify-end gap-2">
+    <button (click)="activeModal.dismiss()"
+            class="px-3 py-1 bg-gray-200 rounded">
+      Cancel
+    </button>
+
+    <button (click)="activeModal.close(selectedReason)"
+            class="px-3 py-1 bg-red-600 text-white rounded">
+      Close
+    </button>
+  </div>
+
+</div>
