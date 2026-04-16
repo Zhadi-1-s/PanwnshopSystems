@@ -3,6 +3,7 @@ import { SlotService } from './slot.service';
 import { CreateSlotDto } from './create-slot.dto';
 import { UpdateSlotStatusDto } from './update-status.dto';
 import { Slot } from 'src/core/database/schemas/slot.schema';
+import { CloseSlotDto } from './update-status.dto';
 @Controller('slots')
 export class SlotController {
   constructor(private readonly slotService: SlotService) {}
@@ -43,6 +44,18 @@ export class SlotController {
     @Body() dto: UpdateSlotStatusDto,
   ): Promise<Slot> {
     return this.slotService.updateStatus(id, dto);
+  }
+  @Patch(':id/close')
+  closeSlot(
+    @Param('id') id: string,
+    @Body() dto: CloseSlotDto
+  ) {
+    return this.slotService.closeSlot(
+      id,
+      dto.status,
+      dto.closeReason,
+      dto.userId
+    );
   }
   
 }

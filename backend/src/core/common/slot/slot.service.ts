@@ -6,15 +6,18 @@ import { CreateSlotDto } from './create-slot.dto';
 import { NotificationService } from '../notification/notification.service';
 
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { LoanStatus } from '../enums/status.enum';
+import { LoanStatus, SlotCloseReason } from '../enums/status.enum';
 import { UpdateSlotStatusDto } from './update-status.dto';
-
+import { NotificationType } from 'src/core/database/schemas/notifications.schema';
+import { NotificationDocument,Notification } from 'src/core/database/schemas/notifications.schema';
 
 @Injectable()
 export class SlotService {
   constructor(
     @InjectModel(Slot.name) private readonly slotModel: Model<SlotDocument>,
-    private notificationService:NotificationService
+    private notificationService:NotificationService,
+    @InjectModel(Notification.name)
+    private readonly notificationModel:Model<NotificationDocument>,
   ) {}
 
   async createSlot(dto: CreateSlotDto): Promise<Slot> {
@@ -136,66 +139,143 @@ export class SlotService {
 
     await slot.save();
 
-    if (dto.status === LoanStatus.EXTEND_REQUESTED) {
-      await this.notificationService.create({
-        userId: slot.pawnshopId.toString(),
-        senderId: dto.userId,
-        type: 'extend-request',
-        title: 'Extension request',
-        message: 'Пользователь запросил продление займа',
-        refId: slot._id.toString(),
-        readBy: [],
-        data: { slotId: slot._id.toString() }
-      });
-    }
-    if(dto.status === LoanStatus.ACTIVE){
-      const now = new Date();
-      const currentEnd = new Date(slot.endDate);
+    // if (dto.status === LoanStatus.EXTEND_REQUESTED) {
+    //   await this.notificationService.create({
+    //     userId: slot.pawnshopId.toString(),
+    //     senderId: dto.userId,
+    //     type: 'extend-request',
+    //     title: 'Extension request',
+    //     message: 'Пользователь запросил продление займа',
+    //     refId: slot._id.toString(),
+    //     readBy: [],
+    //     data: { slotId: slot._id.toString() }
+    //   });
+    // }
+    // if(dto.status === LoanStatus.ACTIVE){
+    //   const now = new Date();
+    //   const currentEnd = new Date(slot.endDate);
 
-      // если срок ещё не истёк — продлеваем от текущего endDate
-      // если уже истёк — продлеваем от сегодняшнего дня
-      const baseDate = currentEnd > now ? currentEnd : now;
+    //   // если срок ещё не истёк — продлеваем от текущего endDate
+    //   // если уже истёк — продлеваем от сегодняшнего дня
+    //   const baseDate = currentEnd > now ? currentEnd : now;
 
-      baseDate.setDate(baseDate.getDate() + 7); // только 1 неделя
-      slot.endDate = baseDate;
+    //   baseDate.setDate(baseDate.getDate() + 7); // только 1 неделя
+    //   slot.endDate = baseDate;
 
-      await slot.save();
+    //   await slot.save();
 
-      await this.notificationService.create({
-        userId: slot.userId.toString(),
-        senderId: dto.userId,
-        type: 'extend-approved',
-        title: 'Extension approved',
-        message: 'Продление займа одобрено',
-        refId: slot._id.toString(),
-        readBy: [],
-        data: { slotData:slot }
-      });
-    }
+    //   await this.notificationService.create({
+    //     userId: slot.userId.toString(),
+    //     senderId: dto.userId,
+    //     type: 'extend-approved',
+    //     title: 'Extension approved',
+    //     message: 'Продление займа одобрено',
+    //     refId: slot._id.toString(),
+    //     readBy: [],
+    //     data: { slotData:slot }
+    //   });
+    // }
 
-    if(dto.status === LoanStatus.CLOSED){
+    if(dto.status === LoanStatus.COMPLETED){
 
-      await this.notificationService.create({
+      await this.upsertSlotNotification({
         userId:slot.userId.toString(),
         senderId:dto.userId,
         type:'slot-completed',
         title:'Loan completed',
         message:'Ваш займ завершён. Спасибо, что воспользовались нашими услугами!',
         refId: slot._id.toString(),
-        readBy: [],
-        data:{ slotData:slot }
+        
       })
     }
-    if(dto.status === LoanStatus.FORFEITED){
-
-  
-    }
-
 
     return slot;
   }
 
-  @Cron(CronExpression.EVERY_10_SECONDS)
+  async closeSlot(
+    id: string,
+    status: LoanStatus,
+    closeReason: SlotCloseReason,
+    userId: string
+  ) {
+    const slot = await this.slotModel.findById(id);
+    if (!slot) {
+      throw new NotFoundException('Slot not found');
+    }
+
+    // 👇 формируем сообщение
+    let message = '';
+
+    switch (closeReason) {
+      case SlotCloseReason.NON_PAYMENT:
+        message = 'Займ закрыт из-за неуплаты';
+        break;
+      case SlotCloseReason.MANUAL:
+        message = 'Займ закрыт вручную';
+        break;
+      case SlotCloseReason.EARLY_REPAYMENT:
+        message = 'Займ погашен досрочно';
+        break;
+      case SlotCloseReason.ADMIN_FORCE:
+        message = 'Займ принудительно закрыт администратором';
+        break;
+      default:
+        message = 'Займ закрыт';
+    }
+
+    // 👇 обновляем уведомление
+    await this.upsertSlotNotification({
+      userId: slot.userId.toString(), // важно — не тот кто закрыл, а владелец слота
+      senderId: userId,
+      type: 'slot-closed',
+      title: 'Loan closed',
+      message,
+      refId: slot._id.toString(),
+    });
+
+    return this.slotModel.findByIdAndUpdate(
+      id,
+      {
+        status,
+        closeReason,
+        closedAt: new Date(),
+        closedBy: userId,
+      },
+      { new: true }
+    );
+  }
+
+  async upsertSlotNotification(data: {
+        userId: string;
+        senderId?: string;
+        type: NotificationType;
+        title: string;
+        message: string;
+        refId: string;
+      }) {
+        return this.notificationModel.findOneAndUpdate(
+          {
+            userId: data.userId,
+            refId: data.refId, // ищем уведомление на этот объект
+          },
+          {
+            $set: {
+              senderId: data.senderId,
+              type: data.type,     // обновляем текущий статус
+              title: data.title,
+              message: data.message,
+              readBy: [], // сбрасываем прочтения при обновлении статуса
+              updatedAt: new Date(),
+            }
+          },
+          {
+            upsert: true,
+            new: true
+          }
+        );
+      }
+
+  @Cron(CronExpression.EVERY_10_MINUTES)
   async handleExpiredSlots() {
     const now = new Date();
 

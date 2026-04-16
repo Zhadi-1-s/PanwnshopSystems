@@ -22,6 +22,7 @@ export type NotificationType =
     | 'slot-updated'
     | 'slot-completed'
     | 'slot-expired'
+    | 'slot-closed'
     | 'product-expired'
     | 'evaluation-created'
     | 'evaluation-updated'
@@ -62,6 +63,7 @@ export class Notification {
       'slot-completed',
       'slot-updated',
       'slot-expired',
+      'slot-closed',
       'product-expired',
       'extend-requested',
       'extend-approved',

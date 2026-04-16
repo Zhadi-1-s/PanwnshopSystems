@@ -4,6 +4,7 @@ import { LoanStatus, Status } from '../enums/status.enum';
 import { Type } from 'class-transformer';
 import { Transform } from 'class-transformer';
 import { Product } from 'src/core/database/schemas/product.schema';
+import { SlotCloseReason } from '../enums/status.enum';
 export class CreateSlotDto {
   @ApiProperty({
     example: '671b2f3c4a12efbd1a23a456',
@@ -93,5 +94,9 @@ export class CreateSlotDto {
   @IsOptional()
   @IsString()
   offerId?: string;
+
+  @IsOptional()
+  @IsEnum(SlotCloseReason)
+  closeReason?: SlotCloseReason;
 
 }

@@ -278,7 +278,7 @@
     </ng-container>
 
     <!-- Pawnshop Actions -->
-    <ng-container *ngIf="user?.role === 'pawnshop' && offer.status !== 'completed' && offer?.status !== 'in_loan' ">
+    <ng-container *ngIf="user?.role === 'pawnshop' && offer.status !== 'completed' && offer?.status !== 'in_loan' && offer.status !== 'pending'">
       <button
         (click)="completeOffer()"
         class="w-full py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-green-600 text-white font-semibold text-sm sm:text-base shadow-lg shadow-emerald-500/25 hover:shadow-xl hover:shadow-emerald-500/30 hover:from-emerald-600 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:ring-offset-2 dark:focus:ring-offset-gray-900 transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2"

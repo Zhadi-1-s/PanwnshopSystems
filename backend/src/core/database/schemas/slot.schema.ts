@@ -3,6 +3,7 @@ import { Document, HydratedDocument, Types } from 'mongoose';
 import { LoanStatus, Status } from 'src/core/common/enums/status.enum';
 import { Product } from './product.schema';
 import { IsOptional } from 'class-validator/types/decorator/common/IsOptional';
+import { SlotCloseReason } from 'src/core/common/enums/status.enum';
 export type SlotDocument = HydratedDocument<Slot>;
 
 @Schema({ timestamps: true })
@@ -46,6 +47,9 @@ export class Slot {
 
   @Prop()
   offerId?: string;
+
+  @Prop({ type: String, enum: SlotCloseReason })
+  closeReason?: SlotCloseReason;
   
 }
 export const SlotSchema = SchemaFactory.createForClass(Slot);

@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsOptional, IsNumber, IsString } from 'class-validator';
 import { LoanStatus } from '../enums/status.enum';
+import { SlotCloseReason } from '../enums/status.enum';
 
 export class UpdateSlotStatusDto {
 
@@ -19,4 +20,15 @@ export class UpdateSlotStatusDto {
   @IsOptional()
   @IsNumber()
   extendDays?: number;
+}
+
+export class CloseSlotDto {
+  @IsEnum(LoanStatus)
+  status: LoanStatus;
+
+  @IsEnum(SlotCloseReason)
+  closeReason: SlotCloseReason;
+
+  @IsString()
+  userId: string;
 }

@@ -279,8 +279,46 @@ export class LombardProfileComponent implements OnInit{
         );
       })
     );
+
+    combineLatest([
+      this.authService.currentUser$.pipe(
+        filter((user): user is User => !!user?._id),
+      ),
+      this.showHistory$,
+      this.slotService.refresh$
+    ])
+    .pipe(
+      switchMap(([user, history]) =>
+        this.lombardService.getLombardByUserId(user._id).pipe(
+          switchMap(pawnshop =>
+            this.slotService.getSlotsByPawnshopId(pawnshop._id).pipe(
+              map(slots =>
+                slots.filter(slot =>
+                  history
+                    ? ['closed', 'sold'].includes(slot.status)
+                    : ['active', 'expired'].includes(slot.status)
+                )
+              )
+            )
+          )
+        )
+      ),
+      switchMap(filteredSlots => {
+        if (!filteredSlots.length) return of([]);
+
+        return forkJoin(
+          filteredSlots.map(slot =>
+            this.productService
+              .getProductById(slot.product)
+              .pipe(map(product => ({ slot, product })))
+          )
+        );
+      })
+    )
+    .subscribe(data => this.slotsSubject.next(data));
+
     this.loadOffers();
-    this.loadSlots();
+    
     console.log('has active deal afete onInit', this.hasActiveDeal);
     console.log('offersBy id in ngONinit', this.offersById);
   }
@@ -337,51 +375,51 @@ export class LombardProfileComponent implements OnInit{
      });
    }
 
-  loadSlots() {
+  // loadSlots() {
 
-    console.log('Loading slots...');
-    this.slotService.refresh$.subscribe(v => console.log('refresh$ emits:', v));
-    combineLatest([
-      this.authService.currentUser$.pipe(
-        filter((user): user is User => !!user?._id),
+  //   console.log('Loading slots...');
+  //   this.slotService.refresh$.subscribe(v => console.log('refresh$ emits:', v));
+  //   combineLatest([
+  //     this.authService.currentUser$.pipe(
+  //       filter((user): user is User => !!user?._id),
       
-      ),
+  //     ),
   
       
-      this.showHistory$,
-      this.slotService.refresh$ // 👈 добавили триггер
-    ])
-    .pipe(
-      switchMap(([user, history]) =>
-        this.lombardService.getLombardByUserId(user._id).pipe(
-          switchMap(pawnshop =>
-            this.slotService.getSlotsByPawnshopId(pawnshop._id).pipe(
-              map(slots =>
+  //     this.showHistory$,
+  //     this.slotService.refresh$ // 👈 добавили триггер
+  //   ])
+  //   .pipe(
+  //     switchMap(([user, history]) =>
+  //       this.lombardService.getLombardByUserId(user._id).pipe(
+  //         switchMap(pawnshop =>
+  //           this.slotService.getSlotsByPawnshopId(pawnshop._id).pipe(
+  //             map(slots =>
                 
-                slots.filter(slot =>
-                  history
-                    ? ['closed', 'sold'].includes(slot.status)
-                    : ['active', 'expired'].includes(slot.status)
-                )
-              )
-            )
-          )
-        )
-      ),
-      switchMap(filteredSlots => {
-        if (!filteredSlots.length) return of([]);
+  //               slots.filter(slot =>
+  //                 history
+  //                   ? ['closed', 'sold'].includes(slot.status)
+  //                   : ['active', 'expired'].includes(slot.status)
+  //               )
+  //             )
+  //           )
+  //         )
+  //       )
+  //     ),
+  //     switchMap(filteredSlots => {
+  //       if (!filteredSlots.length) return of([]);
 
-        return forkJoin(
-          filteredSlots.map(slot =>
-            this.productService
-              .getProductById(slot.product)
-              .pipe(map(product => ({ slot, product })))
-          )
-        );
-      })
-    )
-    .subscribe(data => this.slotsSubject.next(data));
-  }
+  //       return forkJoin(
+  //         filteredSlots.map(slot =>
+  //           this.productService
+  //             .getProductById(slot.product)
+  //             .pipe(map(product => ({ slot, product })))
+  //         )
+  //       );
+  //     })
+  //   )
+  //   .subscribe(data => this.slotsSubject.next(data));
+  // }
 
    get hasActiveDeal(): boolean {
     if (!this.offersById) return false;
@@ -518,9 +556,10 @@ export class LombardProfileComponent implements OnInit{
   }
 
   get unreadOfferNotifications() {
-    return (this.notificationsList || []).filter(
-      n => ['new-offer','offer-accepted','offer-rejected','evaluation-accepted','sent-offer'].includes(n.type) && !n.readBy.some(r => r.userId === this.user._id)
-    );
+
+    const unreadOffer = this.notificationsList.filter(n => ['new-offer','offer-accepted','offer-rejected','evaluation-accepted','sent-offer'].includes(n.type) && !n.readBy.some(r => r.userId === this.profile._id))
+
+    return unreadOffer
   }
 
   getNotificationStatus(n: AppNotification): string | null {

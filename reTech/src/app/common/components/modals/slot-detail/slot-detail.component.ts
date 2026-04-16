@@ -14,6 +14,7 @@ import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ConfirmModalComponent } from '../confirm-modal/confirm-modal.component';
 import { SlotCloseReason } from '../../../../shared/enums/status.enum';
+import { CloseSlotComponent } from '../close-slot/close-slot.component';
 
 @Component({
   selector: 'app-slot-detail',
@@ -254,7 +255,7 @@ export class SlotDetailComponent implements OnInit {
   }
 
   closeSlot(slotId: string) {
-    const modalRef = this.modalService.open(ConfirmModalComponent, {
+    const modalRef = this.modalService.open(CloseSlotComponent, {
       centered: true
     });
 
@@ -277,6 +278,7 @@ export class SlotDetailComponent implements OnInit {
           closeReason: reason
         }).subscribe(() => {
           console.log('Slot closed with reason:', reason);
+          this.slotService.triggerRefresh();
         });
       })
       .catch(() => {});
