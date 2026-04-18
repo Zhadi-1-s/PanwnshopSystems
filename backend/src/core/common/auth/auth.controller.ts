@@ -76,6 +76,10 @@ export class AuthController {
     return this.authService.updateUser(req.user.userId, userData); // достаём ID юзера из токена
   }
 
+  @Post('refresh')
+  async refresh(@Body() body: { refreshToken: string }) {
+    return this.authService.refreshToken(body.refreshToken);
+  }
 
   @UseGuards(JwtAuthGuard)
   @Post('logout')

@@ -27,7 +27,7 @@ export class User {
   @Prop({type:[{type:Types.ObjectId, ref:'Product'}] , default:[]})
   favoriteItems:Types.ObjectId[];
 
-  @Prop({select:false})
+  @Prop({})
   refreshToken:string;
 }
 

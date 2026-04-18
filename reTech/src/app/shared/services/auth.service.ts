@@ -38,8 +38,10 @@ export class AuthService{
     login(dto: LoginDto): Observable<LoginResponse> {
         return this.http.post<LoginResponse>(`${this.apiUrl}/login`, dto).pipe(
         tap((response: LoginResponse) => {
+            
            if( typeof localStorage !== 'undefined'){
-                    localStorage.setItem('access_token', response.accessToken)
+                    localStorage.setItem('access_token', response.accessToken);
+                    localStorage.setItem('refresh_token',response.refreshToken);
                 }
             this.getUserProfile().subscribe(user => this.currentUserSubject.next(user));
         })
@@ -82,11 +84,8 @@ export class AuthService{
     }
 
     logout(): void {
-       this.http.post(this.apiUrl + '/logout',{}).subscribe({
-        complete: ()=> {
-                localStorage.removeItem('access_token');
-        },
-       })
+        localStorage.clear();
+        this.currentUserSubject.next(null);
     }
 
     getToken(): string | null {

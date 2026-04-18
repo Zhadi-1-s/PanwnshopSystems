@@ -160,6 +160,10 @@ export class AuthService {
   }
 
   async refreshToken(oldRefreshToken: string) {
+    console.log('🔥 RAW TOKEN:', oldRefreshToken)
+    console.log('SECRET:', this.configService.get('JWT_REFRESH_SECRET'));
+
+    console.log('FRONT refreshToken:', oldRefreshToken);
     try {
       const payload = this.jwtService.verify(oldRefreshToken, {
         secret: this.configService.get('JWT_REFRESH_SECRET'),
@@ -167,10 +171,14 @@ export class AuthService {
 
       const user = await this.userService.findOne({ _id: payload.sub });
 
+       console.log('DB USER:', user);
+      console.log('DB refreshToken:', user?.refreshToken);
+
       if (!user || user.refreshToken !== oldRefreshToken) {
         throw new UnauthorizedException('Invalid refresh token');
       }
-
+      console.log('incoming:', oldRefreshToken);
+      console.log('db:', user.refreshToken);
       const newAccessToken = this.generateAccessToken(user);
       const newRefreshToken = this.generateRefreshToken(user);
 
@@ -181,6 +189,8 @@ export class AuthService {
       throw new UnauthorizedException('Invalid or expired refresh token');
     }
   }
+
+  
 
 
 }
