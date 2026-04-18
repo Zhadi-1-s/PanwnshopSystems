@@ -403,7 +403,7 @@ export class ProfileComponent implements OnInit {
       return 'bg-gray-50 dark:bg-gray-800/30';
     }
 
-    const isInactive = !['in_inspection', 'active','pending'].includes(status);
+    const isInactive = !['in_inspection', 'active','pending','in_loan'].includes(status);
 
     return {
       // 🔻 приглушаем неактивные
@@ -417,7 +417,7 @@ export class ProfileComponent implements OnInit {
       // 🟢 активные
       'bg-blue-50 dark:bg-blue-900/10': status === 'in_inspection',
       'bg-white dark:bg-gray-800/30': status === 'active',
-
+      'bg-yellow-50 dark:bg-yellow-900/10': status === 'in_loan',
       // fallback
       'bg-gray-50 dark:bg-gray-800/30': !status
     };

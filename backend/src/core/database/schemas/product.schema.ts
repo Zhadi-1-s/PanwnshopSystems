@@ -66,7 +66,7 @@ export class Product {
   @Prop({ type: Date })
   activatedAt?: Date;
 
-  @Prop({required:false})
+  @Prop({})
   ownerType:'user'|'pawnshop'
 
 }

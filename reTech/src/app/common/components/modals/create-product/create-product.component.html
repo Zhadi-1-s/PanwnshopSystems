@@ -149,7 +149,7 @@
       <div class="invalid-feedback" *ngIf="price.errors?.['min']">
         {{ 'Price must be greater than 0' | translate }}
       </div>
-       <small class="text-muted d-block mt-2">
+       <small class="text-muted d-block mt-2" *ngIf="user?.role !== 'pawnshop'">
         Цена является ориентировочной. Ломбарды могут предложить другую сумму
         в зависимости от состояния товара.
       </small>

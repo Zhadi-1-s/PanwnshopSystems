@@ -375,6 +375,8 @@
     "new":"Новый",
     "used":"Бывший в употреблении",
     "good":"Хороший",
+    "Your saved pawnshops":"Ваши сохраненные ломбарды",
+    "Manage your listings":"Управляйте вашими товарами",
     "broken":"Сломанный",
     "Pawnshop agreed to inspect": "Ломбард согласен на осмотр",
     "Bring the item for inspection. The price may vary up to 10% depending on condition": "Принесите товар для осмотра. Цена может варьироваться до 10% в зависимости от состояния",
@@ -463,7 +465,10 @@
     "Please make sure to repay the loan before the due date.":"Пожалуйста, не забудьте погасить кредит до истечения установленного срока",
     "Client should repay the loan before the due date.":"Клиент должен погасить кредит до истечения установленного срока.",
     "Are you sure you want to close this slot? This action cannot be undone.":"Вы уверены, что хотите закрыть этот слот? Это действие невозможно отменить.",
-    "Confirm action":"Подтверждение действия"
+    "Confirm action":"Подтверждение действия",
+    "Loan started":"Займ активен",
+    "Your loan has started":"Ваш займ начался",
+    "You can send WhatsApp message using this link:":"Вы можете отправить сообщение используя эту ссылку"
 
 
 }

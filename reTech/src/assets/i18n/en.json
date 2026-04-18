@@ -398,6 +398,8 @@
     "Pawnshop Analytics": "Pawnshop Analytics",
     "Overview of your inventory and slot usage": "Overview of your inventory and slot usage",
     "Slot Usage": "Slot Usage",
+    "Your saved pawnshops":"Your saved pawnshops",
+    "Manage your listings":"Manage your listings",
     "Total Slots": "Total Slots",
     "Active Slots": "Active Slots",
     "Overdue Slots": "Overdue Slots",
@@ -461,5 +463,8 @@
     "Please make sure to repay the loan before the due date.":"Please make sure to repay the loan before the due date.",
     "Client should repay the loan before the due date.":"Client should repay the loan before the due date.",
     "Are you sure you want to close this slot? This action cannot be undone.":"Are you sure you want to close this slot? This action cannot be undone.",
-    "Confirm action":"Confirm action"
+    "Confirm action":"Confirm action",
+    "Loan started":"Loan started",
+    "Your loan has started":"Your loan has started",
+    "You can send WhatsApp message using this link:":"You can send WhatsApp message using this link:"
 }

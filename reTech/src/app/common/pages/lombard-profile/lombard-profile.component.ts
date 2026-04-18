@@ -323,6 +323,8 @@ export class LombardProfileComponent implements OnInit{
     console.log('offersBy id in ngONinit', this.offersById);
   }
 
+
+
   loadOffers() {
      this.authService.currentUser$.pipe(
        filter((user): user is User => !!user?._id),
@@ -589,7 +591,11 @@ export class LombardProfileComponent implements OnInit{
   editProduct(item:Product){
     const modalRef = this.modalService.open(EditProductComponent,{size:'lg'});
 
+
+
     modalRef.componentInstance.product = item;
+    modalRef.componentInstance.user = this.user;
+    modalRef.componentInstance.ownerId = this.profile._id
     modalRef.result.then(
       (updatedProduct:Product) => {
         if(updatedProduct){
@@ -635,11 +641,12 @@ export class LombardProfileComponent implements OnInit{
     modalRef.componentInstance.pawnshopId = this.profile?._id;
   }
 
-  openAddOfferModal(){
+  createProductModal(){
     const modalRef = this.modalService.open(CreateProductComponent, {size:'lg'});
 
     modalRef.componentInstance.ownerId = this.profile._id;
-    modalRef.componentInstance.user = this.profile;
+    modalRef.componentInstance.user = this.user;
+    modalRef.componentInstance.ownerType = this.user.role;
     // modalRef.result.then((result) => {
     //   if (result) this.loadProducts();
     // });
@@ -711,10 +718,12 @@ export class LombardProfileComponent implements OnInit{
   openProductDetail(item: Product) {
 
     const modalRef = this.modalService.open(ProductDetailComponent, { size: 'lg',centered:true });
+    
+    console.log('here is the pawnshop id',this.profile)
 
     modalRef.componentInstance.product = item;
     modalRef.componentInstance.user = this.user;
-    modalRef.componentInstance.pawnshop = this.profile;
+    modalRef.componentInstance.ownerId = this.profile._id;
   }
 
   openCreateSlotModal(){

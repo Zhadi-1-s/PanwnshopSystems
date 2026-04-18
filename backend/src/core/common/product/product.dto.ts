@@ -4,6 +4,7 @@ import { Category } from '../enums/category.enum';
 import { ProductStatus, Status } from '../enums/status.enum';
 import { Type } from 'class-transformer';
 import { ProductType } from '../enums/produtc.type.enum';
+import { IsIn } from 'class-validator';
 
 class ProductPhotoDto {
   @ApiProperty({ example: 'https://res.cloudinary.com/...' })
@@ -73,7 +74,10 @@ export class CreateProductDto {
   @IsOptional()
   activatedAt?: Date;
 
-  @ApiProperty({required:false})
+  @ApiProperty({
+  enum: ['user', 'pawnshop'],
+  })
   @IsOptional()
-  ownerType:'user' | 'pawnshop'
+  @IsIn(['user', 'pawnshop'])
+  ownerType?: 'user' | 'pawnshop';
 }

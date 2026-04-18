@@ -22,7 +22,7 @@ export class ProductDetailComponent implements OnInit{
 
   @Input() pawnshop: PawnshopProfile;
   @Input() user: User;
-  
+  @Input() ownerId:string;
   @Input() productId:string;
 
   isExtending = false;
@@ -52,7 +52,7 @@ export class ProductDetailComponent implements OnInit{
           this.product = product;
           this.normalizePhotos();
           this.checkPermissions(); 
-          console.log('Product loaded in modal:', this.product);
+
 
         },
         error: (err) => {
