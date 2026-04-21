@@ -275,23 +275,35 @@ export class SlotService {
         );
       }
 
-  @Cron(CronExpression.EVERY_10_MINUTES)
+ @Cron(CronExpression.EVERY_10_MINUTES)
   async handleExpiredSlots() {
     const now = new Date();
 
-    const res = await this.slotModel.updateMany(
-      {
-        status: 'active',
-        endDate: { $lt: now }
-      },
-      {
-        status: LoanStatus.EXPIRED // или closed если решил так
-      }
-    );
+    const expiredSlots = await this.slotModel.find({
+      status: LoanStatus.ACTIVE,
+      endDate: { $lt: now }
+    });
 
-    console.log('Expired slots checked');
-    console.log('Modified:', res.modifiedCount);
-    console.log('NOW:', new Date());
+    if (!expiredSlots.length) {
+      console.log('No expired slots');
+      return;
+    }
+
+    for (const slot of expiredSlots) {
+      slot.status = LoanStatus.EXPIRED;
+      await slot.save();
+
+      await this.upsertSlotNotification({
+        userId: slot.userId.toString(),
+        senderId: slot.pawnshopId.toString(), 
+        type: 'slot-expired',
+        title: 'Loan expired',
+        message: 'Срок займа истёк',
+        refId: slot._id.toString(),
+      });
+    }
+
+    console.log('Expired slots processed:', expiredSlots.length);
   }
 
 }
