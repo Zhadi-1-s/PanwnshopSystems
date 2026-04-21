@@ -9,7 +9,7 @@ import { User } from "../interfaces/user.interface";
 import { Product } from "../interfaces/product.interface";
 import { PawnshopProfile } from "../interfaces/shop-profile.interface";
 
-import { environment } from "../../../environments/environment";
+import { environment } from "../../../environments/environment.prod";
 
 @Injectable({
     providedIn: 'root'

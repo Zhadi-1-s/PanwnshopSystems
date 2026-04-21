@@ -3,7 +3,8 @@ import { Observable } from 'rxjs';
 import { PawnshopProfile } from '../interfaces/shop-profile.interface';
 import { HttpClient } from '@angular/common/http';
 import { Review } from '../interfaces/reviews.interface';
-import { environment } from '../../../environments/environment';
+import { environment } from "../../../environments/environment.prod";
+
 import { PawnshopSummary } from '../interfaces/shop-profile.interface';
 
 @Injectable({
