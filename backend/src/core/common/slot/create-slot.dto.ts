@@ -99,4 +99,10 @@ export class CreateSlotDto {
   @IsEnum(SlotCloseReason)
   closeReason?: SlotCloseReason;
 
+  @IsOptional()
+  data?: any;
+
+  @IsOptional()
+  isUserExists?:boolean;
+
 }

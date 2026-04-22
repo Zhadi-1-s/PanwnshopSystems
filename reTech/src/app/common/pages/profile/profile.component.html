@@ -739,21 +739,26 @@
                       </div>
 
                       <!-- ✅ Статус слота -->
-                      <div
+                     <div
                         class="inline-flex items-center text-xs font-semibold mt-2 px-2 py-1 rounded-full"
                         [ngClass]="{
                           'bg-blue-100 text-blue-800': n.type === 'slot-created',
                           'bg-green-100 text-green-800': n.type === 'slot-completed',
-                          'bg-red-100 text-red-800': n.type === 'slot-expired'
+                          'bg-red-100 text-red-800': n.type === 'slot-expired',
+                          'bg-gray-100 text-gray-800': n.type === 'slot-closed'
                         }"
                       >
-                          {{
-                            n.type === 'slot-created'
-                              ? ('Active' | translate)
-                              : n.type === 'slot-completed'
-                              ? ('Completed' | translate)
-                              : ('Expired' | translate)
-                          }}
+                        {{
+                          n.type === 'slot-created'
+                            ? ('Active' | translate)
+                            : n.type === 'slot-completed'
+                            ? ('Completed' | translate)
+                            : n.type === 'slot-expired'
+                            ? ('Expired' | translate)
+                            : n.type === 'slot-closed'
+                            ? ('Closed' | translate)
+                            : ''
+                        }}
                       </div>
 
                       <!-- Unread -->

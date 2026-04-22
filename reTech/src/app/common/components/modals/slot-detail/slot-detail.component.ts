@@ -15,6 +15,7 @@ import { FormsModule } from '@angular/forms';
 import { ConfirmModalComponent } from '../confirm-modal/confirm-modal.component';
 import { SlotCloseReason } from '../../../../shared/enums/status.enum';
 import { CloseSlotComponent } from '../close-slot/close-slot.component';
+import { Console } from 'node:console';
 
 @Component({
   selector: 'app-slot-detail',
@@ -39,7 +40,7 @@ export class SlotDetailComponent implements OnInit {
 
   createdSlot: any;
 
-  isRegistered = true;
+  isRegistered = false;
 
   pawnshopTermFee: { type: string; value: number };
 
@@ -58,6 +59,8 @@ export class SlotDetailComponent implements OnInit {
 
     const hideOverlay = localStorage.getItem('hideSlotOverlay');
 
+    console.log('this is registerd',this.isRegistered)
+
     if(!this.slotId){
       this.slotId = this.route.snapshot.paramMap.get('id');
       this.slotService.getSlotById(this.slotId).subscribe(slot => {
@@ -70,11 +73,6 @@ export class SlotDetailComponent implements OnInit {
     }
     if(this.slotId){
       this.loadSlot();
-    }
-
-    if (hideOverlay === 'true') {
-      this.isRegistered = true;
-      return
     }
 
     if(this.user?._id){
@@ -119,16 +117,11 @@ export class SlotDetailComponent implements OnInit {
         
         this.slot = slot;
         
-        const hideOverlay = localStorage.getItem('hideSlotOverlay');
-
-        if (this.user?._id && this.slot?.userId === this.user._id && !hideOverlay) {
-          this.isRegistered = false;
-        } else  {
-          this.isRegistered = true;
-        }
+        
         console.log('Loaded slot:', slot);
         this.calculate();
         this.loadPawnshop(slot.pawnshopId);
+        this.updateOverlayState();
       });
       
   }
@@ -137,6 +130,18 @@ export class SlotDetailComponent implements OnInit {
     this.pawnshopService.getLombardById(pawnshopId).subscribe(pawnshop => {
       this.pawnshopTermFee = pawnshop?.terms?.fees;
     });
+  }
+
+  private updateOverlayState() {
+    const hideOverlay = localStorage.getItem('hideSlotOverlay') === 'true';
+
+    if (!this.user || !this.slot) return;
+
+    this.isRegistered = !(
+      this.slot.userId === this.user._id
+    ) && !hideOverlay;
+
+    console.log('FINAL isRegistered:', this.isRegistered);
   }
 
   hideSuccess(){

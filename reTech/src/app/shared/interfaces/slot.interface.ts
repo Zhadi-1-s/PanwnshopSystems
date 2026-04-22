@@ -19,4 +19,6 @@ export interface Slot {
   updatedAt?: Date;
 
   telephone?: string;
+  isUserExists?:boolean
+  data?:any;
 }

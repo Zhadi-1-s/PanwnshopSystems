@@ -139,7 +139,7 @@ export class OfferService {
             interestRate,
             status:LoanStatus.ACTIVE,
             prolongationAllowed:true,
-            offerId:offer._id.toString()
+            data:{offer}
           });
 
            await this.productService.updateStatus(

@@ -465,7 +465,7 @@ export class ProfileComponent implements OnInit {
       this.openEvaluationDetailModal(n.refId);
     }
 
-    if(n.type === 'slot-created' || n.type === 'slot-completed'){
+    if(n.type === 'slot-created' || n.type === 'slot-completed' || n.type === 'slot-expired' || n.type === 'slot-closed'){
       this.openSlotDetail(n.refId);
     }
 
@@ -485,6 +485,7 @@ export class ProfileComponent implements OnInit {
 
     modalRef.componentInstance.slotId = slotId;
     modalRef.componentInstance.user = this.user;
+
     
   }
 
@@ -590,7 +591,7 @@ export class ProfileComponent implements OnInit {
 
   get slotNotifications() {
     let notifications = (this.notificationsList || []).filter(n =>
-      ['slot-created', 'slot-completed','slot-expired'].includes(n.type)
+      ['slot-created', 'slot-completed','slot-expired','slot-closed'].includes(n.type)
     );
 
     // 🔹 группировка по refId (оставляем последнее)
@@ -751,7 +752,7 @@ export class ProfileComponent implements OnInit {
   get unreadLoanNotifications(){
 
     const unreaded = (this.notificationsList || []).filter(n =>
-      ['slot-created','slot-completed','slot-updated','slot-expired'].includes(n.type) && !n.readBy.some(r => r.userId === this.user._id)
+      ['slot-created','slot-completed','slot-updated','slot-expired','slot-closed'].includes(n.type) && !n.readBy.some(r => r.userId === this.user._id)
     );
 
     return unreaded;

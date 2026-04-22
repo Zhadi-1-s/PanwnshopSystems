@@ -19,6 +19,7 @@ export interface AppNotification {
     | 'slot-completed'
     | 'slot-updated'
     | 'slot-expired'
+    | 'slot-closed'
     | 'product-expired'
     | 'extend-requested'
     | 'extend-approved'

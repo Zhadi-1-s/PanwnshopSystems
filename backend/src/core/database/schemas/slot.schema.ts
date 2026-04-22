@@ -51,5 +51,11 @@ export class Slot {
   @Prop({ type: String, enum: SlotCloseReason })
   closeReason?: SlotCloseReason;
   
+  @Prop({ type: Object })
+  data?: any;
+
+  @Prop({type:Object})
+  isUserExists?:boolean
+
 }
 export const SlotSchema = SchemaFactory.createForClass(Slot);

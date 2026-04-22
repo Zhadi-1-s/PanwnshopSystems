@@ -10,6 +10,7 @@ import { LoanStatus, SlotCloseReason } from '../enums/status.enum';
 import { UpdateSlotStatusDto } from './update-status.dto';
 import { NotificationType } from 'src/core/database/schemas/notifications.schema';
 import { NotificationDocument,Notification } from 'src/core/database/schemas/notifications.schema';
+import { Offer, OfferDocument } from 'src/core/database/schemas/offer.schema';
 
 @Injectable()
 export class SlotService {
@@ -18,6 +19,8 @@ export class SlotService {
     private notificationService:NotificationService,
     @InjectModel(Notification.name)
     private readonly notificationModel:Model<NotificationDocument>,
+    @InjectModel(Offer.name) 
+    private readonly offerModel: Model<OfferDocument>
   ) {}
 
   async createSlot(dto: CreateSlotDto): Promise<Slot> {
@@ -301,9 +304,47 @@ export class SlotService {
         message: 'Срок займа истёк',
         refId: slot._id.toString(),
       });
+
+      if(slot.offerId){
+
+      }
     }
 
     console.log('Expired slots processed:', expiredSlots.length);
+  }
+
+  private async handleExpiredOffer(slot: Slot) {
+    const offer = await this.offerModel.findById(slot.offerId);
+
+    if (!offer) return;
+
+    // если уже не активный — не трогаем
+    if (offer.status !== 'in_loan') return;
+
+    offer.status = 'completed';
+    offer.updatedAt = new Date();
+
+    await offer.save();
+
+    // 👇 уведомления
+    await Promise.all([
+      this.upsertSlotNotification({
+        userId: offer.productOwnerId.toString(),
+        senderId: offer.pawnshopId.toString(),
+        type: 'offer-completed',
+        title: 'Loan finished',
+        message: 'Предложение завершился',
+        refId: offer._id.toString(),
+      }),
+      this.upsertSlotNotification({
+        userId: offer.pawnshopId.toString(),
+        senderId: offer.productOwnerId.toString(),
+        type: 'offer-completed',
+        title: 'Loan finished',
+        message: 'Предложение закончился',
+        refId: offer._id.toString(),
+      })
+    ]);
   }
 
 }
