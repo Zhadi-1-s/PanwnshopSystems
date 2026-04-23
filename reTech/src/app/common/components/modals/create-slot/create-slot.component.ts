@@ -97,6 +97,8 @@ export class CreateSlotComponent implements OnInit {
     this.loading = true;
     this.errorMessage = '';
 
+    
+
     try { 
       const productPayload:Product = {
         ownerId: this.user._id!,
@@ -113,7 +115,7 @@ export class CreateSlotComponent implements OnInit {
       const createdProduct = await firstValueFrom(
         this.productService.createProduct(productPayload)
       );
-   
+
       const slotPayload: Slot = {
         product: createdProduct._id,
         pawnshopId: this.pawnshop._id!,
@@ -123,7 +125,8 @@ export class CreateSlotComponent implements OnInit {
         startDate: this.form.value.startDate,
         endDate: this.form.value.endDate,
         status: LoanStatus.ACTIVE,
-        telephone:this.form.value.telephone
+        telephone:this.form.value.telephone,
+        isUserExists:false
       };
 
       const createdSlot = await firstValueFrom(

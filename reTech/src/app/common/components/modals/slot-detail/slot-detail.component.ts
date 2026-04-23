@@ -137,9 +137,10 @@ export class SlotDetailComponent implements OnInit {
 
     if (!this.user || !this.slot) return;
 
-    this.isRegistered = !(
-      this.slot.userId === this.user._id
-    ) && !hideOverlay;
+    const isPawnshop = this.user.role === 'pawnshop';
+    const isManualUser = this.slot.isUserExists === false;
+
+    this.isRegistered = isPawnshop && isManualUser && !hideOverlay;
 
     console.log('FINAL isRegistered:', this.isRegistered);
   }
@@ -149,7 +150,7 @@ export class SlotDetailComponent implements OnInit {
         localStorage.setItem('hideSlotOverlay', 'true');
       }
 
-    this.isRegistered = true;
+    this.isRegistered = false;
   }
 
   private calculate(){

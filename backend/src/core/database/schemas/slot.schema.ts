@@ -54,8 +54,8 @@ export class Slot {
   @Prop({ type: Object })
   data?: any;
 
-  @Prop({type:Object})
-  isUserExists?:boolean
+  @Prop({ type: Boolean, default: true })
+  isUserExists: boolean;
 
 }
 export const SlotSchema = SchemaFactory.createForClass(Slot);
