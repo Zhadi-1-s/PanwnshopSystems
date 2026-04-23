@@ -306,7 +306,7 @@ export class SlotService {
       });
 
       if(slot.offerId){
-
+        this.handleExpiredOffer(slot);
       }
     }
 
