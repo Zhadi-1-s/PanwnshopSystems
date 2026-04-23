@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable,Subject } from 'rxjs';
 import { Slot } from '../interfaces/slot.interface';
-import { environment } from "../../../environments/environment.prod";
+import { environment } from "../../../environments/environment";
+
 import { LoanStatus } from '../enums/status.enum';
 import { SlotCloseReason } from '../enums/status.enum';
 

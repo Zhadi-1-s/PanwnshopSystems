@@ -2,7 +2,7 @@ import { HttpClient,HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable, Subject,tap } from "rxjs";
 import { AppNotification } from "../interfaces/notification.interface";
-import { environment } from "../../../environments/environment.prod";
+import { environment } from "../../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
