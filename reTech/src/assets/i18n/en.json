@@ -466,5 +466,7 @@
     "Confirm action":"Confirm action",
     "Loan started":"Loan started",
     "Your loan has started":"Your loan has started",
-    "You can send WhatsApp message using this link":"You can send WhatsApp message using this link"
+    "You can send WhatsApp message using this link":"You can send WhatsApp message using this link",
+    "Close slot":"Close slot",
+    "Are you sure you want to close this slot?":"Are you sure you want to close this slot?"
 }

@@ -3,11 +3,12 @@ import { Component,Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { SlotCloseReason } from '../../../../shared/enums/status.enum';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-close-slot',
   standalone: true,
-  imports: [CommonModule,FormsModule],
+  imports: [CommonModule,FormsModule,TranslateModule],
   templateUrl: './close-slot.component.html',
   styleUrl: './close-slot.component.scss'
 })

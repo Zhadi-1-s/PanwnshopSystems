@@ -314,7 +314,13 @@ export class SlotService {
   }
 
   private async handleExpiredOffer(slot: Slot) {
-    const offer = await this.offerModel.findById(slot.offerId);
+    const offerId = slot?.data?.offer?._id;
+
+    if (!offerId) {
+      throw new Error('Offer ID not found in slot.data');
+    }
+
+    const offer = await this.offerModel.findById(offerId);
 
     if (!offer) return;
 

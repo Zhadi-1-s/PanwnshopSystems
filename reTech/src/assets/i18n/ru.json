@@ -468,7 +468,9 @@
     "Confirm action":"Подтверждение действия",
     "Loan started":"Займ активен",
     "Your loan has started":"Ваш займ начался",
-    "You can send WhatsApp message using this link":"Вы можете отправить сообщение используя эту ссылку"
+    "You can send WhatsApp message using this link":"Вы можете отправить сообщение используя эту ссылку",
+    "Close slot":"Закрыть займ",
+    "Are you sure you want to close this slot?":"Вы уверены что хотите закрыть этот займ?"
 
 
 }

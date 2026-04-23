@@ -558,12 +558,11 @@ export class LombardProfileComponent implements OnInit{
   }
 
   get unreadOfferNotifications() {
-
-    const unreadOffer = this.notificationsList.filter(n => ['new-offer','offer-accepted','offer-rejected','evaluation-accepted','sent-offer'].includes(n.type) && !n.readBy.some(r => r.userId === this.profile._id))
-
-    return unreadOffer
+    return this.notificationsList.filter(n =>
+      ['new-offer','offer-accepted','offer-rejected','evaluation-accepted','sent-offer'].includes(n.type) &&
+      !(n.readBy ?? []).some(r => r?.userId === this.profile._id)
+    );
   }
-
   getNotificationStatus(n: AppNotification): string | null {
     if (!n) return null;
 
