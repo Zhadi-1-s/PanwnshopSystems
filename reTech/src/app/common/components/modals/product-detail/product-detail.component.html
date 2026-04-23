@@ -193,8 +193,8 @@
       {{ 'Send Offer' | translate }}
     </button>
 
-    <button 
-      *ngIf="user?.role === 'user' && canEdit"
+    <!-- <button 
+      *ngIf="user?.role === 'user' && canEdit && isWithin7Days(product.createdAt)"
       [disabled]="isExtending"
       class="px-6 py-3 bg-gradient-to-r from-emerald-600 to-green-600 
             text-white font-semibold rounded-xl shadow-lg
@@ -211,7 +211,7 @@
         <i class="fa fa-spinner fa-spin"></i>
         Extending...
       </span>
-    </button>
+    </button> -->
 
 
     <!-- <button 

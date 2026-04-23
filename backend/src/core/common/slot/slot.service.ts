@@ -6,11 +6,12 @@ import { CreateSlotDto } from './create-slot.dto';
 import { NotificationService } from '../notification/notification.service';
 
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { LoanStatus, SlotCloseReason } from '../enums/status.enum';
+import { LoanStatus, ProductStatus, SlotCloseReason } from '../enums/status.enum';
 import { UpdateSlotStatusDto } from './update-status.dto';
 import { NotificationType } from 'src/core/database/schemas/notifications.schema';
 import { NotificationDocument,Notification } from 'src/core/database/schemas/notifications.schema';
 import { Offer, OfferDocument } from 'src/core/database/schemas/offer.schema';
+import { Product, ProductDocument } from 'src/core/database/schemas/product.schema';
 
 @Injectable()
 export class SlotService {
@@ -20,7 +21,9 @@ export class SlotService {
     @InjectModel(Notification.name)
     private readonly notificationModel:Model<NotificationDocument>,
     @InjectModel(Offer.name) 
-    private readonly offerModel: Model<OfferDocument>
+    private readonly offerModel: Model<OfferDocument>,
+    @InjectModel(Product.name)
+    private readonly productModel:Model<ProductDocument>
   ) {}
 
   async createSlot(dto: CreateSlotDto): Promise<Slot> {
@@ -236,16 +239,23 @@ export class SlotService {
       refId: slot._id.toString(),
     });
 
-    return this.slotModel.findByIdAndUpdate(
-      id,
-      {
-        status,
-        closeReason,
-        closedAt: new Date(),
-        closedBy: userId,
-      },
-      { new: true }
-    );
+   const updatedSlot = await this.slotModel.findByIdAndUpdate(
+    id,
+    {
+      status,
+      closeReason,
+      closedAt: new Date(),
+      closedBy: userId,
+    },
+    { new: true }
+  );
+
+  if (updatedSlot?.offerId) {
+    await this.handleExpiredOffer(updatedSlot);
+  }
+
+  return updatedSlot;
+    
   }
 
   async upsertSlotNotification(data: {
@@ -305,20 +315,29 @@ export class SlotService {
         refId: slot._id.toString(),
       });
 
-      if(slot.offerId){
-        this.handleExpiredOffer(slot);
-      }
+    
+
     }
 
     console.log('Expired slots processed:', expiredSlots.length);
   }
 
   private async handleExpiredOffer(slot: Slot) {
-    const offerId = slot?.data?.offer?._id;
-
+    const offerId = slot?.offerId;
+    const productId = slot?.product;
+    
     if (!offerId) {
       throw new Error('Offer ID not found in slot.data');
     }
+    if(!productId){
+      throw new Error('Offer ID not dound in slot data')
+    }
+
+    const product = await this.productModel.findById(productId);
+    if(!product) return
+
+    product.status = ProductStatus.INACTIVE;
+    await product.save()
 
     const offer = await this.offerModel.findById(offerId);
 

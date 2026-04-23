@@ -135,6 +135,16 @@ export class ProductDetailComponent implements OnInit{
     }).filter(Boolean);
   }
 
+  isWithin7Days(createdAt: string | Date): boolean {
+    const createdDate = new Date(createdAt);
+    const now = new Date();
+
+    const diffTime = now.getTime() - createdDate.getTime();
+    const diffDays = diffTime / (1000 * 60 * 60 * 24);
+
+    return diffDays <= 7;
+  }
+
   extendSale() {
     if (!this.product?._id && this.isExtending) return;
 

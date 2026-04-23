@@ -171,14 +171,11 @@ export class AuthService {
 
       const user = await this.userService.findOne({ _id: payload.sub });
 
-       console.log('DB USER:', user);
-      console.log('DB refreshToken:', user?.refreshToken);
 
       if (!user || user.refreshToken !== oldRefreshToken) {
         throw new UnauthorizedException('Invalid refresh token');
       }
-      console.log('incoming:', oldRefreshToken);
-      console.log('db:', user.refreshToken);
+
       const newAccessToken = this.generateAccessToken(user);
       const newRefreshToken = this.generateRefreshToken(user);
 

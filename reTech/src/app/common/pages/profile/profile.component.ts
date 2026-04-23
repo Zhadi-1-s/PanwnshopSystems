@@ -660,7 +660,7 @@ export class ProfileComponent implements OnInit {
 
   get completedOfferNotifications() {
     return (this.notificationsList || []).filter(n => {
-      if (!['new-offer','offer-accepted','offer-rejected','offer-canceled'].includes(n.type)) {
+      if (!['new-offer','offer-accepted','offer-rejected','offer-canceled','offer-completed'].includes(n.type)) {
         return false;
       }
 
@@ -744,7 +744,7 @@ export class ProfileComponent implements OnInit {
 
   get unreadOfferNotifications() {
     const unreaded = (this.notificationsList || []).filter(n =>
-      ['new-offer','offer-accepted','offer-rejected','offer-canceled','evaluation-created','evaluation-accepted','evaluation-updated','offer-updated'].includes(n.type) && !n.readBy.some(r => r.userId === this.user._id)
+      ['new-offer','offer-accepted','offer-rejected','offer-canceled','evaluation-created','evaluation-accepted','evaluation-updated','offer-updated','offer-completed'].includes(n.type) && !n.readBy.some(r => r.userId === this.user._id)
     );
     return unreaded;
   }
