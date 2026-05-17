@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
-import { app } from '../../server';
+// import { app } from '../../server';
 import { NavbarComponent } from './common/components/navbar/navbar.component';
 import { CommonModule } from '@angular/common';
 import { TopbarComponent } from './common/components/topbar/topbar.component';
