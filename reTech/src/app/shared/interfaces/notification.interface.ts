@@ -9,6 +9,7 @@ export interface AppNotification {
     | 'offer-updated'
     | 'offer-canceled'
     | 'offer-in-loan'
+    | 'offer-completed'
     | 'new-message'
     | 'system'
     | 'chat-opened'

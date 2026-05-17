@@ -48,6 +48,9 @@ export class Slot {
   @Prop()
   offerId?: string;
 
+  @Prop()
+  evaluationId?:string;
+
   @Prop({ type: String, enum: SlotCloseReason })
   closeReason?: SlotCloseReason;
   

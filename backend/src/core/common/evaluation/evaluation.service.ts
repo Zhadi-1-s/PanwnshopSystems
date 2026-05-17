@@ -140,7 +140,8 @@ const THREE_DAYS = 3 * ONE_DAY;
           startDate: new Date().toISOString(),
           endDate: new Date(Date.now() + (evaluation.termDays || 0) * 24 * 60 * 60 * 1000).toISOString(),
           interestRate: terms?.interest?.rate ?? 0,
-          status:LoanStatus.ACTIVE
+          status:LoanStatus.ACTIVE,
+          evaluationId: (evaluation._id as any).toString()
         })
       }
       

@@ -27,6 +27,7 @@ export type NotificationType =
     | 'evaluation-created'
     | 'evaluation-updated'
     | 'evaluation-accepted'
+    | 'evaluation-completed'
     | 'extend-requested'
     | 'extend-approved'
     | 'extend-rejected';
@@ -59,6 +60,7 @@ export class Notification {
       'evaluation-updated',
       'evaluation-accepted',
       'evaluation-created',
+      'evaluation-completed',
       'slot-created',
       'slot-completed',
       'slot-updated',

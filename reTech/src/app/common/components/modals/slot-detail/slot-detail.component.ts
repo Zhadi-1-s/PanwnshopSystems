@@ -86,17 +86,19 @@ export class SlotDetailComponent implements OnInit {
     }
   } 
 
-  confirmDeleteSlot(slotId:string){
-    const modalRef = this.modalService.open(SlotDeleteComponent, { centered: true });
-    
-    if(modalRef.result){
-      modalRef.result.then((result) => {
-        if (result === 'confirm') {
-          this.finishSlot(slotId);
-        }
-      });
-    }
+  confirmDeleteSlot(slotId: string) {
+    const modalRef = this.modalService.open(ConfirmModalComponent, {
+      centered: true
+    });
 
+    modalRef.componentInstance.message = 'Are you sure you want to finish this slot?';
+
+    modalRef.result.then((result) => {
+      if (result === true) {
+        this.finishSlot(slotId);
+        this.slotService.triggerRefresh();
+      }
+    }).catch(() => {});
   }
 
   finishSlot(slotId:string){

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsNumber, IsDateString, IsEnum,ValidateNested, IsOptional, Matches } from 'class-validator';
+import { IsNotEmpty, IsString, IsNumber, IsDateString, IsEnum,ValidateNested, IsOptional, Matches, isString } from 'class-validator';
 import { LoanStatus, Status } from '../enums/status.enum';
 import { Type } from 'class-transformer';
 import { Transform } from 'class-transformer';
@@ -94,6 +94,10 @@ export class CreateSlotDto {
   @IsOptional()
   @IsString()
   offerId?: string;
+
+  @IsOptional()
+  @IsString()
+  evaluationId?:string;
 
   @IsOptional()
   @IsEnum(SlotCloseReason)

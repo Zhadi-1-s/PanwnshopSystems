@@ -160,10 +160,6 @@ export class AuthService {
   }
 
   async refreshToken(oldRefreshToken: string) {
-    console.log('🔥 RAW TOKEN:', oldRefreshToken)
-    console.log('SECRET:', this.configService.get('JWT_REFRESH_SECRET'));
-
-    console.log('FRONT refreshToken:', oldRefreshToken);
     try {
       const payload = this.jwtService.verify(oldRefreshToken, {
         secret: this.configService.get('JWT_REFRESH_SECRET'),

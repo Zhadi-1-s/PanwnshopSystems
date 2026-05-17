@@ -235,14 +235,6 @@
   dependencies:
     tslib "^2.3.0"
 
-"@angular/ssr@^17.3.7":
-  version "17.3.17"
-  resolved "https://registry.yarnpkg.com/@angular/ssr/-/ssr-17.3.17.tgz#b8f2f9488f6f142ffbf19356bf7cdde9ecb76a4a"
-  integrity sha512-hRszFhFPh74n17cjhbRuR0igSwHm4ssB0LgkE4A5tBgYTSoWomRM6nmiyrk10OdQHlLOTFwdTIZ3aPDM5174Ow==
-  dependencies:
-    critters "0.0.22"
-    tslib "^2.3.0"
-
 "@auth0/angular-jwt@^5.2.0":
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/@auth0/angular-jwt/-/angular-jwt-5.2.0.tgz#3a734be51f7f4b1bb85ac2535e987b7e6e706481"
@@ -3500,7 +3492,7 @@ exponential-backoff@^3.1.1:
   resolved "https://registry.yarnpkg.com/exponential-backoff/-/exponential-backoff-3.1.2.tgz#a8f26adb96bf78e8cd8ad1037928d5e5c0679d91"
   integrity sha512-8QxYTVXUkuy7fIIoitQkPwGonB8F3Zj8eEO8Sqg9Zv/bkI7RJAzowee4gr81Hak/dUTpA2Z7VfQgoijjPNlUZA==
 
-express@^4.17.3, express@^4.18.2:
+express@^4.17.3:
   version "4.21.2"
   resolved "https://registry.yarnpkg.com/express/-/express-4.21.2.tgz#cf250e48362174ead6cea4a566abef0162c1ec32"
   integrity sha512-28HqgMZAmih1Czt9ny7qr6ek2qddF4FclbMzwhCREB6OFfH+rXAnuNCwo1/wFvrtbgsQDb4kSbX9de9lFbrXnA==

@@ -12,6 +12,7 @@ import { NotificationType } from 'src/core/database/schemas/notifications.schema
 import { NotificationDocument,Notification } from 'src/core/database/schemas/notifications.schema';
 import { Offer, OfferDocument } from 'src/core/database/schemas/offer.schema';
 import { Product, ProductDocument } from 'src/core/database/schemas/product.schema';
+import { Evaluation, EvaluationDocument } from 'src/core/database/schemas/evaluation.schema';
 
 @Injectable()
 export class SlotService {
@@ -23,7 +24,9 @@ export class SlotService {
     @InjectModel(Offer.name) 
     private readonly offerModel: Model<OfferDocument>,
     @InjectModel(Product.name)
-    private readonly productModel:Model<ProductDocument>
+    private readonly productModel:Model<ProductDocument>,
+    @InjectModel(Evaluation.name)
+    private readonly evaluatoinModel:Model<EvaluationDocument>
   ) {}
 
   async createSlot(dto: CreateSlotDto): Promise<Slot> {
@@ -184,6 +187,49 @@ export class SlotService {
 
     if(dto.status === LoanStatus.COMPLETED){
 
+      const productId = slot?.product;
+
+      const product = await this.productModel.findById(productId);
+      if(product){
+        product.status = ProductStatus.INACTIVE;
+        await product.save();
+      }
+
+      if(slot?.offerId){
+        const offer = await this.offerModel.findById(slot?.offerId);
+        
+        if(offer){
+          offer.status = 'completed';
+
+          await offer.save();
+
+           await this.upsertSlotNotification({
+            userId: slot.userId.toString(),
+            senderId: dto.userId,
+            type: 'offer-completed',
+            title: 'Offer completed',
+            message: 'Оффер завершён',
+            refId: offer._id.toString(), // 👈 ВАЖНО
+          });
+        }
+      }
+      if(slot?.evaluationId){
+        const evaluation = await this.evaluatoinModel.findById(slot?.evaluationId);
+
+        if(evaluation){
+          evaluation.status = 'completed';
+          await evaluation.save();
+          await this.upsertSlotNotification({
+            userId: slot.userId.toString(),
+            senderId: dto.userId,
+            type: 'evaluation-completed',
+            title: 'Evaluation completed',
+            message: 'Оценка завершена',
+            refId: (evaluation._id as any).toString(), // 👈 ВАЖНО
+          });
+        }
+      }
+      
       await this.upsertSlotNotification({
         userId:slot.userId.toString(),
         senderId:dto.userId,
@@ -252,6 +298,10 @@ export class SlotService {
 
   if (updatedSlot?.offerId) {
     await this.handleExpiredOffer(updatedSlot);
+  }
+
+  if(updatedSlot?.evaluationId){
+    await this.handleExpiredEvaluation(updatedSlot);
   }
 
   return updatedSlot;
@@ -343,9 +393,6 @@ export class SlotService {
 
     if (!offer) return;
 
-    // если уже не активный — не трогаем
-    if (offer.status !== 'in_loan') return;
-
     offer.status = 'completed';
     offer.updatedAt = new Date();
 
@@ -372,4 +419,48 @@ export class SlotService {
     ]);
   }
 
-}
+  private async handleExpiredEvaluation(slot:Slot){
+    const evaluationId = slot?.evaluationId;
+    const productId = slot?.product;
+
+     if (!evaluationId) {
+        throw new Error('Offer ID not found in slot.data');
+      }
+      if(!productId){
+        throw new Error('Offer ID not dound in slot data')
+      }
+
+      const product = await this.productModel.findById(productId)
+      if(!product) return
+
+      product.status = ProductStatus.INACTIVE;
+      await product.save();
+
+      const evaluation = await this.evaluatoinModel.findById(evaluationId);
+      if(!evaluation) return;
+
+      evaluation.status = 'completed';
+      await evaluation.save();
+
+      await Promise.all([
+        this.upsertSlotNotification({
+          userId:evaluation.userId.toString(),
+          senderId:evaluation.pawnshopId.toString(),
+          type:'evaluation-completed',
+          title:'Loan closed',
+          message:'Ваш займ завершен',
+          refId:evaluationId.toString()
+        }),
+        this.upsertSlotNotification({
+          userId:evaluation.pawnshopId.toString(),
+          senderId:evaluation.userId.toString(),
+          type:'evaluation-completed',
+          title:'Loan closed',
+          message:'Займ от оценки завершен',
+          refId:evaluationId.toString()
+        })
+      ])
+
+  }
+
+} 
